@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/app_providers.dart';
 import '../services/library_service.dart';
 import '../theme/app_colors.dart';
+import '../widgets/app_modal_widget.dart';
 import '../widgets/library_exercise_card_widget.dart';
 import '../widgets/library_exercise_form_widget.dart';
 
@@ -70,26 +71,13 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
   }
 
   Future<void> _deleteExercise(String id, String name) async {
-    await showDialog<void>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Delete exercise?'),
-        content: Text('Delete "$name"?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text('Cancel'),
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              Navigator.of(ctx).pop();
-              await ref.read(libraryServiceProvider).deleteExercise(id);
-            },
-            child: const Text('Delete'),
-          ),
-        ],
-      ),
+    final ok = await showConfirmSheet(
+      context,
+      title: 'Delete exercise?',
+      message: 'Delete "$name"?',
+      confirmLabel: 'Delete',
     );
+    if (ok) await ref.read(libraryServiceProvider).deleteExercise(id);
   }
 
   @override

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../widgets/brand_title.dart';
+import '../widgets/app_modal_widget.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/app_providers.dart';
 import '../services/plans_service.dart';
@@ -108,26 +109,14 @@ class _PlanEditScreenState extends ConsumerState<PlanEditScreen> {
   }
 
   Future<void> _deletePlan() async {
-    await showDialog<void>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Delete plan?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text('Cancel'),
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              Navigator.of(ctx).pop();
-              await ref.read(plansServiceProvider).deletePlan(widget.planId!);
-              if (mounted) await Navigator.of(context).maybePop();
-            },
-            child: const Text('Delete'),
-          ),
-        ],
-      ),
+    final ok = await showConfirmSheet(
+      context,
+      title: 'Delete plan?',
+      confirmLabel: 'Delete',
     );
+    if (!ok) return;
+    await ref.read(plansServiceProvider).deletePlan(widget.planId!);
+    if (mounted) await Navigator.of(context).maybePop();
   }
 
   @override

@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../providers/app_providers.dart';
 import '../services/routines_service.dart';
 import '../theme/app_colors.dart';
+import '../widgets/app_modal_widget.dart';
 import '../widgets/routine_card_widget.dart';
 
 Future<void> _showDeleteConfirm(
@@ -13,26 +14,13 @@ Future<void> _showDeleteConfirm(
   String routineId,
   String routineName,
 ) async {
-  await showDialog<void>(
-    context: context,
-    builder: (ctx) => AlertDialog(
-      title: const Text('Delete routine?'),
-      content: Text('Delete "$routineName"?'),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(ctx).pop(),
-          child: const Text('Cancel'),
-        ),
-        ElevatedButton(
-          onPressed: () async {
-            Navigator.of(ctx).pop();
-            await service.deleteRoutine(routineId);
-          },
-          child: const Text('Delete'),
-        ),
-      ],
-    ),
+  final ok = await showConfirmSheet(
+    context,
+    title: 'Delete routine?',
+    message: 'Delete "$routineName"?',
+    confirmLabel: 'Delete',
   );
+  if (ok) await service.deleteRoutine(routineId);
 }
 
 class RoutinesScreen extends ConsumerWidget {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
+import 'brand_mark.dart';
 
 /// The app-bar title used across chrome screens: the "PRsonal" wordmark
 /// ("PR" in primary text, "sonal" in accent) followed by a "·" divider and the
@@ -15,6 +16,8 @@ class BrandTitle extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
+        BrandMark(size: 18, color: colors.text1),
+        const SizedBox(width: 7),
         Text.rich(
           TextSpan(
             children: [
@@ -28,14 +31,14 @@ class BrandTitle extends StatelessWidget {
               TextSpan(
                 text: 'sonal',
                 style: TextStyle(
-                  color: colors.accent,
+                  color: colors.text2,
                   fontWeight: FontWeight.w700,
                 ),
               ),
             ],
           ),
           semanticsLabel: 'PRsonal',
-          style: const TextStyle(fontSize: 15),
+          style: const TextStyle(fontSize: 13),
         ),
         Text('  ·  ', style: TextStyle(color: colors.text3, fontSize: 14)),
         Flexible(

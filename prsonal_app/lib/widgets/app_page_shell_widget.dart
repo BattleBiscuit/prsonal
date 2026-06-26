@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:prsonal_app/theme/app_colors.dart';
+import 'package:prsonal_app/widgets/brand_mark.dart';
 
 class AppPageShell extends StatelessWidget {
   const AppPageShell({
@@ -35,14 +36,31 @@ class AppPageShell extends StatelessWidget {
                   Semantics(
                     label: 'PRsonal',
                     child: ExcludeSemantics(
-                      child: Text(
-                        'PRsonal',
-                        style: TextStyle(
-                          color: colors.accent,
-                          fontSize: 22,
-                          fontWeight: FontWeight.w800,
-                          letterSpacing: -0.5,
-                        ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          BrandMark(size: 22, color: colors.text1),
+                          const SizedBox(width: 8),
+                          Text.rich(
+                            TextSpan(
+                              children: [
+                                TextSpan(
+                                  text: 'PR',
+                                  style: TextStyle(color: colors.text1),
+                                ),
+                                TextSpan(
+                                  text: 'sonal',
+                                  style: TextStyle(color: colors.text2),
+                                ),
+                              ],
+                            ),
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: -0.5,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),

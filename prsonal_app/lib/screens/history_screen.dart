@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../widgets/brand_title.dart';
+import '../widgets/app_modal_widget.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
@@ -59,26 +60,14 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
   }
 
   Future<void> _deleteSession(String id) async {
-    await showDialog<void>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Delete workout?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text('Cancel'),
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              Navigator.of(ctx).pop();
-              await ref.read(historyServiceProvider).deleteSession(id);
-              setState(() => _sessions.removeWhere((s) => s.id == id));
-            },
-            child: const Text('Delete'),
-          ),
-        ],
-      ),
+    final ok = await showConfirmSheet(
+      context,
+      title: 'Delete workout?',
+      confirmLabel: 'Delete',
     );
+    if (!ok) return;
+    await ref.read(historyServiceProvider).deleteSession(id);
+    if (mounted) setState(() => _sessions.removeWhere((s) => s.id == id));
   }
 
   /// Group sessions by 'MMMM yyyy' label.

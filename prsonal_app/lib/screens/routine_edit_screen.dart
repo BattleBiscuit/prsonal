@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import '../widgets/brand_title.dart';
+import '../widgets/app_modal_widget.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/exercise.dart';
 import '../models/routine_exercise.dart';
@@ -47,28 +48,17 @@ class _RoutineEditScreenState extends ConsumerState<RoutineEditScreen> {
       if (mounted) unawaited(Navigator.of(context).maybePop());
       return;
     }
-    // Fire the dialog but do NOT await it — the caller is responsible for
-    // pumping frames so the dialog appears and then asserting on its content.
+    // Fire the sheet but do NOT await it — the caller pumps frames so the sheet
+    // appears and then asserts on its content.
     unawaited(
-      showDialog<void>(
-        context: context,
-        builder: (ctx) => AlertDialog(
-          title: const Text('Discard changes?'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(ctx).pop(),
-              child: const Text('Keep editing'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(ctx).pop();
-                Navigator.of(context).maybePop();
-              },
-              child: const Text('Discard'),
-            ),
-          ],
-        ),
-      ),
+      showConfirmSheet(
+        context,
+        title: 'Discard changes?',
+        confirmLabel: 'Discard',
+        cancelLabel: 'Keep editing',
+      ).then((discard) {
+        if (discard && mounted) Navigator.of(context).maybePop();
+      }),
     );
   }
 

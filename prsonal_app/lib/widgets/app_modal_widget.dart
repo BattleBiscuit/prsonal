@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:prsonal_app/theme/app_colors.dart';
+import 'package:prsonal_app/widgets/app_button_widget.dart';
 
 class AppModal extends StatelessWidget {
   const AppModal({
@@ -64,4 +65,74 @@ class AppModal extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Presents [child] as a bottom-sheet modal with the app's scrim and slide-up,
+/// wrapping the [AppModal] content. Returns the value the sheet is popped with.
+Future<T?> showAppModal<T>(
+  BuildContext context, {
+  String? title,
+  required Widget child,
+  List<Widget> Function(BuildContext sheetContext)? actionsBuilder,
+  bool isDismissible = true,
+}) {
+  return showModalBottomSheet<T>(
+    context: context,
+    isScrollControlled: true,
+    isDismissible: isDismissible,
+    enableDrag: isDismissible,
+    backgroundColor: Colors.transparent,
+    barrierColor: Colors.black.withValues(alpha: 0.70),
+    builder: (ctx) => Padding(
+      padding: EdgeInsets.only(
+        left: 12,
+        right: 12,
+        bottom:
+            12 +
+            MediaQuery.of(ctx).viewInsets.bottom +
+            MediaQuery.of(ctx).padding.bottom,
+      ),
+      child: AppModal(
+        title: title,
+        onClose: isDismissible ? () => Navigator.of(ctx).pop() : null,
+        actions: actionsBuilder?.call(ctx),
+        child: child,
+      ),
+    ),
+  );
+}
+
+/// A confirm/cancel bottom sheet. Resolves to `true` when confirmed.
+Future<bool> showConfirmSheet(
+  BuildContext context, {
+  required String title,
+  String? message,
+  String confirmLabel = 'Confirm',
+  String cancelLabel = 'Cancel',
+  AppButtonVariant confirmVariant = AppButtonVariant.danger,
+}) async {
+  final colors = Theme.of(context).extension<AppColors>() ?? AppColors.dark;
+  final result = await showAppModal<bool>(
+    context,
+    title: title,
+    child: message == null
+        ? const SizedBox.shrink()
+        : Text(message, style: TextStyle(color: colors.text2, fontSize: 14)),
+    actionsBuilder: (ctx) => [
+      AppButton(
+        label: confirmLabel,
+        variant: confirmVariant,
+        full: true,
+        onPressed: () => Navigator.of(ctx).pop(true),
+      ),
+      const SizedBox(height: 8),
+      AppButton(
+        label: cancelLabel,
+        variant: AppButtonVariant.ghost,
+        full: true,
+        onPressed: () => Navigator.of(ctx).pop(false),
+      ),
+    ],
+  );
+  return result ?? false;
 }

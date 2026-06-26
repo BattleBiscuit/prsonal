@@ -5,13 +5,21 @@ status: approved
 ---
 
 ## Purpose
-The single source of truth for the app's visual language, ported 1:1 from gym-app's CSS tokens
-so the Flutter app looks **identical**. Every colour, size, and radius below is exact. Feature
-specs reference these tokens by name; they must never hard-code ad-hoc values.
+The single source of truth for the app's visual language. Every colour, size, and radius below is
+exact. Feature specs reference these tokens **by name** (e.g. `accent`), never hard-coded values —
+so a palette change happens here and propagates everywhere.
 
-The app is **dark-only** (there is no light theme). The whole app is a fixed, non-scrolling
-shell with inner scroll regions — implemented in Flutter as a `Scaffold` whose body scrolls, not
-the page.
+The app is **dark-only**. The whole app is a fixed, non-scrolling shell with inner scroll regions
+— implemented in Flutter as a `Scaffold` whose body scrolls, not the page.
+
+## Theme direction — Graphite (monochrome)
+The identity is **monochrome**: the brand carries on contrast and value, not hue. The `accent`
+(primary CTAs, active nav, PR, focus, logo) is **chalk white**, not a colour. The structure was
+ported from gym-app; the original lime accent (`#E8FF47`) is retired in favour of chalk (`#EDEDED`).
+
+**Semantic colours stay coloured** — `success` / `danger` / `warning` convey function (a delete is
+red, a gain is green) and are deliberately exempt from the monochrome rule. They are never used as
+the brand accent.
 
 ---
 
@@ -27,7 +35,7 @@ the page.
 
 | ColorScheme slot | Token | Hex |
 |------------------|-------|-----|
-| `primary` | accent | `#E8FF47` |
+| `primary` | accent | `#EDEDED` |
 | `onPrimary` | (hardcoded dark) | `#0F0F0F` |
 | `surface` | bg | `#0F0F0F` |
 | `onSurface` | text-1 | `#F5F5F5` |
@@ -53,8 +61,8 @@ the page.
 ### Accent
 | Token | Hex | Role |
 |-------|-----|------|
-| `accent` | `#E8FF47` | Primary CTA, FAB, active nav/tab, focus ring, PR, logo |
-| `accentDim` | `#B8CC35` | Accent pressed state |
+| `accent` | `#EDEDED` | Primary CTA, FAB, active nav/tab, focus ring, PR, logo |
+| `accentDim` | `#C7C7CC` | Accent pressed state |
 | `onAccent` | `#0F0F0F` | Text/icon on accent surfaces (hardcoded) |
 
 ### Semantic
@@ -75,7 +83,7 @@ the page.
 | Token | Hex |
 |-------|-----|
 | `border` | `#2E2E2E` |
-| `borderFocus` | `#E8FF47` |
+| `borderFocus` | `#EDEDED` |
 
 ### Common alpha derivations (use `Color.withValues(alpha:)`)
 | Use | Value |
@@ -162,7 +170,7 @@ FAB: `0 4 16 black@0.40`. Drag ghost (if reorder kept): `0 8 24 black@0.50`.
 - **FAB**: pill, `accent` bg, `onAccent` content, `sm`/700, fixed above the nav. (`AppFab`.)
 
 ## Notes for "identical" fidelity
-- Accent `#E8FF47` is the signature; it appears on every primary action, active state, and PR.
+- Accent `#EDEDED` is the signature; it appears on every primary action, active state, and PR.
 - Inactive nav/icons are `text3` (`#616161`), not a faded white.
 - "Abandoned" sessions and streak counts use `warning` (`#FF9800`); volume up/down and
   completed sets use `success`/`danger`.

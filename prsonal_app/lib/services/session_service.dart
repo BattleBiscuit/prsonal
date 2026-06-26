@@ -88,11 +88,7 @@ class ActiveExercise {
     required bool isCurrent,
     required List<ActiveSet> sets,
   }) {
-    return ActiveExercise(
-      name: name,
-      sets: sets,
-      isCurrent: isCurrent,
-    );
+    return ActiveExercise(name: name, sets: sets, isCurrent: isCurrent);
   }
 
   final String name;
@@ -104,10 +100,7 @@ class ActiveExercise {
   final String? routineExerciseId;
   final int position;
 
-  ActiveExercise copyWith({
-    List<ActiveSet>? sets,
-    bool? isCurrent,
-  }) {
+  ActiveExercise copyWith({List<ActiveSet>? sets, bool? isCurrent}) {
     return ActiveExercise(
       name: name,
       sets: sets ?? this.sets,
@@ -191,18 +184,20 @@ class ActiveSessionState {
 
   // Derived getters
 
-  int get totalCount =>
-      exercises.fold(0, (sum, e) => sum + e.sets.length);
+  int get totalCount => exercises.fold(0, (sum, e) => sum + e.sets.length);
 
   int get completedCount => exercises.fold(
-      0,
-      (sum, e) =>
-          sum +
-          e.sets
-              .where((s) =>
+    0,
+    (sum, e) =>
+        sum +
+        e.sets
+            .where(
+              (s) =>
                   s.status == ActiveSetStatus.completed ||
-                  s.status == ActiveSetStatus.skipped)
-              .length);
+                  s.status == ActiveSetStatus.skipped,
+            )
+            .length,
+  );
 
   double get progress {
     final total = totalCount;
@@ -314,8 +309,7 @@ class SessionEngine extends Notifier<ActiveSessionState?> {
     if (routine == null) {
       throw ArgumentError('Routine $routineId not found.');
     }
-    final routineExerciseRows =
-        await _db.routineExercisesForRoutine(routineId);
+    final routineExerciseRows = await _db.routineExercisesForRoutine(routineId);
     if (routineExerciseRows.isEmpty) {
       throw ArgumentError('Routine $routineId has no exercises.');
     }
@@ -323,15 +317,17 @@ class SessionEngine extends Notifier<ActiveSessionState?> {
     final sessionId = _newId();
     final now = ref.read(nowProvider)();
 
-    await _db.insertWorkoutSessionRow(WorkoutSessionsCompanion.insert(
-      id: sessionId,
-      routineId: routineId,
-      routineName: routine.name,
-      startedAt: now,
-      status: SessionStatus.active,
-      planId: Value(planId),
-      planEntryId: Value(planEntryId),
-    ));
+    await _db.insertWorkoutSessionRow(
+      WorkoutSessionsCompanion.insert(
+        id: sessionId,
+        routineId: routineId,
+        routineName: routine.name,
+        startedAt: now,
+        status: SessionStatus.active,
+        planId: Value(planId),
+        planEntryId: Value(planEntryId),
+      ),
+    );
 
     final exercises = <ActiveExercise>[];
 
@@ -344,43 +340,49 @@ class SessionEngine extends Notifier<ActiveSessionState?> {
         final setId = _newId();
         final label = _plannedLabel(target);
 
-        await _db.insertWorkoutSetRow(WorkoutSetsCompanion.insert(
-          id: setId,
-          sessionId: sessionId,
-          exercisePosition: re.position,
-          exerciseId: Value(re.exerciseId),
-          exerciseName: exerciseName,
-          setIndex: si,
-          type: target.kind,
-          plannedReps: Value(target.reps),
-          plannedWeight: Value(target.weight),
-          isBodyweight: Value(target.isBodyweight ?? false),
-          restSeconds: Value(target.restSeconds ?? 0),
-        ));
+        await _db.insertWorkoutSetRow(
+          WorkoutSetsCompanion.insert(
+            id: setId,
+            sessionId: sessionId,
+            exercisePosition: re.position,
+            exerciseId: Value(re.exerciseId),
+            exerciseName: exerciseName,
+            setIndex: si,
+            type: target.kind,
+            plannedReps: Value(target.reps),
+            plannedWeight: Value(target.weight),
+            isBodyweight: Value(target.isBodyweight ?? false),
+            restSeconds: Value(target.restSeconds ?? 0),
+          ),
+        );
 
-        exerciseSets.add(ActiveSet(
-          index: si,
-          kind: target.kind,
-          plannedLabel: label,
-          status: si == 0 && re.position == routineExerciseRows.first.position
-              ? ActiveSetStatus.active
-              : ActiveSetStatus.pending,
-          dbId: setId,
-          restSeconds: target.restSeconds ?? 0,
-          plannedReps: target.reps,
-          plannedWeight: target.weight,
-          isBodyweight: target.isBodyweight ?? false,
-        ));
+        exerciseSets.add(
+          ActiveSet(
+            index: si,
+            kind: target.kind,
+            plannedLabel: label,
+            status: si == 0 && re.position == routineExerciseRows.first.position
+                ? ActiveSetStatus.active
+                : ActiveSetStatus.pending,
+            dbId: setId,
+            restSeconds: target.restSeconds ?? 0,
+            plannedReps: target.reps,
+            plannedWeight: target.weight,
+            isBodyweight: target.isBodyweight ?? false,
+          ),
+        );
       }
 
-      exercises.add(ActiveExercise(
-        name: exerciseName,
-        sets: exerciseSets,
-        isCurrent: re.position == routineExerciseRows.first.position,
-        exerciseId: re.exerciseId,
-        routineExerciseId: re.id,
-        position: re.position,
-      ));
+      exercises.add(
+        ActiveExercise(
+          name: exerciseName,
+          sets: exerciseSets,
+          isCurrent: re.position == routineExerciseRows.first.position,
+          exerciseId: re.exerciseId,
+          routineExerciseId: re.id,
+          position: re.position,
+        ),
+      );
     }
 
     final session = await _db.sessionById(sessionId);
@@ -431,8 +433,9 @@ class SessionEngine extends Notifier<ActiveSessionState?> {
           kind: ws.type,
           plannedLabel: _plannedLabelFromSet(ws),
           status: status,
-          actualLabel:
-              status == ActiveSetStatus.completed ? _actualLabel(ws) : null,
+          actualLabel: status == ActiveSetStatus.completed
+              ? _actualLabel(ws)
+              : null,
           isPR: ws.isPR,
           dbId: ws.id,
           restSeconds: ws.restSeconds,
@@ -446,12 +449,14 @@ class SessionEngine extends Notifier<ActiveSessionState?> {
           ? await _db.exerciseById(first.exerciseId!)
           : null;
 
-      exercises.add(ActiveExercise(
-        name: exerciseRow?.name ?? first.exerciseName,
-        sets: activeSets,
-        exerciseId: first.exerciseId,
-        position: pos,
-      ));
+      exercises.add(
+        ActiveExercise(
+          name: exerciseRow?.name ?? first.exerciseName,
+          sets: activeSets,
+          exerciseId: first.exerciseId,
+          position: pos,
+        ),
+      );
     }
 
     // Find cursor: first incomplete (pending) set.
@@ -491,9 +496,10 @@ class SessionEngine extends Notifier<ActiveSessionState?> {
   }) {
     _requireActive();
     return _doMarkCurrentSetComplete(
-        actualPrimary: actualPrimary,
-        actualSecondary: actualSecondary,
-        isBodyweight: isBodyweight);
+      actualPrimary: actualPrimary,
+      actualSecondary: actualSecondary,
+      isBodyweight: isBodyweight,
+    );
   }
 
   Future<bool> _doMarkCurrentSetComplete({
@@ -507,8 +513,7 @@ class SessionEngine extends Notifier<ActiveSessionState?> {
         current.exercises[cursor.exerciseIndex].sets[cursor.setIndex];
 
     // Resolve bodyweight.
-    final bodyweightMetric =
-        await _db.latestBodyMetric(BodyMetricType.weight);
+    final bodyweightMetric = await _db.latestBodyMetric(BodyMetricType.weight);
     final bodyweight = bodyweightMetric?.value ?? 80.0;
 
     // For strength sets compute effectiveWeight and 1RM.
@@ -530,8 +535,7 @@ class SessionEngine extends Notifier<ActiveSessionState?> {
       // PR detection: compare against max 1RM of all prior completed
       // strength sets for the same exercise (across all sessions and
       // earlier sets in this session).
-      final exercise =
-          current.exercises[cursor.exerciseIndex];
+      final exercise = current.exercises[cursor.exerciseIndex];
       final bestPrior = await _db.bestEstimated1RMForExercise(
         exerciseId: exercise.exerciseId,
         exerciseName: exercise.name,
@@ -552,23 +556,25 @@ class SessionEngine extends Notifier<ActiveSessionState?> {
 
     // Update DB row.
     if (currentSet.dbId != null) {
-      await _db.updateWorkoutSetRow(WorkoutSetsCompanion(
-        id: Value(currentSet.dbId!),
-        sessionId: Value(current.session.id),
-        exercisePosition: Value(
-            current.exercises[cursor.exerciseIndex].position),
-        exerciseName:
-            Value(current.exercises[cursor.exerciseIndex].name),
-        setIndex: Value(currentSet.index),
-        type: Value(currentSet.kind),
-        actualReps: Value(actualPrimary.toInt()),
-        actualWeight: Value(actualSecondary.toDouble()),
-        effectiveWeight: Value(effectiveWeight),
-        estimated1RM: Value(estimated1RM),
-        completedAt: Value(now),
-        isPR: Value(isPR),
-        skipped: const Value(false),
-      ));
+      await _db.updateWorkoutSetRow(
+        WorkoutSetsCompanion(
+          id: Value(currentSet.dbId!),
+          sessionId: Value(current.session.id),
+          exercisePosition: Value(
+            current.exercises[cursor.exerciseIndex].position,
+          ),
+          exerciseName: Value(current.exercises[cursor.exerciseIndex].name),
+          setIndex: Value(currentSet.index),
+          type: Value(currentSet.kind),
+          actualReps: Value(actualPrimary.toInt()),
+          actualWeight: Value(actualSecondary.toDouble()),
+          effectiveWeight: Value(effectiveWeight),
+          estimated1RM: Value(estimated1RM),
+          completedAt: Value(now),
+          isPR: Value(isPR),
+          skipped: const Value(false),
+        ),
+      );
     }
 
     // Haptic feedback.
@@ -618,16 +624,19 @@ class SessionEngine extends Notifier<ActiveSessionState?> {
         current.exercises[cursor.exerciseIndex].sets[cursor.setIndex];
 
     if (currentSet.dbId != null) {
-      await _db.updateWorkoutSetRow(WorkoutSetsCompanion(
-        id: Value(currentSet.dbId!),
-        sessionId: Value(current.session.id),
-        exercisePosition:
-            Value(current.exercises[cursor.exerciseIndex].position),
-        exerciseName: Value(current.exercises[cursor.exerciseIndex].name),
-        setIndex: Value(currentSet.index),
-        type: Value(currentSet.kind),
-        skipped: const Value(true),
-      ));
+      await _db.updateWorkoutSetRow(
+        WorkoutSetsCompanion(
+          id: Value(currentSet.dbId!),
+          sessionId: Value(current.session.id),
+          exercisePosition: Value(
+            current.exercises[cursor.exerciseIndex].position,
+          ),
+          exerciseName: Value(current.exercises[cursor.exerciseIndex].name),
+          setIndex: Value(currentSet.index),
+          type: Value(currentSet.kind),
+          skipped: const Value(true),
+        ),
+      );
     }
 
     final updatedSet = currentSet.copyWith(status: ActiveSetStatus.skipped);
@@ -671,21 +680,23 @@ class SessionEngine extends Notifier<ActiveSessionState?> {
     final set = current.exercises[exerciseIndex].sets[setIndex];
 
     if (set.dbId != null) {
-      await _db.updateWorkoutSetRow(WorkoutSetsCompanion(
-        id: Value(set.dbId!),
-        sessionId: Value(current.session.id),
-        exercisePosition: Value(current.exercises[exerciseIndex].position),
-        exerciseName: Value(current.exercises[exerciseIndex].name),
-        setIndex: Value(set.index),
-        type: Value(set.kind),
-        actualReps: const Value(null),
-        actualWeight: const Value(null),
-        effectiveWeight: const Value(null),
-        estimated1RM: const Value(null),
-        completedAt: const Value(null),
-        skipped: const Value(false),
-        isPR: const Value(false),
-      ));
+      await _db.updateWorkoutSetRow(
+        WorkoutSetsCompanion(
+          id: Value(set.dbId!),
+          sessionId: Value(current.session.id),
+          exercisePosition: Value(current.exercises[exerciseIndex].position),
+          exerciseName: Value(current.exercises[exerciseIndex].name),
+          setIndex: Value(set.index),
+          type: Value(set.kind),
+          actualReps: const Value(null),
+          actualWeight: const Value(null),
+          effectiveWeight: const Value(null),
+          estimated1RM: const Value(null),
+          completedAt: const Value(null),
+          skipped: const Value(false),
+          isPR: const Value(false),
+        ),
+      );
     }
 
     final clearedSet = ActiveSet(
@@ -702,8 +713,7 @@ class SessionEngine extends Notifier<ActiveSessionState?> {
 
     final newCursor = (exerciseIndex: exerciseIndex, setIndex: setIndex);
     cancelRest();
-    var updatedExercises =
-        _updateSet(current.exercises, newCursor, clearedSet);
+    var updatedExercises = _updateSet(current.exercises, newCursor, clearedSet);
     updatedExercises = _markCursorActive(updatedExercises, newCursor);
 
     state = ActiveSessionState(
@@ -730,38 +740,45 @@ class SessionEngine extends Notifier<ActiveSessionState?> {
     // Determine next position.
     final nextPosition = current.exercises.isEmpty
         ? 0
-        : current.exercises.map((e) => e.position).reduce((a, b) => a > b ? a : b) + 1;
+        : current.exercises
+                  .map((e) => e.position)
+                  .reduce((a, b) => a > b ? a : b) +
+              1;
 
     final activeSets = <ActiveSet>[];
     for (var si = 0; si < sets.length; si++) {
       final target = sets[si];
       final setId = _newId();
 
-      await _db.insertWorkoutSetRow(WorkoutSetsCompanion.insert(
-        id: setId,
-        sessionId: current.session.id,
-        exercisePosition: nextPosition,
-        exerciseId: Value(exerciseId),
-        exerciseName: exerciseName,
-        setIndex: si,
-        type: target.kind,
-        plannedReps: Value(target.reps),
-        plannedWeight: Value(target.weight),
-        isBodyweight: Value(target.isBodyweight ?? false),
-        restSeconds: Value(target.restSeconds ?? 0),
-      ));
+      await _db.insertWorkoutSetRow(
+        WorkoutSetsCompanion.insert(
+          id: setId,
+          sessionId: current.session.id,
+          exercisePosition: nextPosition,
+          exerciseId: Value(exerciseId),
+          exerciseName: exerciseName,
+          setIndex: si,
+          type: target.kind,
+          plannedReps: Value(target.reps),
+          plannedWeight: Value(target.weight),
+          isBodyweight: Value(target.isBodyweight ?? false),
+          restSeconds: Value(target.restSeconds ?? 0),
+        ),
+      );
 
-      activeSets.add(ActiveSet(
-        index: si,
-        kind: target.kind,
-        plannedLabel: _plannedLabel(target),
-        status: ActiveSetStatus.pending,
-        dbId: setId,
-        restSeconds: target.restSeconds ?? 0,
-        plannedReps: target.reps,
-        plannedWeight: target.weight,
-        isBodyweight: target.isBodyweight ?? false,
-      ));
+      activeSets.add(
+        ActiveSet(
+          index: si,
+          kind: target.kind,
+          plannedLabel: _plannedLabel(target),
+          status: ActiveSetStatus.pending,
+          dbId: setId,
+          restSeconds: target.restSeconds ?? 0,
+          plannedReps: target.reps,
+          plannedWeight: target.weight,
+          isBodyweight: target.isBodyweight ?? false,
+        ),
+      );
     }
 
     final newExercise = ActiveExercise(
@@ -794,15 +811,17 @@ class SessionEngine extends Notifier<ActiveSessionState?> {
         if (s.status == ActiveSetStatus.pending ||
             s.status == ActiveSetStatus.active) {
           if (s.dbId != null) {
-            await _db.updateWorkoutSetRow(WorkoutSetsCompanion(
-              id: Value(s.dbId!),
-              sessionId: Value(current.session.id),
-              exercisePosition: Value(ex.position),
-              exerciseName: Value(ex.name),
-              setIndex: Value(s.index),
-              type: Value(s.kind),
-              skipped: const Value(true),
-            ));
+            await _db.updateWorkoutSetRow(
+              WorkoutSetsCompanion(
+                id: Value(s.dbId!),
+                sessionId: Value(current.session.id),
+                exercisePosition: Value(ex.position),
+                exerciseName: Value(ex.name),
+                setIndex: Value(s.index),
+                type: Value(s.kind),
+                skipped: const Value(true),
+              ),
+            );
           }
           updatedSets.add(s.copyWith(status: ActiveSetStatus.skipped));
         } else {
@@ -832,14 +851,16 @@ class SessionEngine extends Notifier<ActiveSessionState?> {
     final now = ref.read(nowProvider)();
 
     // Mark session completed.
-    await _db.updateWorkoutSessionRow(WorkoutSessionsCompanion(
-      id: Value(current.session.id),
-      routineId: Value(current.session.routineId),
-      routineName: Value(current.session.routineName),
-      startedAt: Value(current.session.startedAt),
-      completedAt: Value(now),
-      status: Value(SessionStatus.completed),
-    ));
+    await _db.updateWorkoutSessionRow(
+      WorkoutSessionsCompanion(
+        id: Value(current.session.id),
+        routineId: Value(current.session.routineId),
+        routineName: Value(current.session.routineName),
+        startedAt: Value(current.session.startedAt),
+        completedAt: Value(now),
+        status: Value(SessionStatus.completed),
+      ),
+    );
 
     // Write actuals back to routine as new planned targets.
     await _writeActualsToRoutine(current);
@@ -980,18 +1001,21 @@ class SessionEngine extends Notifier<ActiveSessionState?> {
       }).toList();
 
       // Load current routine exercise to do a full replace.
-      final routineExerciseRows =
-          await _db.routineExercisesForRoutine(current.session.routineId);
+      final routineExerciseRows = await _db.routineExercisesForRoutine(
+        current.session.routineId,
+      );
       for (final re in routineExerciseRows) {
         if (re.id == ex.routineExerciseId) {
-          await _db.updateRoutineExerciseRow(RoutineExercisesCompanion(
-            id: Value(re.id),
-            routineId: Value(re.routineId),
-            exerciseId: Value(re.exerciseId),
-            position: Value(re.position),
-            notes: Value(re.notes),
-            sets: Value(newTargets),
-          ));
+          await _db.updateRoutineExerciseRow(
+            RoutineExercisesCompanion(
+              id: Value(re.id),
+              routineId: Value(re.routineId),
+              exerciseId: Value(re.exerciseId),
+              position: Value(re.position),
+              notes: Value(re.notes),
+              sets: Value(newTargets),
+            ),
+          );
           break;
         }
       }
@@ -1101,7 +1125,6 @@ class SessionEngine extends Notifier<ActiveSessionState?> {
     if (v == v.truncateToDouble()) return v.truncate().toString();
     return v.toString();
   }
-
 }
 
 // ---------------------------------------------------------------------------

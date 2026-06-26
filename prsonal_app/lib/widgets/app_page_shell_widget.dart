@@ -59,12 +59,17 @@ class AppPageShell extends StatelessWidget {
                 onTap: onResumeWorkout,
                 child: Container(
                   color: colors.accent.withValues(alpha: 0.15),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 10,
+                  ),
                   child: Row(
                     children: [
-                      Icon(Icons.fitness_center,
-                          color: colors.accent, size: 16),
+                      Icon(
+                        Icons.fitness_center,
+                        color: colors.accent,
+                        size: 16,
+                      ),
                       const SizedBox(width: 8),
                       Text(
                         'Workout in progress',
@@ -78,10 +83,7 @@ class AppPageShell extends StatelessWidget {
                         const SizedBox(width: 8),
                         Text(
                           workoutRoutineName!,
-                          style: TextStyle(
-                            color: colors.text2,
-                            fontSize: 14,
-                          ),
+                          style: TextStyle(color: colors.text2, fontSize: 14),
                         ),
                       ],
                     ],

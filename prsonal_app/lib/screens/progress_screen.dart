@@ -31,157 +31,170 @@ class ProgressScreen extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-          // Range toggles
-          Row(
-            children: [
-              for (final r in [7, 28, 56, 90]) ...[
-                _RangeButton(
-                  label: r == 7
-                      ? '7d'
-                      : r == 28
-                          ? '4w'
-                          : r == 56
-                              ? '8w'
-                              : '90d',
-                  selected: range == r,
-                  onTap: () =>
-                      ref.read(progressRangeProvider.notifier).state = r,
-                ),
-                const SizedBox(width: 8),
-              ],
-            ],
-          ),
-          const SizedBox(height: 8),
-          // Metric cards — compact 2×2 grid
-          summaryAsync.when(
-            data: (summary) => Column(
+            // Range toggles
+            Row(
               children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: StatCard(
-                        value: '${summary.workoutCount}',
-                        label: 'Workouts',
-                        icon: Icons.fitness_center,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: StatCard(
-                        value: summary.volumeTrendPercent != null
-                            ? '${summary.volumeTrendPercent!.toStringAsFixed(0)}%'
-                            : '—',
-                        label: 'Volume trend',
-                        icon: Icons.trending_up,
-                        tone: (summary.volumeTrendPercent ?? 0) >= 0
-                            ? StatTone.success
-                            : StatTone.danger,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    Expanded(
-                      child: StatCard(
-                        value: summary.adherencePercent != null
-                            ? '${summary.adherencePercent!.toStringAsFixed(0)}%'
-                            : '—',
-                        label: 'Plan adherence',
-                        icon: Icons.calendar_today,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: StatCard(
-                        value: '${summary.bestStreak}',
-                        label: 'Best streak',
-                        icon: Icons.local_fire_department,
-                        tone: StatTone.warning,
-                      ),
-                    ),
-                  ],
-                ),
+                for (final r in [7, 28, 56, 90]) ...[
+                  _RangeButton(
+                    label: r == 7
+                        ? '7d'
+                        : r == 28
+                        ? '4w'
+                        : r == 56
+                        ? '8w'
+                        : '90d',
+                    selected: range == r,
+                    onTap: () =>
+                        ref.read(progressRangeProvider.notifier).state = r,
+                  ),
+                  const SizedBox(width: 8),
+                ],
               ],
             ),
-            loading: () => const SizedBox(
-                height: 80,
-                child: Center(child: CircularProgressIndicator())),
-            error: (e, _) => Text('Error: $e'),
-          ),
-          const SizedBox(height: 8),
-          // Chart slider — compact height
-          SizedBox(
-            height: 120,
-            child: ChartSlider(
-              titles: const ['Muscle Balance', 'Volume'],
-              pages: [
-                const Center(child: Text('Muscle Balance')),
-                const Center(child: Text('Volume')),
-              ],
-            ),
-          ),
-          const SizedBox(height: 8),
-          // Recent PRs
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text('Recent PRs',
-                  style: TextStyle(
-                      color: colors.text1,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600)),
-              TextButton(
-                onPressed: () => context.goNamed('all-prs'),
-                child: const Text('View all PRs'),
+            const SizedBox(height: 8),
+            // Metric cards — compact 2×2 grid
+            summaryAsync.when(
+              data: (summary) => Column(
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: StatCard(
+                          value: '${summary.workoutCount}',
+                          label: 'Workouts',
+                          icon: Icons.fitness_center,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: StatCard(
+                          value: summary.volumeTrendPercent != null
+                              ? '${summary.volumeTrendPercent!.toStringAsFixed(0)}%'
+                              : '—',
+                          label: 'Volume trend',
+                          icon: Icons.trending_up,
+                          tone: (summary.volumeTrendPercent ?? 0) >= 0
+                              ? StatTone.success
+                              : StatTone.danger,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: StatCard(
+                          value: summary.adherencePercent != null
+                              ? '${summary.adherencePercent!.toStringAsFixed(0)}%'
+                              : '—',
+                          label: 'Plan adherence',
+                          icon: Icons.calendar_today,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: StatCard(
+                          value: '${summary.bestStreak}',
+                          label: 'Best streak',
+                          icon: Icons.local_fire_department,
+                          tone: StatTone.warning,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
-            ],
-          ),
-          const SizedBox(height: 4),
-          prsAsync.when(
-            data: (prs) => Column(
-              children: prs.map((pr) {
-                final dateFmt = DateFormat('d MMM yyyy');
-                return PrRow(
-                  exerciseName: pr.exerciseName,
-                  dateLabel: dateFmt.format(pr.date),
-                  weightLabel: '${pr.weight}kg',
-                  oneRmLabel: '1RM: ${pr.oneRepMax.toStringAsFixed(1)}kg',
-                );
-              }).toList(),
+              loading: () => const SizedBox(
+                height: 80,
+                child: Center(child: CircularProgressIndicator()),
+              ),
+              error: (e, _) => Text('Error: $e'),
             ),
-            loading: () => const SizedBox.shrink(),
-            error: (e, _) => Text('Error: $e'),
-          ),
-          const SizedBox(height: 8),
-          // History preview
-          Text('Recent sessions',
+            const SizedBox(height: 8),
+            // Chart slider — compact height
+            SizedBox(
+              height: 120,
+              child: ChartSlider(
+                titles: const ['Muscle Balance', 'Volume'],
+                pages: [
+                  const Center(child: Text('Muscle Balance')),
+                  const Center(child: Text('Volume')),
+                ],
+              ),
+            ),
+            const SizedBox(height: 8),
+            // Recent PRs
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Recent PRs',
+                  style: TextStyle(
+                    color: colors.text1,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                TextButton(
+                  onPressed: () => context.goNamed('all-prs'),
+                  child: const Text('View all PRs'),
+                ),
+              ],
+            ),
+            const SizedBox(height: 4),
+            prsAsync.when(
+              data: (prs) => Column(
+                children: prs.map((pr) {
+                  final dateFmt = DateFormat('d MMM yyyy');
+                  return PrRow(
+                    exerciseName: pr.exerciseName,
+                    dateLabel: dateFmt.format(pr.date),
+                    weightLabel: '${pr.weight}kg',
+                    oneRmLabel: '1RM: ${pr.oneRepMax.toStringAsFixed(1)}kg',
+                  );
+                }).toList(),
+              ),
+              loading: () => const SizedBox.shrink(),
+              error: (e, _) => Text('Error: $e'),
+            ),
+            const SizedBox(height: 8),
+            // History preview
+            Text(
+              'Recent sessions',
               style: TextStyle(
-                  color: colors.text1,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600)),
-          const SizedBox(height: 4),
-          historyAsync.when(
-            data: (sessions) => Column(
-              children: sessions
-                  .map((s) => ListTile(
+                color: colors.text1,
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: 4),
+            historyAsync.when(
+              data: (sessions) => Column(
+                children: sessions
+                    .map(
+                      (s) => ListTile(
                         dense: true,
-                        title: Text(s.routineName,
-                            style: TextStyle(color: colors.text1)),
-                        subtitle: Text(s.durationLabel,
-                            style: TextStyle(color: colors.text2)),
+                        title: Text(
+                          s.routineName,
+                          style: TextStyle(color: colors.text1),
+                        ),
+                        subtitle: Text(
+                          s.durationLabel,
+                          style: TextStyle(color: colors.text2),
+                        ),
                         onTap: () => context.goNamed(
                           'history-detail',
                           pathParameters: {'id': s.id},
                         ),
-                      ))
-                  .toList(),
+                      ),
+                    )
+                    .toList(),
+              ),
+              loading: () => const SizedBox.shrink(),
+              error: (e, _) => Text('Error: $e'),
             ),
-            loading: () => const SizedBox.shrink(),
-            error: (e, _) => Text('Error: $e'),
-          ),
-        ],
+          ],
         ),
       ),
     );
@@ -189,8 +202,11 @@ class ProgressScreen extends ConsumerWidget {
 }
 
 class _RangeButton extends StatelessWidget {
-  const _RangeButton(
-      {required this.label, required this.selected, required this.onTap});
+  const _RangeButton({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
 
   final String label;
   final bool selected;
@@ -207,11 +223,14 @@ class _RangeButton extends StatelessWidget {
           color: selected ? colors.accent : colors.surface2,
           borderRadius: BorderRadius.circular(20),
         ),
-        child: Text(label,
-            style: TextStyle(
-                color: selected ? colors.onAccent : colors.text2,
-                fontWeight: FontWeight.w600,
-                fontSize: 13)),
+        child: Text(
+          label,
+          style: TextStyle(
+            color: selected ? colors.onAccent : colors.text2,
+            fontWeight: FontWeight.w600,
+            fontSize: 13,
+          ),
+        ),
       ),
     );
   }

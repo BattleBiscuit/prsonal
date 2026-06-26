@@ -87,9 +87,7 @@ class SetRow extends StatelessWidget {
   Widget _buildActive(BuildContext context, AppColors colors) {
     return Container(
       decoration: BoxDecoration(
-        border: Border(
-          left: BorderSide(color: colors.accent, width: 3),
-        ),
+        border: Border(left: BorderSide(color: colors.accent, width: 3)),
         color: colors.accent.withValues(alpha: 0.04),
       ),
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
@@ -119,8 +117,10 @@ class SetRow extends StatelessWidget {
                 hintText: 'Reps',
                 hintStyle: TextStyle(color: colors.text3),
                 isDense: true,
-                contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 8,
+                  vertical: 8,
+                ),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(4),
                   borderSide: BorderSide(color: colors.border),
@@ -140,8 +140,10 @@ class SetRow extends StatelessWidget {
                 hintText: 'kg',
                 hintStyle: TextStyle(color: colors.text3),
                 isDense: true,
-                contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 8,
+                  vertical: 8,
+                ),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(4),
                   borderSide: BorderSide(color: colors.border),
@@ -204,8 +206,11 @@ class SetRow extends StatelessWidget {
                 label: 'Personal record',
                 container: true,
                 child: ExcludeSemantics(
-                  child: Icon(Icons.emoji_events,
-                      color: colors.warning, size: 18),
+                  child: Icon(
+                    Icons.emoji_events,
+                    color: colors.warning,
+                    size: 18,
+                  ),
                 ),
               ),
             const SizedBox(width: 8),

@@ -8,6 +8,12 @@
 **/.flutter-plugins-dependencies
 **/.testlib/
 
+# Release signing — NEVER commit keystores or passwords
+**/key.properties
+**/*.jks
+**/*.keystore
+**/upload-keystore.jks
+
 # IDE / OS
 *.iml
 .idea/

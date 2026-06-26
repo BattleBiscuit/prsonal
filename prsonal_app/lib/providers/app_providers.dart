@@ -5,9 +5,11 @@ import '../services/plans_service.dart';
 import '../services/routines_service.dart';
 import '../widgets/exercise_search_input_widget.dart';
 
-export '../services/routines_service.dart' show RoutineSummary, RoutineDraft, RoutineExerciseDraft;
+export '../services/routines_service.dart'
+    show RoutineSummary, RoutineDraft, RoutineExerciseDraft;
 export '../services/library_service.dart' show LibraryExercise;
-export '../services/plans_service.dart' show PlanDraft, PlanEntryDraft, PlanEntryInput;
+export '../services/plans_service.dart'
+    show PlanDraft, PlanEntryDraft, PlanEntryInput;
 
 /// Provides the singleton [AppDatabase] instance.
 ///
@@ -34,8 +36,10 @@ final routinesListProvider = StreamProvider<List<RoutineSummary>>((ref) {
 });
 
 /// Draft for a single routine (null = create mode).
-final routineDraftProvider =
-    FutureProvider.family<RoutineDraft?, String?>((ref, routineId) async {
+final routineDraftProvider = FutureProvider.family<RoutineDraft?, String?>((
+  ref,
+  routineId,
+) async {
   if (routineId == null) return null;
   final service = ref.watch(routinesServiceProvider);
   return service.getRoutineForEdit(routineId);
@@ -52,16 +56,20 @@ final libraryListProvider = StreamProvider<List<LibraryExercise>>((ref) {
 });
 
 /// Stream of ExerciseOption (for ExerciseForm picker).
-final libraryOptionsProvider = StreamProvider<List<ExerciseOption>>((ref) async* {
+final libraryOptionsProvider = StreamProvider<List<ExerciseOption>>((
+  ref,
+) async* {
   final service = ref.watch(libraryServiceProvider);
   await for (final exercises in service.watchExercises()) {
     yield exercises
-        .map((e) => ExerciseOption(
-              id: e.id,
-              name: e.name,
-              type: e.type,
-              primaryMuscles: e.primaryMuscles,
-            ))
+        .map(
+          (e) => ExerciseOption(
+            id: e.id,
+            name: e.name,
+            type: e.type,
+            primaryMuscles: e.primaryMuscles,
+          ),
+        )
         .toList();
   }
 });
@@ -71,8 +79,10 @@ final libraryOptionsProvider = StreamProvider<List<ExerciseOption>>((ref) async*
 // ---------------------------------------------------------------------------
 
 /// Draft for a single plan (null = create mode).
-final planDraftProvider =
-    FutureProvider.family<PlanDraft?, String?>((ref, planId) async {
+final planDraftProvider = FutureProvider.family<PlanDraft?, String?>((
+  ref,
+  planId,
+) async {
   if (planId == null) return null;
   final service = ref.watch(plansServiceProvider);
   return service.getPlanForEdit(planId);
@@ -87,5 +97,7 @@ final appVersionProvider = Provider<String>((ref) => '1.0.0');
 
 /// A function that presents a file picker and returns the JSON string or null.
 /// Override in tests with a stub.
-final backupFilePickerProvider =
-    Provider<Future<String?> Function()>((ref) => () async => null);
+final backupFilePickerProvider = Provider<Future<String?> Function()>(
+  (ref) =>
+      () async => null,
+);

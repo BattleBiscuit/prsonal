@@ -41,9 +41,19 @@ class ExerciseListItem extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(name, style: TextStyle(color: colors.text1, fontSize: 15, fontWeight: FontWeight.w600)),
+                  Text(
+                    name,
+                    style: TextStyle(
+                      color: colors.text1,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                   const SizedBox(height: 2),
-                  Text(setsSummary, style: TextStyle(color: colors.text2, fontSize: 13)),
+                  Text(
+                    setsSummary,
+                    style: TextStyle(color: colors.text2, fontSize: 13),
+                  ),
                 ],
               ),
             ),

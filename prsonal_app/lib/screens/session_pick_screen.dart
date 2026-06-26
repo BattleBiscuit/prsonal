@@ -139,13 +139,18 @@ class _PlanBlock extends ConsumerWidget {
                     fontWeight: FontWeight.w700,
                   ),
                 ),
-                Icon(Icons.local_fire_department,
-                    color: colors.accent, size: 18),
+                Icon(
+                  Icons.local_fire_department,
+                  color: colors.accent,
+                  size: 18,
+                ),
               ],
               const SizedBox(width: 8),
               GestureDetector(
-                onTap: () => context
-                    .goNamed('plan-edit', pathParameters: {'id': plan.id}),
+                onTap: () => context.goNamed(
+                  'plan-edit',
+                  pathParameters: {'id': plan.id},
+                ),
                 child: Icon(Icons.edit_outlined, color: colors.text3, size: 18),
               ),
             ],

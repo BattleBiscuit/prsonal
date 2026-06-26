@@ -38,25 +38,52 @@ class LibraryExerciseCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(name, style: TextStyle(color: colors.text1, fontSize: 15, fontWeight: FontWeight.w600)),
+                  Text(
+                    name,
+                    style: TextStyle(
+                      color: colors.text1,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                   const SizedBox(height: 4),
                   Row(
                     children: [
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 2,
+                        ),
                         decoration: BoxDecoration(
                           color: colors.surface3,
                           borderRadius: BorderRadius.circular(4),
                         ),
-                        child: Text(type.name, style: TextStyle(color: colors.text2, fontSize: 11, fontWeight: FontWeight.w600)),
+                        child: Text(
+                          type.name,
+                          style: TextStyle(
+                            color: colors.text2,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                       ),
                       const SizedBox(width: 8),
-                      Text(musclesLabel, style: TextStyle(color: colors.text2, fontSize: 12)),
+                      Text(
+                        musclesLabel,
+                        style: TextStyle(color: colors.text2, fontSize: 12),
+                      ),
                     ],
                   ),
                   if (prLabel != null) ...[
                     const SizedBox(height: 4),
-                    Text(prLabel!, style: TextStyle(color: colors.accent, fontSize: 12, fontWeight: FontWeight.w600)),
+                    Text(
+                      prLabel!,
+                      style: TextStyle(
+                        color: colors.accent,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                   ],
                 ],
               ),

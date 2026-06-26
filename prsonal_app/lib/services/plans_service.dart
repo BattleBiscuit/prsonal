@@ -46,10 +46,7 @@ class PlanDraft {
 
 /// Input value object for [PlansService.replaceEntries].
 class PlanEntryInput {
-  const PlanEntryInput({
-    required this.routineId,
-    this.dayOfWeek,
-  });
+  const PlanEntryInput({required this.routineId, this.dayOfWeek});
 
   final String routineId;
   final int? dayOfWeek;
@@ -158,16 +155,19 @@ class PlansService {
   Future<String> createPlan(String name) async {
     final id = _uuid.v4();
     final allPlans = await _db.allPlans();
-    final nextOrder =
-        allPlans.isEmpty ? 0 : allPlans.map((p) => p.order).reduce((a, b) => a > b ? a : b) + 1;
+    final nextOrder = allPlans.isEmpty
+        ? 0
+        : allPlans.map((p) => p.order).reduce((a, b) => a > b ? a : b) + 1;
 
-    await _db.insertPlanRow(PlansCompanion.insert(
-      id: id,
-      name: name,
-      status: PlanStatus.active,
-      order: nextOrder,
-      createdAt: DateTime.now(),
-    ));
+    await _db.insertPlanRow(
+      PlansCompanion.insert(
+        id: id,
+        name: name,
+        status: PlanStatus.active,
+        order: nextOrder,
+        createdAt: DateTime.now(),
+      ),
+    );
     return id;
   }
 
@@ -175,21 +175,19 @@ class PlansService {
   // updatePlan
   // -------------------------------------------------------------------------
 
-  Future<void> updatePlan(
-    String id, {
-    String? name,
-    PlanStatus? status,
-  }) async {
+  Future<void> updatePlan(String id, {String? name, PlanStatus? status}) async {
     final existing = await _db.planById(id);
     if (existing == null) throw const NotFoundException();
 
-    await _db.updatePlanRow(PlansCompanion(
-      id: Value(id),
-      name: Value(name ?? existing.name),
-      status: Value(status ?? existing.status),
-      order: Value(existing.order),
-      createdAt: Value(existing.createdAt),
-    ));
+    await _db.updatePlanRow(
+      PlansCompanion(
+        id: Value(id),
+        name: Value(name ?? existing.name),
+        status: Value(status ?? existing.status),
+        order: Value(existing.order),
+        createdAt: Value(existing.createdAt),
+      ),
+    );
   }
 
   // -------------------------------------------------------------------------
@@ -206,17 +204,21 @@ class PlansService {
   // -------------------------------------------------------------------------
 
   Future<void> replaceEntries(
-      String planId, List<PlanEntryInput> entries) async {
+    String planId,
+    List<PlanEntryInput> entries,
+  ) async {
     await _db.deletePlanEntriesForPlan(planId);
     for (var i = 0; i < entries.length; i++) {
       final e = entries[i];
-      await _db.insertPlanEntryRow(PlanEntriesCompanion.insert(
-        id: _uuid.v4(),
-        planId: planId,
-        routineId: e.routineId,
-        dayOfWeek: Value(e.dayOfWeek),
-        order: i,
-      ));
+      await _db.insertPlanEntryRow(
+        PlanEntriesCompanion.insert(
+          id: _uuid.v4(),
+          planId: planId,
+          routineId: e.routineId,
+          dayOfWeek: Value(e.dayOfWeek),
+          order: i,
+        ),
+      );
     }
   }
 
@@ -226,7 +228,9 @@ class PlansService {
 
   Future<List<PlanView>> activePlansView({required DateTime asOf}) async {
     final allPlans = await _db.allPlans();
-    final activePlans = allPlans.where((p) => p.status == PlanStatus.active).toList();
+    final activePlans = allPlans
+        .where((p) => p.status == PlanStatus.active)
+        .toList();
 
     // Compute week boundaries for asOf (Mon–Sun, ISO).
     final weekStart = _weekStart(asOf);
@@ -236,10 +240,14 @@ class PlansService {
         .subtract(const Duration(seconds: 1));
 
     // Load completed sessions in the current week.
-    final sessionsThisWeek =
-        await _db.completedSessionsInRange(weekStart, weekEnd);
-    final completedEntryIds =
-        sessionsThisWeek.map((s) => s.planEntryId).whereType<String>().toSet();
+    final sessionsThisWeek = await _db.completedSessionsInRange(
+      weekStart,
+      weekEnd,
+    );
+    final completedEntryIds = sessionsThisWeek
+        .map((s) => s.planEntryId)
+        .whereType<String>()
+        .toSet();
 
     final result = <PlanView>[];
     for (final plan in activePlans) {
@@ -259,12 +267,14 @@ class PlansService {
 
       final streak = await streakForPlan(plan.id, asOf: asOf);
 
-      result.add(PlanView(
-        id: plan.id,
-        name: plan.name,
-        streak: streak,
-        entries: entryViews,
-      ));
+      result.add(
+        PlanView(
+          id: plan.id,
+          name: plan.name,
+          streak: streak,
+          entries: entryViews,
+        ),
+      );
     }
     return result;
   }
@@ -299,7 +309,9 @@ class PlansService {
   Future<int> streakForPlan(String planId, {required DateTime asOf}) async {
     final entryRows = await _db.planEntriesForPlan(planId);
     // Only entries with a dayOfWeek matter for streak calculation.
-    final scheduledEntries = entryRows.where((e) => e.dayOfWeek != null).toList();
+    final scheduledEntries = entryRows
+        .where((e) => e.dayOfWeek != null)
+        .toList();
     if (scheduledEntries.isEmpty) return 0;
 
     int streak = 0;
@@ -308,19 +320,15 @@ class PlansService {
     while (true) {
       // weekEnd is the Monday of the NEXT week — exclusive upper bound.
       // We use (weekStart, weekEnd-1ms) for inclusive DB queries.
-      final checkWeekEnd =
-          checkWeekStart.add(const Duration(days: 7));
-      final isCurrentWeek =
-          checkWeekStart == _weekStart(asOf);
+      final checkWeekEnd = checkWeekStart.add(const Duration(days: 7));
+      final isCurrentWeek = checkWeekStart == _weekStart(asOf);
 
       // For the current week, only count entries whose dayOfWeek <= asOf.weekday-1
       // (dayOfWeek is 0-based Mon=0, DateTime.weekday is 1-based Mon=1)
       final asOfDayIndex = asOf.weekday - 1; // 0=Mon ... 6=Sun
 
       final relevantEntries = isCurrentWeek
-          ? scheduledEntries
-              .where((e) => e.dayOfWeek! <= asOfDayIndex)
-              .toList()
+          ? scheduledEntries.where((e) => e.dayOfWeek! <= asOfDayIndex).toList()
           : scheduledEntries;
 
       if (relevantEntries.isEmpty) {
@@ -331,21 +339,22 @@ class PlansService {
       // Load sessions for this week. Use checkWeekEnd-1ms to make the range
       // exclusive on the upper bound (next Monday belongs to the next week).
       final sessionsThisWeek = await _db.completedSessionsInRange(
-          checkWeekStart,
-          checkWeekEnd.subtract(const Duration(seconds: 1)));
+        checkWeekStart,
+        checkWeekEnd.subtract(const Duration(seconds: 1)),
+      );
       final completedEntryIds = sessionsThisWeek
           .where((s) => s.planEntryId != null)
           .map((s) => s.planEntryId!)
           .toSet();
 
       // A week is "complete" when every relevant entry has a completed session.
-      final allComplete =
-          relevantEntries.every((e) => completedEntryIds.contains(e.id));
+      final allComplete = relevantEntries.every(
+        (e) => completedEntryIds.contains(e.id),
+      );
 
       if (allComplete) {
         streak++;
-        checkWeekStart =
-            checkWeekStart.subtract(const Duration(days: 7));
+        checkWeekStart = checkWeekStart.subtract(const Duration(days: 7));
       } else {
         break;
       }
@@ -359,7 +368,8 @@ class PlansService {
   // -------------------------------------------------------------------------
 
   Future<Map<String, String>> _resolveRoutineNames(
-      List<String> routineIds) async {
+    List<String> routineIds,
+  ) async {
     final nameMap = <String, String>{};
     for (final routineId in routineIds) {
       final routine = await _db.routineById(routineId);

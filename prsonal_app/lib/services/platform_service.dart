@@ -36,8 +36,9 @@ class RealPlatformService implements PlatformService {
 
   Future<void> _ensureNotificationsInitialised() async {
     if (_notificationsInitialised) return;
-    const androidSettings =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
+    const androidSettings = AndroidInitializationSettings(
+      '@mipmap/ic_launcher',
+    );
     const darwinSettings = DarwinInitializationSettings();
     const initSettings = InitializationSettings(
       android: androidSettings,

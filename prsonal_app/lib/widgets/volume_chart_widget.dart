@@ -13,7 +13,10 @@ class VolumeChart extends StatelessWidget {
 
     if (data.isEmpty) {
       return Center(
-        child: Text('No volume yet', style: TextStyle(color: colors.text3, fontSize: 14)),
+        child: Text(
+          'No volume yet',
+          style: TextStyle(color: colors.text3, fontSize: 14),
+        ),
       );
     }
 
@@ -22,17 +25,25 @@ class VolumeChart extends StatelessWidget {
     return BarChart(
       BarChartData(
         maxY: maxVol * 1.2,
-        barGroups: data.asMap().entries.map((entry) => BarChartGroupData(
-          x: entry.key,
-          barRods: [
-            BarChartRodData(
-              toY: entry.value.volume,
-              color: colors.accent,
-              width: 16,
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
-            ),
-          ],
-        )).toList(),
+        barGroups: data
+            .asMap()
+            .entries
+            .map(
+              (entry) => BarChartGroupData(
+                x: entry.key,
+                barRods: [
+                  BarChartRodData(
+                    toY: entry.value.volume,
+                    color: colors.accent,
+                    width: 16,
+                    borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(4),
+                    ),
+                  ),
+                ],
+              ),
+            )
+            .toList(),
         gridData: FlGridData(show: false),
         borderData: FlBorderData(show: false),
         titlesData: FlTitlesData(
@@ -41,17 +52,28 @@ class VolumeChart extends StatelessWidget {
               showTitles: true,
               getTitlesWidget: (val, meta) {
                 final idx = val.toInt();
-                if (idx < 0 || idx >= data.length) return const SizedBox.shrink();
+                if (idx < 0 || idx >= data.length) {
+                  return const SizedBox.shrink();
+                }
                 return Padding(
                   padding: const EdgeInsets.only(top: 4),
-                  child: Text(data[idx].label, style: TextStyle(color: colors.text2, fontSize: 10)),
+                  child: Text(
+                    data[idx].label,
+                    style: TextStyle(color: colors.text2, fontSize: 10),
+                  ),
                 );
               },
             ),
           ),
-          leftTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-          topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-          rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          leftTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
+          topTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
+          rightTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
         ),
       ),
     );

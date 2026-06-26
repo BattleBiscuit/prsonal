@@ -63,10 +63,7 @@ class SessionHeader extends StatelessWidget {
               ),
               Text(
                 _formatElapsed(elapsed),
-                style: TextStyle(
-                  color: colors.text2,
-                  fontSize: 13,
-                ),
+                style: TextStyle(color: colors.text2, fontSize: 13),
               ),
             ],
           ),

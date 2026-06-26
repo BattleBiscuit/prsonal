@@ -44,8 +44,9 @@ class _HistoryDetailScreenState extends ConsumerState<HistoryDetailScreen> {
   }
 
   Future<void> _load() async {
-    final detail =
-        await ref.read(historyServiceProvider).getDetail(widget.sessionId);
+    final detail = await ref
+        .read(historyServiceProvider)
+        .getDetail(widget.sessionId);
     setState(() {
       _detail = detail;
       _loading = false;
@@ -58,9 +59,22 @@ class _HistoryDetailScreenState extends ConsumerState<HistoryDetailScreen> {
       for (final s in ex.sets) {
         final key = '${ex.name}_${s.setIndex}';
         _repsCtrl.putIfAbsent(
-            key, () => TextEditingController(text: s.actualLabel?.split('×').firstOrNull ?? ''));
+          key,
+          () => TextEditingController(
+            text: s.actualLabel?.split('×').firstOrNull ?? '',
+          ),
+        );
         _weightCtrl.putIfAbsent(
-            key, () => TextEditingController(text: s.actualLabel?.split('×').elementAtOrNull(1)?.replaceAll('kg', '') ?? ''));
+          key,
+          () => TextEditingController(
+            text:
+                s.actualLabel
+                    ?.split('×')
+                    .elementAtOrNull(1)
+                    ?.replaceAll('kg', '') ??
+                '',
+          ),
+        );
       }
     }
     setState(() => _editing = true);
@@ -115,7 +129,9 @@ class _HistoryDetailScreenState extends ConsumerState<HistoryDetailScreen> {
             TextButton(onPressed: _enterEditMode, child: const Text('Edit'))
           else
             TextButton(
-                onPressed: _saveEdits, child: const Text('Save changes')),
+              onPressed: _saveEdits,
+              child: const Text('Save changes'),
+            ),
         ],
       ),
       body: ListView(
@@ -143,16 +159,21 @@ class _HistoryDetailScreenState extends ConsumerState<HistoryDetailScreen> {
                   Text(
                     'PRs this session',
                     style: TextStyle(
-                        color: colors.accent,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600),
+                      color: colors.accent,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                   const SizedBox(height: 4),
-                  ...detail.prNames.map((name) => Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 2),
-                        child: Text(name,
-                            style: TextStyle(color: colors.text1, fontSize: 14)),
-                      )),
+                  ...detail.prNames.map(
+                    (name) => Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 2),
+                      child: Text(
+                        name,
+                        style: TextStyle(color: colors.text1, fontSize: 14),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -162,7 +183,10 @@ class _HistoryDetailScreenState extends ConsumerState<HistoryDetailScreen> {
             _editing
                 ? _buildEditTable(ex, colors)
                 : HistorySetTable(
-                    exerciseName: ex.name, rows: ex.sets, editing: false),
+                    exerciseName: ex.name,
+                    rows: ex.sets,
+                    editing: false,
+                  ),
             const SizedBox(height: 16),
           ],
         ],
@@ -176,11 +200,14 @@ class _HistoryDetailScreenState extends ConsumerState<HistoryDetailScreen> {
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 8),
-          child: Text(ex.name,
-              style: TextStyle(
-                  color: colors.text1,
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600)),
+          child: Text(
+            ex.name,
+            style: TextStyle(
+              color: colors.text1,
+              fontSize: 15,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
         ),
         for (final s in ex.sets) _buildEditRow(ex.name, s, colors),
       ],
@@ -198,15 +225,19 @@ class _HistoryDetailScreenState extends ConsumerState<HistoryDetailScreen> {
         children: [
           SizedBox(
             width: 28,
-            child: Text('${s.setIndex + 1}',
-                style: TextStyle(color: colors.text3, fontSize: 13)),
+            child: Text(
+              '${s.setIndex + 1}',
+              style: TextStyle(color: colors.text3, fontSize: 13),
+            ),
           ),
           Expanded(
             child: TextField(
               controller: repsC,
               keyboardType: TextInputType.number,
-              decoration:
-                  const InputDecoration(hintText: 'Reps', isDense: true),
+              decoration: const InputDecoration(
+                hintText: 'Reps',
+                isDense: true,
+              ),
             ),
           ),
           const SizedBox(width: 8),
@@ -214,8 +245,7 @@ class _HistoryDetailScreenState extends ConsumerState<HistoryDetailScreen> {
             child: TextField(
               controller: weightC,
               keyboardType: TextInputType.number,
-              decoration:
-                  const InputDecoration(hintText: 'kg', isDense: true),
+              decoration: const InputDecoration(hintText: 'kg', isDense: true),
             ),
           ),
         ],

@@ -99,10 +99,15 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
     if (!_loading && _sessions.isEmpty && !_hasMore) {
       return Scaffold(
         backgroundColor: colors.bg,
-        appBar: AppBar(title: const BrandTitle('History'), backgroundColor: colors.bg),
+        appBar: AppBar(
+          title: const BrandTitle('History'),
+          backgroundColor: colors.bg,
+        ),
         body: Center(
-          child: Text('No workouts yet',
-              style: TextStyle(color: colors.text2, fontSize: 16)),
+          child: Text(
+            'No workouts yet',
+            style: TextStyle(color: colors.text2, fontSize: 16),
+          ),
         ),
       );
     }
@@ -112,7 +117,10 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
 
     return Scaffold(
       backgroundColor: colors.bg,
-      appBar: AppBar(title: const BrandTitle('History'), backgroundColor: colors.bg),
+      appBar: AppBar(
+        title: const BrandTitle('History'),
+        backgroundColor: colors.bg,
+      ),
       body: _sessions.isEmpty && _loading
           ? const Center(child: CircularProgressIndicator())
           : ListView.builder(
@@ -122,10 +130,11 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
               itemBuilder: (context, i) {
                 if (i == groupKeys.length) {
                   return const Center(
-                      child: Padding(
-                    padding: EdgeInsets.all(16),
-                    child: CircularProgressIndicator(),
-                  ));
+                    child: Padding(
+                      padding: EdgeInsets.all(16),
+                      child: CircularProgressIndicator(),
+                    ),
+                  );
                 }
                 final key = groupKeys[i];
                 final sessions = grouped[key]!;

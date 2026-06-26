@@ -53,7 +53,11 @@ final progressSummaryProvider = FutureProvider<ProgressSummary>((ref) async {
       .map((v) => (label: v.label, volume: v.volume))
       .toList();
 
-  final freqs = await service.muscleFrequency(range, MuscleMode.session, asOf: now);
+  final freqs = await service.muscleFrequency(
+    range,
+    MuscleMode.session,
+    asOf: now,
+  );
   final muscleBalance = <Muscle, double>{
     for (final f in freqs) f.muscle: f.count,
   };
@@ -77,7 +81,9 @@ final recentPrsProvider = FutureProvider<List<PRItem>>((ref) async {
 });
 
 /// Last few sessions for the history preview on the progress screen.
-final historyPreviewProvider = FutureProvider<List<SessionSummary>>((ref) async {
+final historyPreviewProvider = FutureProvider<List<SessionSummary>>((
+  ref,
+) async {
   final service = ref.watch(historyServiceProvider);
   return service.loadPage(page: 1, pageSize: 5);
 });

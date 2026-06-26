@@ -2,11 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:prsonal_app/theme/app_colors.dart';
 
 class DayOfWeekSelector extends StatelessWidget {
-  const DayOfWeekSelector({
-    super.key,
-    this.selected,
-    required this.onChanged,
-  });
+  const DayOfWeekSelector({super.key, this.selected, required this.onChanged});
 
   final int? selected;
   final ValueChanged<int?> onChanged;

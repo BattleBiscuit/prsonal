@@ -1,0 +1,105 @@
+name: Release
+
+# On a version tag (vX.Y.Z): builds a signed App Bundle (.aab, for the Play
+# Store) and a signed APK (for direct download/sideload), attaches both to a
+# GitHub Release as versioned artifacts, and — when a Play service account is
+# configured — uploads the bundle to the Play internal track.
+#
+# Required repository secrets (Settings → Secrets and variables → Actions):
+#   ANDROID_KEYSTORE_BASE64    - `base64 -w0 upload-keystore.jks`
+#   ANDROID_KEYSTORE_PASSWORD  - keystore (store) password
+#   ANDROID_KEY_PASSWORD       - key password
+#   ANDROID_KEY_ALIAS          - key alias (e.g. upload)
+#   PLAY_SERVICE_ACCOUNT_JSON  - (optional) Play service-account JSON for auto-upload
+#
+# Without the keystore secrets the binaries still build (debug-signed) so the
+# pipeline is testable before signing is set up — they just aren't Play-uploadable.
+
+on:
+  push:
+    tags: ["v*.*.*"]
+  workflow_dispatch:
+
+defaults:
+  run:
+    working-directory: prsonal_app
+
+jobs:
+  release:
+    name: Build & publish versioned artifacts
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # required to create the GitHub Release
+    env:
+      KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+      PLAY_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Configure release signing
+        if: env.KEYSTORE_BASE64 != ''
+        working-directory: prsonal_app/android
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+        run: |
+          echo "$KEYSTORE_BASE64" | base64 -d > app/upload-keystore.jks
+          cat > key.properties <<EOF
+          storePassword=$KEYSTORE_PASSWORD
+          keyPassword=$KEY_PASSWORD
+          keyAlias=$KEY_ALIAS
+          storeFile=upload-keystore.jks
+          EOF
+
+      - uses: ./.github/actions/flutter-setup
+
+      - name: Generate Drift code
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Build App Bundle (.aab)
+        run: flutter build appbundle --release
+
+      - name: Build APK (.apk)
+        run: flutter build apk --release
+
+      - name: Stage versioned artifacts
+        env:
+          VERSION: ${{ github.ref_name }}
+        run: |
+          mkdir -p dist
+          cp build/app/outputs/bundle/release/app-release.aab "dist/prsonal-${VERSION}.aab"
+          cp build/app/outputs/flutter-apk/app-release.apk "dist/prsonal-${VERSION}.apk"
+          ls -la dist
+
+      - name: Upload workflow artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: prsonal-${{ github.ref_name }}
+          path: prsonal_app/dist/*
+          if-no-files-found: error
+
+      - name: Create GitHub Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            prsonal_app/dist/prsonal-${{ github.ref_name }}.aab
+            prsonal_app/dist/prsonal-${{ github.ref_name }}.apk
+          generate_release_notes: true
+          fail_on_unmatched_files: true
+
+      - name: Publish to Play Store (internal track)
+        if: env.PLAY_JSON != '' && env.KEYSTORE_BASE64 != ''
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+          packageName: com.prsonal.prsonal_app
+          releaseFiles: prsonal_app/build/app/outputs/bundle/release/app-release.aab
+          track: internal
+          status: completed

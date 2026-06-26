@@ -145,13 +145,15 @@ class RoutinesService {
   Future<String> createRoutine({required String name, String? notes}) async {
     final id = _uuid.v4();
     final now = DateTime.now();
-    await _db.insertRoutineRow(RoutinesCompanion.insert(
-      id: id,
-      name: name,
-      notes: Value(notes),
-      createdAt: now,
-      updatedAt: now,
-    ));
+    await _db.insertRoutineRow(
+      RoutinesCompanion.insert(
+        id: id,
+        name: name,
+        notes: Value(notes),
+        createdAt: now,
+        updatedAt: now,
+      ),
+    );
     return id;
   }
 
@@ -159,11 +161,7 @@ class RoutinesService {
   // updateRoutine
   // -------------------------------------------------------------------------
 
-  Future<void> updateRoutine(
-    String id, {
-    String? name,
-    String? notes,
-  }) async {
+  Future<void> updateRoutine(String id, {String? name, String? notes}) async {
     final existing = await _db.routineById(id);
     if (existing == null) throw const NotFoundException();
 
@@ -171,13 +169,15 @@ class RoutinesService {
     final newUpdatedAt = now.isAfter(existing.updatedAt)
         ? now
         : existing.updatedAt.add(const Duration(seconds: 1));
-    await _db.updateRoutineRow(RoutinesCompanion(
-      id: Value(id),
-      name: Value(name ?? existing.name),
-      notes: notes != null ? Value(notes) : Value(existing.notes),
-      createdAt: Value(existing.createdAt),
-      updatedAt: Value(newUpdatedAt),
-    ));
+    await _db.updateRoutineRow(
+      RoutinesCompanion(
+        id: Value(id),
+        name: Value(name ?? existing.name),
+        notes: notes != null ? Value(notes) : Value(existing.notes),
+        createdAt: Value(existing.createdAt),
+        updatedAt: Value(newUpdatedAt),
+      ),
+    );
   }
 
   // -------------------------------------------------------------------------
@@ -205,14 +205,16 @@ class RoutinesService {
         : existing.map((re) => re.position).reduce((a, b) => a > b ? a : b) + 1;
 
     final id = _uuid.v4();
-    await _db.insertRoutineExerciseRow(RoutineExercisesCompanion.insert(
-      id: id,
-      routineId: routineId,
-      exerciseId: exerciseId,
-      position: position,
-      sets: sets,
-      notes: Value(notes),
-    ));
+    await _db.insertRoutineExerciseRow(
+      RoutineExercisesCompanion.insert(
+        id: id,
+        routineId: routineId,
+        exerciseId: exerciseId,
+        position: position,
+        sets: sets,
+        notes: Value(notes),
+      ),
+    );
 
     // Touch routine updatedAt.
     await _touchRoutine(routineId);
@@ -227,20 +229,22 @@ class RoutinesService {
     List<SetTarget>? sets,
     String? notes,
   }) async {
-    final rows = await ((_db.select(_db.routineExercises))
-          ..where((re) => re.id.equals(id)))
-        .get();
+    final rows = await ((_db.select(
+      _db.routineExercises,
+    ))..where((re) => re.id.equals(id))).get();
     if (rows.isEmpty) throw const NotFoundException();
     final existing = rows.first;
 
-    await _db.updateRoutineExerciseRow(RoutineExercisesCompanion(
-      id: Value(id),
-      routineId: Value(existing.routineId),
-      exerciseId: Value(existing.exerciseId),
-      position: Value(existing.position),
-      sets: Value(sets ?? existing.sets),
-      notes: notes != null ? Value(notes) : Value(existing.notes),
-    ));
+    await _db.updateRoutineExerciseRow(
+      RoutineExercisesCompanion(
+        id: Value(id),
+        routineId: Value(existing.routineId),
+        exerciseId: Value(existing.exerciseId),
+        position: Value(existing.position),
+        sets: Value(sets ?? existing.sets),
+        notes: notes != null ? Value(notes) : Value(existing.notes),
+      ),
+    );
   }
 
   // -------------------------------------------------------------------------
@@ -248,9 +252,9 @@ class RoutinesService {
   // -------------------------------------------------------------------------
 
   Future<void> removeExercise(String id) async {
-    final rows = await ((_db.select(_db.routineExercises))
-          ..where((re) => re.id.equals(id)))
-        .get();
+    final rows = await ((_db.select(
+      _db.routineExercises,
+    ))..where((re) => re.id.equals(id))).get();
     if (rows.isEmpty) return;
     final routineId = rows.first.routineId;
 
@@ -261,14 +265,16 @@ class RoutinesService {
     for (var i = 0; i < remaining.length; i++) {
       final re = remaining[i];
       if (re.position != i) {
-        await _db.updateRoutineExerciseRow(RoutineExercisesCompanion(
-          id: Value(re.id),
-          routineId: Value(re.routineId),
-          exerciseId: Value(re.exerciseId),
-          position: Value(i),
-          sets: Value(re.sets),
-          notes: Value(re.notes),
-        ));
+        await _db.updateRoutineExerciseRow(
+          RoutineExercisesCompanion(
+            id: Value(re.id),
+            routineId: Value(re.routineId),
+            exerciseId: Value(re.exerciseId),
+            position: Value(i),
+            sets: Value(re.sets),
+            notes: Value(re.notes),
+          ),
+        );
       }
     }
 
@@ -280,7 +286,9 @@ class RoutinesService {
   // -------------------------------------------------------------------------
 
   Future<void> reorderExercises(
-      String routineId, List<String> orderedIds) async {
+    String routineId,
+    List<String> orderedIds,
+  ) async {
     final reRows = await _db.routineExercisesForRoutine(routineId);
     final byId = {for (final re in reRows) re.id: re};
 
@@ -288,14 +296,16 @@ class RoutinesService {
       final re = byId[orderedIds[i]];
       if (re == null) continue;
       if (re.position != i) {
-        await _db.updateRoutineExerciseRow(RoutineExercisesCompanion(
-          id: Value(re.id),
-          routineId: Value(re.routineId),
-          exerciseId: Value(re.exerciseId),
-          position: Value(i),
-          sets: Value(re.sets),
-          notes: Value(re.notes),
-        ));
+        await _db.updateRoutineExerciseRow(
+          RoutineExercisesCompanion(
+            id: Value(re.id),
+            routineId: Value(re.routineId),
+            exerciseId: Value(re.exerciseId),
+            position: Value(i),
+            sets: Value(re.sets),
+            notes: Value(re.notes),
+          ),
+        );
       }
     }
 
@@ -314,13 +324,15 @@ class RoutinesService {
     final bumped = routine.updatedAt.add(const Duration(seconds: 1));
     final now = DateTime.now();
     final newUpdatedAt = now.isAfter(bumped) ? now : bumped;
-    await _db.updateRoutineRow(RoutinesCompanion(
-      id: Value(routineId),
-      name: Value(routine.name),
-      notes: Value(routine.notes),
-      createdAt: Value(routine.createdAt),
-      updatedAt: Value(newUpdatedAt),
-    ));
+    await _db.updateRoutineRow(
+      RoutinesCompanion(
+        id: Value(routineId),
+        name: Value(routine.name),
+        notes: Value(routine.notes),
+        createdAt: Value(routine.createdAt),
+        updatedAt: Value(newUpdatedAt),
+      ),
+    );
   }
 }
 

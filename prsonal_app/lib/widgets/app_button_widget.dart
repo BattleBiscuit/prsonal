@@ -63,10 +63,7 @@ class AppButton extends StatelessWidget {
       mainAxisSize: full ? MainAxisSize.max : MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        if (icon != null) ...[
-          icon!,
-          const SizedBox(width: 8),
-        ],
+        if (icon != null) ...[icon!, const SizedBox(width: 8)],
         Text(
           label,
           style: TextStyle(
@@ -96,9 +93,6 @@ class AppButton extends StatelessWidget {
       button = SizedBox(width: double.infinity, child: button);
     }
 
-    return Opacity(
-      opacity: onPressed == null ? 0.4 : 1.0,
-      child: button,
-    );
+    return Opacity(opacity: onPressed == null ? 0.4 : 1.0, child: button);
   }
 }

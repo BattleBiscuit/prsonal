@@ -1,0 +1,20 @@
+name: Flutter setup
+description: Set up the pinned Flutter SDK and fetch prsonal_app dependencies.
+
+inputs:
+  flutter-version:
+    description: Flutter SDK version
+    default: "3.44.4"
+
+runs:
+  using: composite
+  steps:
+    - uses: subosito/flutter-action@v2
+      with:
+        flutter-version: ${{ inputs.flutter-version }}
+        channel: stable
+        cache: true
+    - name: Install dependencies
+      shell: bash
+      working-directory: prsonal_app
+      run: flutter pub get

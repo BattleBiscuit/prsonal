@@ -94,15 +94,17 @@ class LibraryService {
     String? notes,
   }) async {
     final id = _uuid.v4();
-    await _db.insertExerciseRow(ExercisesCompanion.insert(
-      id: id,
-      name: name,
-      type: type,
-      primaryMuscles: Value(primaryMuscles),
-      secondaryMuscles: Value(secondaryMuscles),
-      notes: Value(notes),
-      createdAt: DateTime.now(),
-    ));
+    await _db.insertExerciseRow(
+      ExercisesCompanion.insert(
+        id: id,
+        name: name,
+        type: type,
+        primaryMuscles: Value(primaryMuscles),
+        secondaryMuscles: Value(secondaryMuscles),
+        notes: Value(notes),
+        createdAt: DateTime.now(),
+      ),
+    );
     return id;
   }
 
@@ -121,15 +123,17 @@ class LibraryService {
     final existing = await _db.exerciseById(id);
     if (existing == null) return;
 
-    await _db.updateExerciseRow(ExercisesCompanion(
-      id: Value(id),
-      name: Value(name ?? existing.name),
-      type: Value(type ?? existing.type),
-      primaryMuscles: Value(primaryMuscles ?? existing.primaryMuscles),
-      secondaryMuscles: Value(secondaryMuscles ?? existing.secondaryMuscles),
-      notes: notes != null ? Value(notes) : Value(existing.notes),
-      createdAt: Value(existing.createdAt),
-    ));
+    await _db.updateExerciseRow(
+      ExercisesCompanion(
+        id: Value(id),
+        name: Value(name ?? existing.name),
+        type: Value(type ?? existing.type),
+        primaryMuscles: Value(primaryMuscles ?? existing.primaryMuscles),
+        secondaryMuscles: Value(secondaryMuscles ?? existing.secondaryMuscles),
+        notes: notes != null ? Value(notes) : Value(existing.notes),
+        createdAt: Value(existing.createdAt),
+      ),
+    );
   }
 
   // -------------------------------------------------------------------------

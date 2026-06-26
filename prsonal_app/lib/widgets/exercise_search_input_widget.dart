@@ -106,7 +106,8 @@ class _ExerciseSearchSheetState extends State<_ExerciseSearchSheet> {
     final filtered = widget.exercises
         .where((e) => e.name.toLowerCase().contains(_query.toLowerCase()))
         .toList();
-    final showCreate = _query.isNotEmpty && filtered.isEmpty && widget.onCreate != null;
+    final showCreate =
+        _query.isNotEmpty && filtered.isEmpty && widget.onCreate != null;
 
     return DraggableScrollableSheet(
       expand: false,
@@ -124,7 +125,10 @@ class _ExerciseSearchSheetState extends State<_ExerciseSearchSheet> {
                 hintStyle: TextStyle(color: colors.text3),
                 filled: true,
                 fillColor: colors.surface2,
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide.none,
+                ),
               ),
               style: TextStyle(color: colors.text1),
               onChanged: (v) => setState(() => _query = v),
@@ -134,13 +138,21 @@ class _ExerciseSearchSheetState extends State<_ExerciseSearchSheet> {
             child: ListView(
               controller: scrollController,
               children: [
-                ...filtered.map((opt) => ListTile(
-                      title: Text(opt.name, style: TextStyle(color: colors.text1)),
-                      onTap: () => widget.onSelected(opt),
-                    )),
+                ...filtered.map(
+                  (opt) => ListTile(
+                    title: Text(
+                      opt.name,
+                      style: TextStyle(color: colors.text1),
+                    ),
+                    onTap: () => widget.onSelected(opt),
+                  ),
+                ),
                 if (showCreate)
                   ListTile(
-                    title: Text('Create "$_query"', style: TextStyle(color: colors.accent)),
+                    title: Text(
+                      'Create "$_query"',
+                      style: TextStyle(color: colors.accent),
+                    ),
                     onTap: () => widget.onCreate!(_query),
                   ),
               ],

@@ -51,9 +51,7 @@ class SettingsScreen extends ConsumerWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      builder: (ctx) => _ExportSheet(
-        service: ref.read(backupServiceProvider),
-      ),
+      builder: (ctx) => _ExportSheet(service: ref.read(backupServiceProvider)),
     );
   }
 
@@ -94,17 +92,19 @@ class _ExportSheetState extends State<_ExportSheet> {
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 16),
-          ...BackupSection.values.map((section) => CheckboxListTile(
-                title: Text(section.name),
-                value: _selected.contains(section),
-                onChanged: (v) => setState(() {
-                  if (v == true) {
-                    _selected.add(section);
-                  } else {
-                    _selected.remove(section);
-                  }
-                }),
-              )),
+          ...BackupSection.values.map(
+            (section) => CheckboxListTile(
+              title: Text(section.name),
+              value: _selected.contains(section),
+              onChanged: (v) => setState(() {
+                if (v == true) {
+                  _selected.add(section);
+                } else {
+                  _selected.remove(section);
+                }
+              }),
+            ),
+          ),
           const SizedBox(height: 16),
           ElevatedButton(
             onPressed: () async {
@@ -146,17 +146,19 @@ class _ImportSheetState extends State<_ImportSheet> {
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 16),
-          ...BackupSection.values.map((section) => CheckboxListTile(
-                title: Text(section.name),
-                value: _selected.contains(section),
-                onChanged: (v) => setState(() {
-                  if (v == true) {
-                    _selected.add(section);
-                  } else {
-                    _selected.remove(section);
-                  }
-                }),
-              )),
+          ...BackupSection.values.map(
+            (section) => CheckboxListTile(
+              title: Text(section.name),
+              value: _selected.contains(section),
+              onChanged: (v) => setState(() {
+                if (v == true) {
+                  _selected.add(section);
+                } else {
+                  _selected.remove(section);
+                }
+              }),
+            ),
+          ),
           const SizedBox(height: 16),
           ElevatedButton(
             onPressed: () async {

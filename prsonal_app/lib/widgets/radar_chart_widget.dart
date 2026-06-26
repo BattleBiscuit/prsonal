@@ -14,7 +14,10 @@ class MuscleRadarChart extends StatelessWidget {
 
     if (data.isEmpty) {
       return Center(
-        child: Text('Not enough data yet', style: TextStyle(color: colors.text3, fontSize: 14)),
+        child: Text(
+          'Not enough data yet',
+          style: TextStyle(color: colors.text3, fontSize: 14),
+        ),
       );
     }
 
@@ -29,10 +32,8 @@ class MuscleRadarChart extends StatelessWidget {
         gridBorderData: BorderSide(color: colors.border, width: 1),
         radarBorderData: BorderSide(color: colors.border, width: 1),
         titlePositionPercentageOffset: 0.2,
-        getTitle: (index, angle) => RadarChartTitle(
-          text: muscles[index].label,
-          angle: angle,
-        ),
+        getTitle: (index, angle) =>
+            RadarChartTitle(text: muscles[index].label, angle: angle),
         dataSets: [
           RadarDataSet(
             fillColor: colors.accent.withValues(alpha: 0.2),

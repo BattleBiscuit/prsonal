@@ -66,14 +66,16 @@ class _LibraryExerciseFormState extends State<LibraryExerciseForm> {
       setState(() => _showValidation = true);
       return;
     }
-    widget.onSubmit(LibraryExerciseData(
-      id: widget.initial?.id,
-      name: _nameCtrl.text.trim(),
-      type: _type,
-      primaryMuscles: _primary.toList(),
-      secondaryMuscles: _secondary.toList(),
-      notes: null,
-    ));
+    widget.onSubmit(
+      LibraryExerciseData(
+        id: widget.initial?.id,
+        name: _nameCtrl.text.trim(),
+        type: _type,
+        primaryMuscles: _primary.toList(),
+        secondaryMuscles: _secondary.toList(),
+        notes: null,
+      ),
+    );
   }
 
   @override
@@ -88,7 +90,9 @@ class _LibraryExerciseFormState extends State<LibraryExerciseForm> {
             decoration: InputDecoration(
               labelText: 'Exercise name',
               labelStyle: TextStyle(color: colors.text2),
-              errorText: _showValidation && _nameCtrl.text.trim().isEmpty ? 'Name is required' : null,
+              errorText: _showValidation && _nameCtrl.text.trim().isEmpty
+                  ? 'Name is required'
+                  : null,
             ),
             style: TextStyle(color: colors.text1),
             onChanged: (_) => setState(() {}),
@@ -96,47 +100,97 @@ class _LibraryExerciseFormState extends State<LibraryExerciseForm> {
           const SizedBox(height: 16),
           Row(
             children: [
-              _TypeChip(label: 'Strength', selected: _type == ExerciseType.strength, onTap: () => setState(() => _type = ExerciseType.strength), colors: colors),
+              _TypeChip(
+                label: 'Strength',
+                selected: _type == ExerciseType.strength,
+                onTap: () => setState(() => _type = ExerciseType.strength),
+                colors: colors,
+              ),
               const SizedBox(width: 8),
-              _TypeChip(label: 'Cardio', selected: _type == ExerciseType.cardio, onTap: () => setState(() => _type = ExerciseType.cardio), colors: colors),
+              _TypeChip(
+                label: 'Cardio',
+                selected: _type == ExerciseType.cardio,
+                onTap: () => setState(() => _type = ExerciseType.cardio),
+                colors: colors,
+              ),
             ],
           ),
           const SizedBox(height: 16),
-          Text('Primary muscles', style: TextStyle(color: colors.text2, fontSize: 13, fontWeight: FontWeight.w600)),
+          Text(
+            'Primary muscles',
+            style: TextStyle(
+              color: colors.text2,
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
           const SizedBox(height: 8),
           Wrap(
             spacing: 6,
             runSpacing: 6,
-            children: Muscle.values.map((m) => _MuscleChip(
-              label: m.label,
-              selected: _primary.contains(m),
-              onTap: () => setState(() {
-                if (_primary.contains(m)) { _primary.remove(m); } else { _primary.add(m); }
-              }),
-              colors: colors,
-            )).toList(),
+            children: Muscle.values
+                .map(
+                  (m) => _MuscleChip(
+                    label: m.label,
+                    selected: _primary.contains(m),
+                    onTap: () => setState(() {
+                      if (_primary.contains(m)) {
+                        _primary.remove(m);
+                      } else {
+                        _primary.add(m);
+                      }
+                    }),
+                    colors: colors,
+                  ),
+                )
+                .toList(),
           ),
           const SizedBox(height: 16),
-          Text('Secondary muscles', style: TextStyle(color: colors.text2, fontSize: 13, fontWeight: FontWeight.w600)),
+          Text(
+            'Secondary muscles',
+            style: TextStyle(
+              color: colors.text2,
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
           const SizedBox(height: 8),
           Wrap(
             spacing: 6,
             runSpacing: 6,
-            children: Muscle.values.map((m) => _MuscleChip(
-              label: m.label,
-              selected: _secondary.contains(m),
-              onTap: () => setState(() {
-                if (_secondary.contains(m)) { _secondary.remove(m); } else { _secondary.add(m); }
-              }),
-              colors: colors,
-            )).toList(),
+            children: Muscle.values
+                .map(
+                  (m) => _MuscleChip(
+                    label: m.label,
+                    selected: _secondary.contains(m),
+                    onTap: () => setState(() {
+                      if (_secondary.contains(m)) {
+                        _secondary.remove(m);
+                      } else {
+                        _secondary.add(m);
+                      }
+                    }),
+                    colors: colors,
+                  ),
+                )
+                .toList(),
           ),
           const SizedBox(height: 24),
           Row(
             children: [
-              Expanded(child: OutlinedButton(onPressed: widget.onCancel, child: const Text('Cancel'))),
+              Expanded(
+                child: OutlinedButton(
+                  onPressed: widget.onCancel,
+                  child: const Text('Cancel'),
+                ),
+              ),
               const SizedBox(width: 12),
-              Expanded(child: ElevatedButton(onPressed: _submit, child: const Text('Save'))),
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: _submit,
+                  child: const Text('Save'),
+                ),
+              ),
             ],
           ),
         ],
@@ -146,7 +200,12 @@ class _LibraryExerciseFormState extends State<LibraryExerciseForm> {
 }
 
 class _TypeChip extends StatelessWidget {
-  const _TypeChip({required this.label, required this.selected, required this.onTap, required this.colors});
+  const _TypeChip({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+    required this.colors,
+  });
   final String label;
   final bool selected;
   final VoidCallback onTap;
@@ -162,14 +221,26 @@ class _TypeChip extends StatelessWidget {
           color: selected ? colors.accent : colors.surface2,
           borderRadius: BorderRadius.circular(20),
         ),
-        child: Text(label, style: TextStyle(color: selected ? colors.onAccent : colors.text2, fontWeight: FontWeight.w600, fontSize: 13)),
+        child: Text(
+          label,
+          style: TextStyle(
+            color: selected ? colors.onAccent : colors.text2,
+            fontWeight: FontWeight.w600,
+            fontSize: 13,
+          ),
+        ),
       ),
     );
   }
 }
 
 class _MuscleChip extends StatelessWidget {
-  const _MuscleChip({required this.label, required this.selected, required this.onTap, required this.colors});
+  const _MuscleChip({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+    required this.colors,
+  });
   final String label;
   final bool selected;
   final VoidCallback onTap;
@@ -182,11 +253,19 @@ class _MuscleChip extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
         decoration: BoxDecoration(
-          color: selected ? colors.accentDim.withValues(alpha: 0.2) : colors.surface2,
+          color: selected
+              ? colors.accentDim.withValues(alpha: 0.2)
+              : colors.surface2,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(color: selected ? colors.accent : colors.border),
         ),
-        child: Text(label, style: TextStyle(color: selected ? colors.accent : colors.text2, fontSize: 12)),
+        child: Text(
+          label,
+          style: TextStyle(
+            color: selected ? colors.accent : colors.text2,
+            fontSize: 12,
+          ),
+        ),
       ),
     );
   }

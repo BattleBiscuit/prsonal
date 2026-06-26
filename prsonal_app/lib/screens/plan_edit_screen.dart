@@ -53,11 +53,13 @@ class _PlanEditScreenState extends ConsumerState<PlanEditScreen> {
             onTap: () {
               Navigator.of(ctx).pop();
               setState(() {
-                _entries.add(_EntryDraft(
-                  routineId: r.id,
-                  routineName: r.name,
-                  dayOfWeek: null,
-                ));
+                _entries.add(
+                  _EntryDraft(
+                    routineId: r.id,
+                    routineName: r.name,
+                    dayOfWeek: null,
+                  ),
+                );
               });
             },
           );
@@ -80,7 +82,12 @@ class _PlanEditScreenState extends ConsumerState<PlanEditScreen> {
       await service.replaceEntries(
         newId,
         _entries
-            .map((e) => PlanEntryInput(routineId: e.routineId, dayOfWeek: e.dayOfWeek))
+            .map(
+              (e) => PlanEntryInput(
+                routineId: e.routineId,
+                dayOfWeek: e.dayOfWeek,
+              ),
+            )
             .toList(),
       );
     } else {
@@ -88,7 +95,12 @@ class _PlanEditScreenState extends ConsumerState<PlanEditScreen> {
       await service.replaceEntries(
         planId,
         _entries
-            .map((e) => PlanEntryInput(routineId: e.routineId, dayOfWeek: e.dayOfWeek))
+            .map(
+              (e) => PlanEntryInput(
+                routineId: e.routineId,
+                dayOfWeek: e.dayOfWeek,
+              ),
+            )
             .toList(),
       );
     }
@@ -136,11 +148,13 @@ class _PlanEditScreenState extends ConsumerState<PlanEditScreen> {
             _nameCtrl.text = draft.name;
             setState(() {
               _entries = draft.entries
-                  .map((e) => _EntryDraft(
-                        routineId: e.routineId,
-                        routineName: e.routineName,
-                        dayOfWeek: e.dayOfWeek,
-                      ))
+                  .map(
+                    (e) => _EntryDraft(
+                      routineId: e.routineId,
+                      routineName: e.routineName,
+                      dayOfWeek: e.dayOfWeek,
+                    ),
+                  )
                   .toList();
             });
           }
@@ -155,9 +169,7 @@ class _PlanEditScreenState extends ConsumerState<PlanEditScreen> {
       appBar: AppBar(
         title: BrandTitle(widget.planId == null ? 'New Plan' : 'Edit Plan'),
         backgroundColor: colors.bg,
-        actions: [
-          TextButton(onPressed: _save, child: const Text('Save')),
-        ],
+        actions: [TextButton(onPressed: _save, child: const Text('Save'))],
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),
@@ -176,11 +188,14 @@ class _PlanEditScreenState extends ConsumerState<PlanEditScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('Entries',
-                  style: TextStyle(
-                      color: colors.text1,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600)),
+              Text(
+                'Entries',
+                style: TextStyle(
+                  color: colors.text1,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
               TextButton(onPressed: _addEntry, child: const Text('Add')),
             ],
           ),
@@ -198,8 +213,10 @@ class _PlanEditScreenState extends ConsumerState<PlanEditScreen> {
           if (widget.planId != null)
             TextButton(
               onPressed: _deletePlan,
-              child: Text('Delete plan',
-                  style: TextStyle(color: colors.danger)),
+              child: Text(
+                'Delete plan',
+                style: TextStyle(color: colors.danger),
+              ),
             ),
         ],
       ),
@@ -237,7 +254,9 @@ class _EntryRow extends StatelessWidget {
                 child: Text(
                   entry.routineName,
                   style: TextStyle(
-                      color: colors.text1, fontWeight: FontWeight.w500),
+                    color: colors.text1,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
               Semantics(
@@ -251,10 +270,7 @@ class _EntryRow extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 8),
-          DayOfWeekSelector(
-            selected: entry.dayOfWeek,
-            onChanged: onDayChanged,
-          ),
+          DayOfWeekSelector(selected: entry.dayOfWeek, onChanged: onDayChanged),
         ],
       ),
     );

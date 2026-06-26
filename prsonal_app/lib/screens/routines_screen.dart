@@ -74,7 +74,8 @@ class RoutinesScreen extends ConsumerWidget {
               final r = routines[i];
               return RoutineCard(
                 name: r.name,
-                metaLine: '${r.exerciseCount} exercise${r.exerciseCount == 1 ? '' : 's'}',
+                metaLine:
+                    '${r.exerciseCount} exercise${r.exerciseCount == 1 ? '' : 's'}',
                 notes: r.notes,
                 onTap: () => context.goNamed(
                   'routine-edit',
@@ -86,10 +87,8 @@ class RoutinesScreen extends ConsumerWidget {
             },
           );
         },
-        loading: () =>
-            const Center(child: CircularProgressIndicator()),
-        error: (e, _) =>
-            Center(child: Text('Error: $e')),
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (e, _) => Center(child: Text('Error: $e')),
       ),
     );
   }

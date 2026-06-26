@@ -20,11 +20,17 @@ class BrandTitle extends StatelessWidget {
             children: [
               TextSpan(
                 text: 'PR',
-                style: TextStyle(color: colors.text1, fontWeight: FontWeight.w700),
+                style: TextStyle(
+                  color: colors.text1,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
               TextSpan(
                 text: 'sonal',
-                style: TextStyle(color: colors.accent, fontWeight: FontWeight.w700),
+                style: TextStyle(
+                  color: colors.accent,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
             ],
           ),

@@ -35,12 +35,25 @@ class RoutineCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(name, style: TextStyle(color: colors.text1, fontSize: 16, fontWeight: FontWeight.w600)),
+                  Text(
+                    name,
+                    style: TextStyle(
+                      color: colors.text1,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                   const SizedBox(height: 4),
-                  Text(metaLine, style: TextStyle(color: colors.text2, fontSize: 13)),
+                  Text(
+                    metaLine,
+                    style: TextStyle(color: colors.text2, fontSize: 13),
+                  ),
                   if (notes != null) ...[
                     const SizedBox(height: 4),
-                    Text(notes!, style: TextStyle(color: colors.text3, fontSize: 12)),
+                    Text(
+                      notes!,
+                      style: TextStyle(color: colors.text3, fontSize: 12),
+                    ),
                   ],
                 ],
               ),

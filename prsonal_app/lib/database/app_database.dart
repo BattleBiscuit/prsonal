@@ -99,12 +99,13 @@ class SetTargetListConverter extends TypeConverter<List<SetTarget>, String> {
 class Exercises extends Table {
   TextColumn get id => text()();
   TextColumn get name => text()();
-  TextColumn get type =>
-      text().map(const ExerciseTypeConverter())();
-  TextColumn get primaryMuscles =>
-      text().map(const MuscleListConverter()).withDefault(const Constant('[]'))();
-  TextColumn get secondaryMuscles =>
-      text().map(const MuscleListConverter()).withDefault(const Constant('[]'))();
+  TextColumn get type => text().map(const ExerciseTypeConverter())();
+  TextColumn get primaryMuscles => text()
+      .map(const MuscleListConverter())
+      .withDefault(const Constant('[]'))();
+  TextColumn get secondaryMuscles => text()
+      .map(const MuscleListConverter())
+      .withDefault(const Constant('[]'))();
   TextColumn get notes => text().nullable()();
   DateTimeColumn get createdAt => dateTime()();
 
@@ -132,8 +133,7 @@ class RoutineExercises extends Table {
   IntColumn get position => integer()();
   TextColumn get notes => text().nullable()();
   // JSON list of SetTarget objects
-  TextColumn get sets =>
-      text().map(const SetTargetListConverter())();
+  TextColumn get sets => text().map(const SetTargetListConverter())();
 
   @override
   Set<Column> get primaryKey => {id};
@@ -142,8 +142,7 @@ class RoutineExercises extends Table {
 class Plans extends Table {
   TextColumn get id => text()();
   TextColumn get name => text()();
-  TextColumn get status =>
-      text().map(const PlanStatusConverter())();
+  TextColumn get status => text().map(const PlanStatusConverter())();
   IntColumn get order => integer()();
   DateTimeColumn get createdAt => dateTime()();
 
@@ -170,8 +169,7 @@ class WorkoutSessions extends Table {
   TextColumn get routineName => text()();
   DateTimeColumn get startedAt => dateTime()();
   DateTimeColumn get completedAt => dateTime().nullable()();
-  TextColumn get status =>
-      text().map(const SessionStatusConverter())();
+  TextColumn get status => text().map(const SessionStatusConverter())();
   TextColumn get planId => text().nullable()();
   TextColumn get planEntryId => text().nullable()();
 
@@ -187,12 +185,10 @@ class WorkoutSets extends Table {
   TextColumn get exerciseId => text().nullable()();
   TextColumn get exerciseName => text()();
   IntColumn get setIndex => integer()();
-  TextColumn get type =>
-      text().map(const ExerciseTypeConverter())();
+  TextColumn get type => text().map(const ExerciseTypeConverter())();
   IntColumn get plannedReps => integer().nullable()();
   RealColumn get plannedWeight => real().nullable()();
-  BoolColumn get isBodyweight =>
-      boolean().withDefault(const Constant(false))();
+  BoolColumn get isBodyweight => boolean().withDefault(const Constant(false))();
   IntColumn get actualReps => integer().nullable()();
   RealColumn get actualWeight => real().nullable()();
   RealColumn get effectiveWeight => real().nullable()();
@@ -200,13 +196,10 @@ class WorkoutSets extends Table {
   IntColumn get plannedLevel => integer().nullable()();
   IntColumn get actualDuration => integer().nullable()();
   IntColumn get actualLevel => integer().nullable()();
-  IntColumn get restSeconds =>
-      integer().withDefault(const Constant(0))();
+  IntColumn get restSeconds => integer().withDefault(const Constant(0))();
   DateTimeColumn get completedAt => dateTime().nullable()();
-  BoolColumn get skipped =>
-      boolean().withDefault(const Constant(false))();
-  BoolColumn get isPR =>
-      boolean().withDefault(const Constant(false))();
+  BoolColumn get skipped => boolean().withDefault(const Constant(false))();
+  BoolColumn get isPR => boolean().withDefault(const Constant(false))();
   RealColumn get estimated1RM => real().nullable()();
 
   @override
@@ -215,8 +208,7 @@ class WorkoutSets extends Table {
 
 class BodyMetrics extends Table {
   TextColumn get id => text()();
-  TextColumn get type =>
-      text().map(const BodyMetricTypeConverter())();
+  TextColumn get type => text().map(const BodyMetricTypeConverter())();
   RealColumn get value => real()();
   DateTimeColumn get loggedAt => dateTime()();
 
@@ -264,16 +256,18 @@ class SeedSet {
 // AppDatabase
 // ---------------------------------------------------------------------------
 
-@DriftDatabase(tables: [
-  Exercises,
-  Routines,
-  RoutineExercises,
-  Plans,
-  PlanEntries,
-  WorkoutSessions,
-  WorkoutSets,
-  BodyMetrics,
-])
+@DriftDatabase(
+  tables: [
+    Exercises,
+    Routines,
+    RoutineExercises,
+    Plans,
+    PlanEntries,
+    WorkoutSessions,
+    WorkoutSets,
+    BodyMetrics,
+  ],
+)
 class AppDatabase extends _$AppDatabase {
   /// Production constructor — opens the on-device SQLite file.
   AppDatabase() : super(_openConnection());
@@ -307,15 +301,17 @@ class AppDatabase extends _$AppDatabase {
     String? notes,
   }) async {
     final id = _newId();
-    await into(exercises).insert(ExercisesCompanion.insert(
-      id: id,
-      name: name,
-      type: type,
-      primaryMuscles: Value(primaryMuscles),
-      secondaryMuscles: Value(secondaryMuscles),
-      notes: Value(notes),
-      createdAt: DateTime.now(),
-    ));
+    await into(exercises).insert(
+      ExercisesCompanion.insert(
+        id: id,
+        name: name,
+        type: type,
+        primaryMuscles: Value(primaryMuscles),
+        secondaryMuscles: Value(secondaryMuscles),
+        notes: Value(notes),
+        createdAt: DateTime.now(),
+      ),
+    );
     return id;
   }
 
@@ -328,31 +324,32 @@ class AppDatabase extends _$AppDatabase {
     List<Muscle> secondaryMuscles = const [],
     String? notes,
   }) async {
-    await into(exercises).insert(ExercisesCompanion.insert(
-      id: id,
-      name: name,
-      type: type,
-      primaryMuscles: Value(primaryMuscles),
-      secondaryMuscles: Value(secondaryMuscles),
-      notes: Value(notes),
-      createdAt: DateTime.now(),
-    ));
+    await into(exercises).insert(
+      ExercisesCompanion.insert(
+        id: id,
+        name: name,
+        type: type,
+        primaryMuscles: Value(primaryMuscles),
+        secondaryMuscles: Value(secondaryMuscles),
+        notes: Value(notes),
+        createdAt: DateTime.now(),
+      ),
+    );
   }
 
   /// Inserts a routine with a generated UUID and returns the id.
-  Future<String> insertRoutine({
-    required String name,
-    String? notes,
-  }) async {
+  Future<String> insertRoutine({required String name, String? notes}) async {
     final id = _newId();
     final now = DateTime.now();
-    await into(routines).insert(RoutinesCompanion.insert(
-      id: id,
-      name: name,
-      notes: Value(notes),
-      createdAt: now,
-      updatedAt: now,
-    ));
+    await into(routines).insert(
+      RoutinesCompanion.insert(
+        id: id,
+        name: name,
+        notes: Value(notes),
+        createdAt: now,
+        updatedAt: now,
+      ),
+    );
     return id;
   }
 
@@ -372,33 +369,37 @@ class AppDatabase extends _$AppDatabase {
     final sessionId = _newId();
     final resolvedCompletedAt =
         completedAt ?? startedAt.add(const Duration(minutes: 30));
-    await into(workoutSessions).insert(WorkoutSessionsCompanion.insert(
-      id: sessionId,
-      routineId: routineId,
-      routineName: routineName ?? '',
-      startedAt: startedAt,
-      completedAt: Value(resolvedCompletedAt),
-      status: SessionStatus.completed,
-      planId: Value(planId),
-      planEntryId: Value(planEntryId),
-    ));
+    await into(workoutSessions).insert(
+      WorkoutSessionsCompanion.insert(
+        id: sessionId,
+        routineId: routineId,
+        routineName: routineName ?? '',
+        startedAt: startedAt,
+        completedAt: Value(resolvedCompletedAt),
+        status: SessionStatus.completed,
+        planId: Value(planId),
+        planEntryId: Value(planEntryId),
+      ),
+    );
     for (final s in sets) {
-      await into(workoutSets).insert(WorkoutSetsCompanion.insert(
-        id: _newId(),
-        sessionId: sessionId,
-        exercisePosition: s.exercisePosition,
-        exerciseId: Value(s.exerciseId),
-        exerciseName: s.exerciseName,
-        setIndex: s.setIndex,
-        type: s.type,
-        actualReps: Value(s.actualReps),
-        actualWeight: Value(s.actualWeight),
-        effectiveWeight: Value(s.effectiveWeight),
-        estimated1RM: Value(s.estimated1RM),
-        completedAt: Value(s.completedAt),
-        skipped: Value(s.skipped),
-        isPR: Value(s.isPR),
-      ));
+      await into(workoutSets).insert(
+        WorkoutSetsCompanion.insert(
+          id: _newId(),
+          sessionId: sessionId,
+          exercisePosition: s.exercisePosition,
+          exerciseId: Value(s.exerciseId),
+          exerciseName: s.exerciseName,
+          setIndex: s.setIndex,
+          type: s.type,
+          actualReps: Value(s.actualReps),
+          actualWeight: Value(s.actualWeight),
+          effectiveWeight: Value(s.effectiveWeight),
+          estimated1RM: Value(s.estimated1RM),
+          completedAt: Value(s.completedAt),
+          skipped: Value(s.skipped),
+          isPR: Value(s.isPR),
+        ),
+      );
     }
     return sessionId;
   }
@@ -420,18 +421,20 @@ class AppDatabase extends _$AppDatabase {
 
   /// Returns the session row for [id], or null when not found.
   Future<WorkoutSession?> sessionById(String id) {
-    return (select(workoutSessions)..where((s) => s.id.equals(id)))
-        .getSingleOrNull();
+    return (select(
+      workoutSessions,
+    )..where((s) => s.id.equals(id))).getSingleOrNull();
   }
 
   /// Returns the planned [SetTarget]s for every exercise in [routineId], in
   /// position order. Used by the session engine to write progressive-overload
   /// targets back after finishing a session.
   Future<List<SetTarget>> setTargetsForRoutine(String routineId) async {
-    final rows = await (select(routineExercises)
-          ..where((re) => re.routineId.equals(routineId))
-          ..orderBy([(re) => OrderingTerm.asc(re.position)]))
-        .get();
+    final rows =
+        await (select(routineExercises)
+              ..where((re) => re.routineId.equals(routineId))
+              ..orderBy([(re) => OrderingTerm.asc(re.position)]))
+            .get();
     return rows.expand((re) => re.sets).toList();
   }
 
@@ -441,9 +444,9 @@ class AppDatabase extends _$AppDatabase {
 
   /// Returns a stream of all exercises ordered alphabetically by name.
   Stream<List<Exercise>> watchAllExercises() {
-    return (select(exercises)
-          ..orderBy([(e) => OrderingTerm.asc(e.name)]))
-        .watch();
+    return (select(
+      exercises,
+    )..orderBy([(e) => OrderingTerm.asc(e.name)])).watch();
   }
 
   /// Returns all exercises with name matching [query] (case-insensitive).
@@ -457,8 +460,7 @@ class AppDatabase extends _$AppDatabase {
 
   /// Returns a single exercise by id, or null.
   Future<Exercise?> exerciseById(String id) {
-    return (select(exercises)..where((e) => e.id.equals(id)))
-        .getSingleOrNull();
+    return (select(exercises)..where((e) => e.id.equals(id))).getSingleOrNull();
   }
 
   /// Inserts an exercise row using the provided companion.
@@ -479,15 +481,14 @@ class AppDatabase extends _$AppDatabase {
 
   /// Returns a stream of all routines ordered by updatedAt descending.
   Stream<List<Routine>> watchAllRoutines() {
-    return (select(routines)
-          ..orderBy([(r) => OrderingTerm.desc(r.updatedAt)]))
-        .watch();
+    return (select(
+      routines,
+    )..orderBy([(r) => OrderingTerm.desc(r.updatedAt)])).watch();
   }
 
   /// Returns a single routine by id, or null.
   Future<Routine?> routineById(String id) {
-    return (select(routines)..where((r) => r.id.equals(id)))
-        .getSingleOrNull();
+    return (select(routines)..where((r) => r.id.equals(id))).getSingleOrNull();
   }
 
   /// Returns all exercises for a routine in position order.
@@ -527,10 +528,9 @@ class AppDatabase extends _$AppDatabase {
       (delete(routineExercises)..where((re) => re.id.equals(id))).go();
 
   /// Deletes all routine exercises for a routine.
-  Future<int> deleteRoutineExercisesForRoutine(String routineId) =>
-      (delete(routineExercises)
-            ..where((re) => re.routineId.equals(routineId)))
-          .go();
+  Future<int> deleteRoutineExercisesForRoutine(String routineId) => (delete(
+    routineExercises,
+  )..where((re) => re.routineId.equals(routineId))).go();
 
   // =========================================================================
   // Plan queries
@@ -543,8 +543,7 @@ class AppDatabase extends _$AppDatabase {
 
   /// Returns a stream of all plans.
   Stream<List<Plan>> watchAllPlans() {
-    return (select(plans)..orderBy([(p) => OrderingTerm.asc(p.order)]))
-        .watch();
+    return (select(plans)..orderBy([(p) => OrderingTerm.asc(p.order)])).watch();
   }
 
   /// Returns a single plan by id, or null.
@@ -556,8 +555,7 @@ class AppDatabase extends _$AppDatabase {
   Future<void> insertPlanRow(PlansCompanion row) => into(plans).insert(row);
 
   /// Updates a plan row.
-  Future<bool> updatePlanRow(PlansCompanion row) =>
-      update(plans).replace(row);
+  Future<bool> updatePlanRow(PlansCompanion row) => update(plans).replace(row);
 
   /// Deletes a plan by id.
   Future<int> deletePlanById(String id) =>
@@ -590,8 +588,7 @@ class AppDatabase extends _$AppDatabase {
   /// Returns all completed sessions ordered by startedAt descending.
   Future<List<WorkoutSession>> completedSessions({int? limit, int? offset}) {
     return (select(workoutSessions)
-          ..where((s) =>
-              s.status.equals(SessionStatus.completed.name))
+          ..where((s) => s.status.equals(SessionStatus.completed.name))
           ..orderBy([(s) => OrderingTerm.desc(s.startedAt)])
           ..limit(limit ?? -1, offset: offset))
         .get();
@@ -602,19 +599,22 @@ class AppDatabase extends _$AppDatabase {
     final countExpr = workoutSessions.id.count();
     final query = selectOnly(workoutSessions)
       ..addColumns([countExpr])
-      ..where(
-          workoutSessions.status.equals(SessionStatus.completed.name));
+      ..where(workoutSessions.status.equals(SessionStatus.completed.name));
     final row = await query.getSingle();
     return row.read(countExpr) ?? 0;
   }
 
   /// Returns completed sessions whose startedAt falls within [from]..[to].
   Future<List<WorkoutSession>> completedSessionsInRange(
-      DateTime from, DateTime to) {
+    DateTime from,
+    DateTime to,
+  ) {
     return (select(workoutSessions)
-          ..where((s) =>
-              s.status.equals(SessionStatus.completed.name) &
-              s.startedAt.isBetweenValues(from, to))
+          ..where(
+            (s) =>
+                s.status.equals(SessionStatus.completed.name) &
+                s.startedAt.isBetweenValues(from, to),
+          )
           ..orderBy([(s) => OrderingTerm.desc(s.startedAt)]))
         .get();
   }
@@ -654,8 +654,9 @@ class AppDatabase extends _$AppDatabase {
   Future<Map<String, double>> bestOneRepMaxByExerciseId() async {
     final q = selectOnly(workoutSets)
       ..addColumns([workoutSets.exerciseId, workoutSets.estimated1RM.max()])
-      ..where(workoutSets.isPR.equals(true) &
-          workoutSets.exerciseId.isNotNull())
+      ..where(
+        workoutSets.isPR.equals(true) & workoutSets.exerciseId.isNotNull(),
+      )
       ..groupBy([workoutSets.exerciseId]);
     final rows = await q.get();
     final result = <String, double>{};
@@ -670,8 +671,7 @@ class AppDatabase extends _$AppDatabase {
   /// Returns all PR sets for [exerciseId] ordered by estimated1RM desc.
   Future<List<WorkoutSet>> prSetsForExercise(String exerciseId) {
     return (select(workoutSets)
-          ..where((s) =>
-              s.exerciseId.equals(exerciseId) & s.isPR.equals(true))
+          ..where((s) => s.exerciseId.equals(exerciseId) & s.isPR.equals(true))
           ..orderBy([(s) => OrderingTerm.desc(s.estimated1RM)]))
         .get();
   }
@@ -692,7 +692,8 @@ class AppDatabase extends _$AppDatabase {
     final q = selectOnly(workoutSets)..addColumns([maxExpr]);
 
     // Must be a completed strength set.
-    var where = workoutSets.type.equals(ExerciseType.strength.name) &
+    var where =
+        workoutSets.type.equals(ExerciseType.strength.name) &
         workoutSets.skipped.equals(false) &
         workoutSets.completedAt.isNotNull() &
         workoutSets.estimated1RM.isNotNull();
@@ -710,13 +711,10 @@ class AppDatabase extends _$AppDatabase {
   }
 
   /// Returns all PR sets (isPR = true) for sessions started within [from]..[to].
-  Future<List<WorkoutSet>> prSetsInSessionRange(
-      List<String> sessionIds) async {
+  Future<List<WorkoutSet>> prSetsInSessionRange(List<String> sessionIds) async {
     if (sessionIds.isEmpty) return [];
     return (select(workoutSets)
-          ..where((s) =>
-              s.isPR.equals(true) &
-              s.sessionId.isIn(sessionIds))
+          ..where((s) => s.isPR.equals(true) & s.sessionId.isIn(sessionIds))
           ..orderBy([(s) => OrderingTerm.desc(s.estimated1RM)]))
         .get();
   }
@@ -798,7 +796,8 @@ class AppDatabase extends _$AppDatabase {
   }
 
   Future<void> bulkInsertRoutineExercises(
-      List<RoutineExercisesCompanion> rows) async {
+    List<RoutineExercisesCompanion> rows,
+  ) async {
     await batch((b) => b.insertAll(routineExercises, rows));
   }
 
@@ -811,7 +810,8 @@ class AppDatabase extends _$AppDatabase {
   }
 
   Future<void> bulkInsertWorkoutSessions(
-      List<WorkoutSessionsCompanion> rows) async {
+    List<WorkoutSessionsCompanion> rows,
+  ) async {
     await batch((b) => b.insertAll(workoutSessions, rows));
   }
 

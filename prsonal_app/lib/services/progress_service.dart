@@ -62,7 +62,7 @@ class ProgressService {
   // -------------------------------------------------------------------------
 
   Future<List<({String label, double volume, String routineName})>>
-      sessionVolumes(int rangeDays, {required DateTime asOf}) async {
+  sessionVolumes(int rangeDays, {required DateTime asOf}) async {
     final from = asOf.subtract(Duration(days: rangeDays));
     final sessions = await _db.completedSessionsInRange(from, asOf);
 
@@ -71,9 +71,7 @@ class ProgressService {
       final sets = await _db.workoutSetsForSession(session.id);
       double vol = 0;
       for (final s in sets) {
-        if (!s.skipped &&
-            s.actualReps != null &&
-            s.effectiveWeight != null) {
+        if (!s.skipped && s.actualReps != null && s.effectiveWeight != null) {
           vol += s.actualReps! * s.effectiveWeight!;
         }
       }
@@ -90,18 +88,18 @@ class ProgressService {
   // volumeTrendPercent — percent change first half vs second half
   // -------------------------------------------------------------------------
 
-  Future<double?> volumeTrendPercent(int rangeDays,
-      {required DateTime asOf}) async {
+  Future<double?> volumeTrendPercent(
+    int rangeDays, {
+    required DateTime asOf,
+  }) async {
     final vols = await sessionVolumes(rangeDays, asOf: asOf);
     if (vols.length < 2) return null;
 
     final half = vols.length ~/ 2;
     // Sessions are returned newest-first; so the second half (older) is
     // vols[half..end] and first half (newer) is vols[0..half].
-    final newerVol =
-        vols.take(half).fold(0.0, (sum, v) => sum + v.volume);
-    final olderVol =
-        vols.skip(half).fold(0.0, (sum, v) => sum + v.volume);
+    final newerVol = vols.take(half).fold(0.0, (sum, v) => sum + v.volume);
+    final olderVol = vols.skip(half).fold(0.0, (sum, v) => sum + v.volume);
 
     if (olderVol == 0) return null;
     return (newerVol - olderVol) / olderVol * 100.0;
@@ -184,10 +182,11 @@ class ProgressService {
 
   Future<List<PRItem>> allPRs() async {
     // Get all PR sets; find best per exercise name.
-    final allSets = await (_db.select(_db.workoutSets)
-          ..where((s) => s.isPR.equals(true))
-          ..orderBy([(s) => OrderingTerm.desc(s.estimated1RM)]))
-        .get();
+    final allSets =
+        await (_db.select(_db.workoutSets)
+              ..where((s) => s.isPR.equals(true))
+              ..orderBy([(s) => OrderingTerm.desc(s.estimated1RM)]))
+            .get();
 
     final byExercise = <String, WorkoutSet>{};
     for (final s in allSets) {
@@ -208,8 +207,10 @@ class ProgressService {
   // recentPRs — PR sets in range, newest first
   // -------------------------------------------------------------------------
 
-  Future<List<PRItem>> recentPRs(int rangeDays,
-      {required DateTime asOf}) async {
+  Future<List<PRItem>> recentPRs(
+    int rangeDays, {
+    required DateTime asOf,
+  }) async {
     final from = asOf.subtract(Duration(days: rangeDays));
     final sessions = await _db.completedSessionsInRange(from, asOf);
     final sessionIds = sessions.map((s) => s.id).toList();
@@ -237,14 +238,17 @@ class ProgressService {
   // planAdherencePercent
   // -------------------------------------------------------------------------
 
-  Future<double?> planAdherencePercent(int rangeDays,
-      {required DateTime asOf}) async {
+  Future<double?> planAdherencePercent(
+    int rangeDays, {
+    required DateTime asOf,
+  }) async {
     final from = asOf.subtract(Duration(days: rangeDays));
 
     // Get all active plans.
     final allPlans = await _db.allPlans();
-    final activePlans =
-        allPlans.where((p) => p.status == PlanStatus.active).toList();
+    final activePlans = allPlans
+        .where((p) => p.status == PlanStatus.active)
+        .toList();
     if (activePlans.isEmpty) return null;
 
     int required = 0;
@@ -261,8 +265,9 @@ class ProgressService {
       final entries = await _db.planEntriesForPlan(plan.id);
       // Each plan entry that has a scheduled day counts as required once per
       // week in the range.
-      final scheduledEntries =
-          entries.where((e) => e.dayOfWeek != null).toList();
+      final scheduledEntries = entries
+          .where((e) => e.dayOfWeek != null)
+          .toList();
       if (scheduledEntries.isEmpty) continue;
 
       final weeks = (rangeDays / 7).ceil();

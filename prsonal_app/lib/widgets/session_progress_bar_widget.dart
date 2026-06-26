@@ -2,10 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:prsonal_app/theme/app_colors.dart';
 
 class SessionProgressBar extends StatelessWidget {
-  const SessionProgressBar({
-    super.key,
-    required this.progress,
-  });
+  const SessionProgressBar({super.key, required this.progress});
 
   final double progress;
 

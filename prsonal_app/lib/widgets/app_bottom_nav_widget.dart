@@ -30,10 +30,8 @@ class AppBottomNav extends ConsumerWidget {
       onDestinationSelected: onTabSelected,
       destinations: _tabs
           .map(
-            (tab) => NavigationDestination(
-              icon: Icon(tab.icon),
-              label: tab.label,
-            ),
+            (tab) =>
+                NavigationDestination(icon: Icon(tab.icon), label: tab.label),
           )
           .toList(),
     );

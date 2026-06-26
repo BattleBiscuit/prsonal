@@ -36,14 +36,31 @@ class BodyMetricCard extends StatelessWidget {
               children: [
                 Icon(icon, color: colors.accent, size: 20),
                 const SizedBox(width: 8),
-                Text(label, style: TextStyle(color: colors.text2, fontSize: 13, fontWeight: FontWeight.w500)),
+                Text(
+                  label,
+                  style: TextStyle(
+                    color: colors.text2,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
               ],
             ),
             const SizedBox(height: 12),
-            Text(valueLabel, style: TextStyle(color: colors.text1, fontSize: 24, fontWeight: FontWeight.w700)),
+            Text(
+              valueLabel,
+              style: TextStyle(
+                color: colors.text1,
+                fontSize: 24,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
             if (dateLabel != null) ...[
               const SizedBox(height: 4),
-              Text(dateLabel!, style: TextStyle(color: colors.text3, fontSize: 12)),
+              Text(
+                dateLabel!,
+                style: TextStyle(color: colors.text3, fontSize: 12),
+              ),
             ],
           ],
         ),

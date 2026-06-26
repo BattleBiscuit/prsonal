@@ -52,8 +52,11 @@ class PlanEntryRow extends StatelessWidget {
               label: 'Completed this week',
               container: true,
               child: ExcludeSemantics(
-                child: Icon(Icons.check_circle,
-                    color: colors.success, size: 20),
+                child: Icon(
+                  Icons.check_circle,
+                  color: colors.success,
+                  size: 20,
+                ),
               ),
             ),
             const SizedBox(width: 8),
@@ -71,7 +74,9 @@ class PlanEntryRow extends StatelessWidget {
                   opacity: startDisabled ? 0.4 : 1.0,
                   child: Container(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 12, vertical: 6),
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
                     decoration: BoxDecoration(
                       color: done ? colors.surface2 : colors.accent,
                       borderRadius: BorderRadius.circular(6),

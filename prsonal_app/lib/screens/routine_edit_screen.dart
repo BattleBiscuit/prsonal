@@ -49,28 +49,33 @@ class _RoutineEditScreenState extends ConsumerState<RoutineEditScreen> {
     }
     // Fire the dialog but do NOT await it — the caller is responsible for
     // pumping frames so the dialog appears and then asserting on its content.
-    unawaited(showDialog<void>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Discard changes?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text('Keep editing'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.of(ctx).pop();
-              Navigator.of(context).maybePop();
-            },
-            child: const Text('Discard'),
-          ),
-        ],
+    unawaited(
+      showDialog<void>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: const Text('Discard changes?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(),
+              child: const Text('Keep editing'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(ctx).pop();
+                Navigator.of(context).maybePop();
+              },
+              child: const Text('Discard'),
+            ),
+          ],
+        ),
       ),
-    ));
+    );
   }
 
-  void _showExerciseForm({RoutineExerciseDraft? existing, List<ExerciseOption> options = const []}) {
+  void _showExerciseForm({
+    RoutineExerciseDraft? existing,
+    List<ExerciseOption> options = const [],
+  }) {
     ExerciseFormData? initial;
     if (existing != null) {
       initial = ExerciseFormData(
@@ -79,7 +84,9 @@ class _RoutineEditScreenState extends ConsumerState<RoutineEditScreen> {
         type: existing.sets.isNotEmpty
             ? existing.sets.first.kind
             : ExerciseType.strength,
-        sets: existing.sets.map((s) => SetFormData(reps: s.reps ?? 0, weight: s.weight ?? 0)).toList(),
+        sets: existing.sets
+            .map((s) => SetFormData(reps: s.reps ?? 0, weight: s.weight ?? 0))
+            .toList(),
       );
     }
     showModalBottomSheet(
@@ -109,30 +116,36 @@ class _RoutineEditScreenState extends ConsumerState<RoutineEditScreen> {
                       exerciseName: data.exerciseName ?? existing.exerciseName,
                       position: existing.position,
                       sets: data.sets
-                          .map((s) => SetTarget.strength(
-                                reps: s.reps,
-                                weight: s.weight,
-                                isBodyweight: s.isBodyweight,
-                              ))
+                          .map(
+                            (s) => SetTarget.strength(
+                              reps: s.reps,
+                              weight: s.weight,
+                              isBodyweight: s.isBodyweight,
+                            ),
+                          )
                           .toList(),
                       notes: existing.notes,
                     );
                   }
                 } else {
-                  _exercises.add(RoutineExerciseDraft(
-                    id: UniqueKey().toString(),
-                    exerciseId: data.exerciseId ?? '',
-                    exerciseName: data.exerciseName ?? '',
-                    position: _exercises.length,
-                    sets: data.sets
-                        .map((s) => SetTarget.strength(
+                  _exercises.add(
+                    RoutineExerciseDraft(
+                      id: UniqueKey().toString(),
+                      exerciseId: data.exerciseId ?? '',
+                      exerciseName: data.exerciseName ?? '',
+                      position: _exercises.length,
+                      sets: data.sets
+                          .map(
+                            (s) => SetTarget.strength(
                               reps: s.reps,
                               weight: s.weight,
                               isBodyweight: s.isBodyweight,
-                            ))
-                        .toList(),
-                    notes: null,
-                  ));
+                            ),
+                          )
+                          .toList(),
+                      notes: null,
+                    ),
+                  );
                 }
               });
             },
@@ -154,16 +167,24 @@ class _RoutineEditScreenState extends ConsumerState<RoutineEditScreen> {
     final routineId = widget.routineId;
     if (routineId == null) {
       final newId = await service.createRoutine(
-          name: name, notes: _notesCtrl.text.trim().isEmpty ? null : _notesCtrl.text.trim());
+        name: name,
+        notes: _notesCtrl.text.trim().isEmpty ? null : _notesCtrl.text.trim(),
+      );
       // Add exercises
       for (final ex in _exercises) {
-        await service.addExercise(newId,
-            exerciseId: ex.exerciseId, sets: ex.sets, notes: ex.notes);
+        await service.addExercise(
+          newId,
+          exerciseId: ex.exerciseId,
+          sets: ex.sets,
+          notes: ex.notes,
+        );
       }
     } else {
-      await service.updateRoutine(routineId,
-          name: name,
-          notes: _notesCtrl.text.trim().isEmpty ? null : _notesCtrl.text.trim());
+      await service.updateRoutine(
+        routineId,
+        name: name,
+        notes: _notesCtrl.text.trim().isEmpty ? null : _notesCtrl.text.trim(),
+      );
     }
     if (mounted) await Navigator.of(context).maybePop();
   }
@@ -195,14 +216,11 @@ class _RoutineEditScreenState extends ConsumerState<RoutineEditScreen> {
     return Scaffold(
       backgroundColor: colors.bg,
       appBar: AppBar(
-        title: BrandTitle(widget.routineId == null ? 'New Routine' : 'Edit Routine'),
+        title: BrandTitle(
+          widget.routineId == null ? 'New Routine' : 'Edit Routine',
+        ),
         backgroundColor: colors.bg,
-        actions: [
-          TextButton(
-            onPressed: _save,
-            child: const Text('Save'),
-          ),
-        ],
+        actions: [TextButton(onPressed: _save, child: const Text('Save'))],
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),
@@ -228,11 +246,14 @@ class _RoutineEditScreenState extends ConsumerState<RoutineEditScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('Exercises',
-                  style: TextStyle(
-                      color: colors.text1,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600)),
+              Text(
+                'Exercises',
+                style: TextStyle(
+                  color: colors.text1,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
               TextButton(
                 onPressed: () => _showExerciseForm(options: options),
                 child: const Text('Add'),
@@ -241,8 +262,10 @@ class _RoutineEditScreenState extends ConsumerState<RoutineEditScreen> {
           ),
           const SizedBox(height: 8),
           if (_exercises.isEmpty)
-            Text('No exercises yet',
-                style: TextStyle(color: colors.text2, fontSize: 14))
+            Text(
+              'No exercises yet',
+              style: TextStyle(color: colors.text2, fontSize: 14),
+            )
           else
             ReorderableListView(
               shrinkWrap: true,
@@ -258,10 +281,14 @@ class _RoutineEditScreenState extends ConsumerState<RoutineEditScreen> {
                 for (final ex in _exercises)
                   ListTile(
                     key: ValueKey(ex.id),
-                    title: Text(ex.exerciseName,
-                        style: TextStyle(color: colors.text1)),
-                    subtitle: Text('${ex.sets.length} set${ex.sets.length == 1 ? '' : 's'}',
-                        style: TextStyle(color: colors.text2, fontSize: 12)),
+                    title: Text(
+                      ex.exerciseName,
+                      style: TextStyle(color: colors.text1),
+                    ),
+                    subtitle: Text(
+                      '${ex.sets.length} set${ex.sets.length == 1 ? '' : 's'}',
+                      style: TextStyle(color: colors.text2, fontSize: 12),
+                    ),
                     trailing: const Icon(Icons.drag_handle),
                     onTap: () =>
                         _showExerciseForm(existing: ex, options: options),

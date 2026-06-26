@@ -39,24 +39,47 @@ class HistoryCard extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      Text(routineName, style: TextStyle(color: colors.text1, fontSize: 16, fontWeight: FontWeight.w600)),
+                      Text(
+                        routineName,
+                        style: TextStyle(
+                          color: colors.text1,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
                       if (abandoned) ...[
                         const SizedBox(width: 8),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 6,
+                            vertical: 2,
+                          ),
                           decoration: BoxDecoration(
                             color: colors.danger.withValues(alpha: 0.15),
                             borderRadius: BorderRadius.circular(4),
                           ),
-                          child: Text('Abandoned', style: TextStyle(color: colors.danger, fontSize: 11, fontWeight: FontWeight.w600)),
+                          child: Text(
+                            'Abandoned',
+                            style: TextStyle(
+                              color: colors.danger,
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
                         ),
                       ],
                     ],
                   ),
                   const SizedBox(height: 4),
-                  Text(dateLabel, style: TextStyle(color: colors.text2, fontSize: 13)),
+                  Text(
+                    dateLabel,
+                    style: TextStyle(color: colors.text2, fontSize: 13),
+                  ),
                   const SizedBox(height: 2),
-                  Text(metaLabel, style: TextStyle(color: colors.text2, fontSize: 13)),
+                  Text(
+                    metaLabel,
+                    style: TextStyle(color: colors.text2, fontSize: 13),
+                  ),
                 ],
               ),
             ),

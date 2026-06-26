@@ -4,11 +4,7 @@ import 'package:prsonal_app/theme/app_colors.dart';
 import 'package:prsonal_app/widgets/exercise_search_input_widget.dart';
 
 class SetFormData {
-  SetFormData({
-    this.reps = 0,
-    this.weight = 0,
-    this.isBodyweight = false,
-  });
+  SetFormData({this.reps = 0, this.weight = 0, this.isBodyweight = false});
 
   int reps;
   double weight;
@@ -65,7 +61,15 @@ class _ExerciseFormState extends State<ExerciseForm> {
       _exerciseName = initial.exerciseName;
       _type = initial.type;
       _sets = initial.sets.isNotEmpty
-          ? initial.sets.map((s) => SetFormData(reps: s.reps, weight: s.weight, isBodyweight: s.isBodyweight)).toList()
+          ? initial.sets
+                .map(
+                  (s) => SetFormData(
+                    reps: s.reps,
+                    weight: s.weight,
+                    isBodyweight: s.isBodyweight,
+                  ),
+                )
+                .toList()
           : [SetFormData()];
     } else {
       _sets = [SetFormData()];
@@ -84,12 +88,14 @@ class _ExerciseFormState extends State<ExerciseForm> {
       setState(() => _showValidation = true);
       return;
     }
-    widget.onSubmit(ExerciseFormData(
-      exerciseId: _exerciseId,
-      exerciseName: _exerciseName,
-      type: _type,
-      sets: List.unmodifiable(_sets),
-    ));
+    widget.onSubmit(
+      ExerciseFormData(
+        exerciseId: _exerciseId,
+        exerciseName: _exerciseName,
+        type: _type,
+        sets: List.unmodifiable(_sets),
+      ),
+    );
   }
 
   @override
@@ -111,7 +117,10 @@ class _ExerciseFormState extends State<ExerciseForm> {
         if (_showValidation)
           Padding(
             padding: const EdgeInsets.only(top: 4),
-            child: Text('Select an exercise', style: TextStyle(color: colors.danger, fontSize: 12)),
+            child: Text(
+              'Select an exercise',
+              style: TextStyle(color: colors.danger, fontSize: 12),
+            ),
           ),
         const SizedBox(height: 12),
         ..._sets.asMap().entries.map((entry) {
@@ -122,7 +131,8 @@ class _ExerciseFormState extends State<ExerciseForm> {
             set: set,
             canRemove: _sets.length > 1,
             onRemove: () => _removeSet(i),
-            onToggleBw: () => setState(() => set.isBodyweight = !set.isBodyweight),
+            onToggleBw: () =>
+                setState(() => set.isBodyweight = !set.isBodyweight),
           );
         }),
         TextButton(
@@ -200,7 +210,10 @@ class _SetRow extends StatelessWidget {
                 hintText: 'Reps',
                 hintStyle: TextStyle(color: colors.text3),
                 isDense: true,
-                contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 8,
+                  vertical: 8,
+                ),
               ),
               style: TextStyle(color: colors.text1),
             ),
@@ -213,7 +226,10 @@ class _SetRow extends StatelessWidget {
                 hintText: 'kg',
                 hintStyle: TextStyle(color: colors.text3),
                 isDense: true,
-                contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 8,
+                  vertical: 8,
+                ),
               ),
               style: TextStyle(color: colors.text1),
             ),
@@ -226,7 +242,10 @@ class _SetRow extends StatelessWidget {
               onTap: canRemove ? onRemove : null,
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Icon(Icons.remove_circle_outline, color: canRemove ? colors.danger : colors.text3),
+                child: Icon(
+                  Icons.remove_circle_outline,
+                  color: canRemove ? colors.danger : colors.text3,
+                ),
               ),
             ),
           ),

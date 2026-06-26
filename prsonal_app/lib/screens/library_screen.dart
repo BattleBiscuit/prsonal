@@ -129,10 +129,12 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                 final filtered = _query.isEmpty
                     ? exercises
                     : exercises
-                        .where((e) => e.name
-                            .toLowerCase()
-                            .contains(_query.toLowerCase()))
-                        .toList();
+                          .where(
+                            (e) => e.name.toLowerCase().contains(
+                              _query.toLowerCase(),
+                            ),
+                          )
+                          .toList();
                 if (filtered.isEmpty) {
                   return Center(
                     child: Text(
@@ -144,7 +146,8 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                 return ListView.separated(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   itemCount: filtered.length,
-                  separatorBuilder: (context, index) => const SizedBox(height: 12),
+                  separatorBuilder: (context, index) =>
+                      const SizedBox(height: 12),
                   itemBuilder: (context, i) {
                     final ex = filtered[i];
                     final musclesLabel = ex.primaryMuscles
@@ -163,8 +166,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                   },
                 );
               },
-              loading: () =>
-                  const Center(child: CircularProgressIndicator()),
+              loading: () => const Center(child: CircularProgressIndicator()),
               error: (e, _) => Center(child: Text('Error: $e')),
             ),
           ),

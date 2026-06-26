@@ -44,103 +44,112 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state, shell) => _ShellScaffold(shell: shell),
         branches: [
           // 0 – Workout
-          StatefulShellBranch(routes: [
-            GoRoute(
-              path: '/',
-              name: 'session-pick',
-              builder: (context, state) => const SessionPickScreen(),
-              routes: [
-                GoRoute(
-                  path: 'routines',
-                  name: 'routines',
-                  builder: (context, state) => const RoutinesScreen(),
-                  routes: [
-                    GoRoute(
-                      path: 'new',
-                      name: 'routine-create',
-                      builder: (context, state) => const RoutineEditScreen(),
-                    ),
-                    GoRoute(
-                      path: ':id/edit',
-                      name: 'routine-edit',
-                      builder: (context, state) => RoutineEditScreen(
-                        routineId: state.pathParameters['id'],
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/',
+                name: 'session-pick',
+                builder: (context, state) => const SessionPickScreen(),
+                routes: [
+                  GoRoute(
+                    path: 'routines',
+                    name: 'routines',
+                    builder: (context, state) => const RoutinesScreen(),
+                    routes: [
+                      GoRoute(
+                        path: 'new',
+                        name: 'routine-create',
+                        builder: (context, state) => const RoutineEditScreen(),
                       ),
-                    ),
-                  ],
-                ),
-                GoRoute(
-                  path: 'plans/new',
-                  name: 'plan-create',
-                  builder: (context, state) => const PlanEditScreen(),
-                ),
-                GoRoute(
-                  path: 'plans/:id/edit',
-                  name: 'plan-edit',
-                  builder: (context, state) => PlanEditScreen(
-                    planId: state.pathParameters['id'],
+                      GoRoute(
+                        path: ':id/edit',
+                        name: 'routine-edit',
+                        builder: (context, state) => RoutineEditScreen(
+                          routineId: state.pathParameters['id'],
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-                GoRoute(
-                  path: 'history',
-                  name: 'history',
-                  builder: (context, state) => const HistoryScreen(),
-                  routes: [
-                    GoRoute(
-                      path: ':id',
-                      name: 'history-detail',
-                      builder: (context, state) => HistoryDetailScreen(
-                        sessionId: state.pathParameters['id']!,
+                  GoRoute(
+                    path: 'plans/new',
+                    name: 'plan-create',
+                    builder: (context, state) => const PlanEditScreen(),
+                  ),
+                  GoRoute(
+                    path: 'plans/:id/edit',
+                    name: 'plan-edit',
+                    builder: (context, state) =>
+                        PlanEditScreen(planId: state.pathParameters['id']),
+                  ),
+                  GoRoute(
+                    path: 'history',
+                    name: 'history',
+                    builder: (context, state) => const HistoryScreen(),
+                    routes: [
+                      GoRoute(
+                        path: ':id',
+                        name: 'history-detail',
+                        builder: (context, state) => HistoryDetailScreen(
+                          sessionId: state.pathParameters['id']!,
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ]),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          ),
 
           // 1 – Exercises / Library
-          StatefulShellBranch(routes: [
-            GoRoute(
-              path: '/library',
-              name: 'library',
-              builder: (context, state) => const LibraryScreen(),
-            ),
-          ]),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/library',
+                name: 'library',
+                builder: (context, state) => const LibraryScreen(),
+              ),
+            ],
+          ),
 
           // 2 – Body
-          StatefulShellBranch(routes: [
-            GoRoute(
-              path: '/body',
-              name: 'body',
-              builder: (context, state) => const BodyScreen(),
-            ),
-          ]),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/body',
+                name: 'body',
+                builder: (context, state) => const BodyScreen(),
+              ),
+            ],
+          ),
 
           // 3 – Progress
-          StatefulShellBranch(routes: [
-            GoRoute(
-              path: '/progress',
-              name: 'progress',
-              builder: (context, state) => const ProgressScreen(),
-              routes: [
-                GoRoute(
-                  path: 'prs',
-                  name: 'all-prs',
-                  builder: (context, state) => const AllPrsScreen(),
-                ),
-              ],
-            ),
-          ]),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/progress',
+                name: 'progress',
+                builder: (context, state) => const ProgressScreen(),
+                routes: [
+                  GoRoute(
+                    path: 'prs',
+                    name: 'all-prs',
+                    builder: (context, state) => const AllPrsScreen(),
+                  ),
+                ],
+              ),
+            ],
+          ),
 
           // 4 – Settings
-          StatefulShellBranch(routes: [
-            GoRoute(
-              path: '/settings',
-              name: 'settings',
-              builder: (context, state) => const SettingsScreen(),
-            ),
-          ]),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/settings',
+                name: 'settings',
+                builder: (context, state) => const SettingsScreen(),
+              ),
+            ],
+          ),
         ],
       ),
     ],
@@ -158,10 +167,8 @@ class _ShellScaffold extends ConsumerWidget {
       body: shell,
       bottomNavigationBar: AppBottomNav(
         currentIndex: shell.currentIndex,
-        onTabSelected: (i) => shell.goBranch(
-          i,
-          initialLocation: i == shell.currentIndex,
-        ),
+        onTabSelected: (i) =>
+            shell.goBranch(i, initialLocation: i == shell.currentIndex),
       ),
     );
   }

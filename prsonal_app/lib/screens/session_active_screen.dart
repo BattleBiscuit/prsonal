@@ -18,11 +18,8 @@ Future<void> _showAppModal(
 }) {
   return showDialog<void>(
     context: context,
-    builder: (ctx) => AlertDialog(
-      title: Text(title),
-      content: body,
-      actions: actions,
-    ),
+    builder: (ctx) =>
+        AlertDialog(title: Text(title), content: body, actions: actions),
   );
 }
 
@@ -108,11 +105,13 @@ class _SessionActiveScreenState extends ConsumerState<SessionActiveScreen> {
                 Navigator.of(ctx).pop();
                 if (data.exerciseId != null) {
                   final sets = data.sets
-                      .map((s) => SetTarget.strength(
-                            reps: s.reps,
-                            weight: s.weight,
-                            isBodyweight: s.isBodyweight,
-                          ))
+                      .map(
+                        (s) => SetTarget.strength(
+                          reps: s.reps,
+                          weight: s.weight,
+                          isBodyweight: s.isBodyweight,
+                        ),
+                      )
                       .toList();
                   await ref
                       .read(sessionEngineProvider.notifier)
@@ -193,12 +192,14 @@ class _SessionActiveScreenState extends ConsumerState<SessionActiveScreen> {
                           plannedLabel: ex.sets[si].plannedLabel,
                           actualLabel: ex.sets[si].actualLabel,
                           isPR: ex.sets[si].isPR,
-                          primaryValue: ex.isCurrent &&
+                          primaryValue:
+                              ex.isCurrent &&
                                   si == state.cursor.setIndex &&
                                   i == state.cursor.exerciseIndex
                               ? _primaryValue
                               : null,
-                          secondaryValue: ex.isCurrent &&
+                          secondaryValue:
+                              ex.isCurrent &&
                                   si == state.cursor.setIndex &&
                                   i == state.cursor.exerciseIndex
                               ? _secondaryValue
@@ -218,8 +219,7 @@ class _SessionActiveScreenState extends ConsumerState<SessionActiveScreen> {
             ),
             // Bottom action button
             Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               child: SizedBox(
                 width: double.infinity,
                 height: 52,
@@ -228,10 +228,12 @@ class _SessionActiveScreenState extends ConsumerState<SessionActiveScreen> {
                     if (isResting) {
                       ref.read(sessionEngineProvider.notifier).cancelRest();
                     } else if (currentSet != null) {
-                      final primary = num.tryParse(_primaryValue) ??
+                      final primary =
+                          num.tryParse(_primaryValue) ??
                           currentSet.plannedReps ??
                           0;
-                      final secondary = num.tryParse(_secondaryValue) ??
+                      final secondary =
+                          num.tryParse(_secondaryValue) ??
                           currentSet.plannedWeight ??
                           0;
                       await ref
@@ -251,10 +253,12 @@ class _SessionActiveScreenState extends ConsumerState<SessionActiveScreen> {
                     isResting
                         ? 'Rest ${restRemaining}s'
                         : isLastSet
-                            ? 'Finish'
-                            : 'Done',
+                        ? 'Finish'
+                        : 'Done',
                     style: const TextStyle(
-                        fontSize: 16, fontWeight: FontWeight.w600),
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
               ),

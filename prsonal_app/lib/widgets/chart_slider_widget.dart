@@ -2,11 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:prsonal_app/theme/app_colors.dart';
 
 class ChartSlider extends StatefulWidget {
-  const ChartSlider({
-    super.key,
-    required this.pages,
-    required this.titles,
-  });
+  const ChartSlider({super.key, required this.pages, required this.titles});
 
   final List<Widget> pages;
   final List<String> titles;
@@ -32,7 +28,11 @@ class _ChartSliderState extends State<ChartSlider> {
       children: [
         Text(
           widget.titles[_page],
-          style: TextStyle(color: colors.text1, fontSize: 14, fontWeight: FontWeight.w600),
+          style: TextStyle(
+            color: colors.text1,
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+          ),
         ),
         const SizedBox(height: 8),
         Expanded(
@@ -45,21 +45,28 @@ class _ChartSliderState extends State<ChartSlider> {
         const SizedBox(height: 8),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: List.generate(widget.pages.length, (i) => GestureDetector(
-            onTap: () {
-              _ctrl.animateToPage(i, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
-            },
-            child: Container(
-              key: const Key('chart-slider-dot'),
-              width: 8,
-              height: 8,
-              margin: const EdgeInsets.symmetric(horizontal: 3),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: _page == i ? colors.accent : colors.text3,
+          children: List.generate(
+            widget.pages.length,
+            (i) => GestureDetector(
+              onTap: () {
+                _ctrl.animateToPage(
+                  i,
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeInOut,
+                );
+              },
+              child: Container(
+                key: const Key('chart-slider-dot'),
+                width: 8,
+                height: 8,
+                margin: const EdgeInsets.symmetric(horizontal: 3),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: _page == i ? colors.accent : colors.text3,
+                ),
               ),
             ),
-          )),
+          ),
         ),
       ],
     );

@@ -20,10 +20,7 @@ export '../widgets/history_set_table_widget.dart' show SetTableRow;
 /// [sets] is typed as [SetTableRow] so it can be consumed directly by the
 /// history-set-table widget and constructed in screen tests.
 class DetailExercise {
-  const DetailExercise({
-    required this.name,
-    required this.sets,
-  });
+  const DetailExercise({required this.name, required this.sets});
 
   final String name;
   final List<SetTableRow> sets;
@@ -100,15 +97,19 @@ class HistoryService {
     for (final row in rows) {
       final sets = await _db.workoutSetsForSession(row.id);
       final volume = _computeVolume(sets);
-      result.add(SessionSummary(
-        id: row.id,
-        routineName: row.routineName,
-        startedAt: row.startedAt,
-        durationLabel: formatSessionDuration(row.startedAt, row.completedAt),
-        volume: volume,
-        abandoned: sessionIsAbandoned(
-            status: row.status, totalVolume: volume),
-      ));
+      result.add(
+        SessionSummary(
+          id: row.id,
+          routineName: row.routineName,
+          startedAt: row.startedAt,
+          durationLabel: formatSessionDuration(row.startedAt, row.completedAt),
+          volume: volume,
+          abandoned: sessionIsAbandoned(
+            status: row.status,
+            totalVolume: volume,
+          ),
+        ),
+      );
     }
     return result;
   }
@@ -199,9 +200,9 @@ class HistoryService {
     bool? skipped,
   }) async {
     // Load existing set — we need session context for the full update.
-    final existing = await (_db.select(_db.workoutSets)
-          ..where((s) => s.id.equals(setId)))
-        .getSingleOrNull();
+    final existing = await (_db.select(
+      _db.workoutSets,
+    )..where((s) => s.id.equals(setId))).getSingleOrNull();
     if (existing == null) return;
 
     final effectiveReps = reps ?? existing.actualReps;
@@ -222,19 +223,21 @@ class HistoryService {
       );
     }
 
-    await _db.updateWorkoutSetRow(WorkoutSetsCompanion(
-      id: Value(setId),
-      sessionId: Value(existing.sessionId),
-      exercisePosition: Value(existing.exercisePosition),
-      exerciseName: Value(existing.exerciseName),
-      setIndex: Value(existing.setIndex),
-      type: Value(existing.type),
-      actualReps: Value(effectiveReps),
-      actualWeight: Value(weight ?? existing.actualWeight),
-      effectiveWeight: Value(newEffectiveWeight),
-      estimated1RM: Value(newEstimated1RM),
-      skipped: Value(skipped ?? existing.skipped),
-    ));
+    await _db.updateWorkoutSetRow(
+      WorkoutSetsCompanion(
+        id: Value(setId),
+        sessionId: Value(existing.sessionId),
+        exercisePosition: Value(existing.exercisePosition),
+        exerciseName: Value(existing.exerciseName),
+        setIndex: Value(existing.setIndex),
+        type: Value(existing.type),
+        actualReps: Value(effectiveReps),
+        actualWeight: Value(weight ?? existing.actualWeight),
+        effectiveWeight: Value(newEffectiveWeight),
+        estimated1RM: Value(newEstimated1RM),
+        skipped: Value(skipped ?? existing.skipped),
+      ),
+    );
   }
 
   // -------------------------------------------------------------------------
@@ -244,9 +247,7 @@ class HistoryService {
   double _computeVolume(List<WorkoutSet> sets) {
     double total = 0;
     for (final s in sets) {
-      if (!s.skipped &&
-          s.actualReps != null &&
-          s.effectiveWeight != null) {
+      if (!s.skipped && s.actualReps != null && s.effectiveWeight != null) {
         total += s.actualReps! * s.effectiveWeight!;
       }
     }

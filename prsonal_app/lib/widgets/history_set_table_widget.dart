@@ -51,17 +51,27 @@ class HistorySetTable extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 8),
           child: Text(
             exerciseName,
-            style: TextStyle(color: colors.text1, fontSize: 15, fontWeight: FontWeight.w600),
+            style: TextStyle(
+              color: colors.text1,
+              fontSize: 15,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ),
-        ...rows.map((row) => _SetRow(row: row, editing: editing, colors: colors)),
+        ...rows.map(
+          (row) => _SetRow(row: row, editing: editing, colors: colors),
+        ),
       ],
     );
   }
 }
 
 class _SetRow extends StatelessWidget {
-  const _SetRow({required this.row, required this.editing, required this.colors});
+  const _SetRow({
+    required this.row,
+    required this.editing,
+    required this.colors,
+  });
   final SetTableRow row;
   final bool editing;
   final AppColors colors;
@@ -74,10 +84,16 @@ class _SetRow extends StatelessWidget {
         children: [
           SizedBox(
             width: 28,
-            child: Text('${row.setIndex + 1}', style: TextStyle(color: colors.text3, fontSize: 13)),
+            child: Text(
+              '${row.setIndex + 1}',
+              style: TextStyle(color: colors.text3, fontSize: 13),
+            ),
           ),
           Expanded(
-            child: Text(row.plannedLabel, style: TextStyle(color: colors.text2, fontSize: 13)),
+            child: Text(
+              row.plannedLabel,
+              style: TextStyle(color: colors.text2, fontSize: 13),
+            ),
           ),
           if (row.isPR)
             Semantics(
@@ -91,7 +107,14 @@ class _SetRow extends StatelessWidget {
                   color: colors.accent.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(4),
                 ),
-                child: Text('PR', style: TextStyle(color: colors.accent, fontSize: 10, fontWeight: FontWeight.w700)),
+                child: Text(
+                  'PR',
+                  style: TextStyle(
+                    color: colors.accent,
+                    fontSize: 10,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
               ),
             ),
           if (row.skipped)
@@ -104,12 +127,22 @@ class _SetRow extends StatelessWidget {
                 style: TextStyle(color: colors.text1, fontSize: 13),
                 decoration: InputDecoration(
                   isDense: true,
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 6,
+                    vertical: 6,
+                  ),
                 ),
               ),
             )
           else
-            Text(row.actualLabel ?? '—', style: TextStyle(color: colors.text1, fontSize: 13, fontWeight: FontWeight.w500)),
+            Text(
+              row.actualLabel ?? '—',
+              style: TextStyle(
+                color: colors.text1,
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
         ],
       ),
     );

@@ -1,7 +1,9 @@
 name: CI
 
-# Full test + compliance suite for the prsonal_app Flutter project, which lives
-# in the prsonal_app/ subfolder of this repo.
+# Granular test + compliance suite for prsonal_app (lives in the prsonal_app/
+# subfolder). Each check is its own job so failures are isolated and run in
+# parallel. Generated code (*.g.dart) is committed, so most jobs use it directly;
+# the verify-codegen job guards against it drifting out of sync.
 
 on:
   push:
@@ -12,74 +14,79 @@ concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 
-env:
-  FLUTTER_VERSION: "3.44.4"
-
 defaults:
   run:
     working-directory: prsonal_app
 
 jobs:
-  test:
-    name: Analyze · Test · Spec coverage
+  format:
+    name: Format (lib)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: ./.github/actions/flutter-setup
+      - run: dart format --output none --set-exit-if-changed lib
 
-      # Drift's in-memory test database loads libsqlite3.so (the unversioned
-      # linker name lives in libsqlite3-dev).
-      - name: Install sqlite3
-        run: sudo apt-get update && sudo apt-get install -y libsqlite3-dev
+  analyze:
+    name: Analyze
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/flutter-setup
+      - run: flutter analyze
 
-      - uses: subosito/flutter-action@v2
-        with:
-          flutter-version: ${{ env.FLUTTER_VERSION }}
-          channel: stable
-          cache: true
+  spec-coverage:
+    name: Spec coverage gate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: bash scripts/check_spec_coverage.sh
 
-      - name: Install dependencies
-        run: flutter pub get
-
-      - name: Generate Drift code
+  verify-codegen:
+    name: Verify committed Drift codegen
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/flutter-setup
+      - name: Regenerate
         run: dart run build_runner build --delete-conflicting-outputs
+      - name: Fail if generated code is stale
+        run: |
+          if ! git diff --quiet -- '**/*.g.dart'; then
+            echo "::error::Committed *.g.dart is out of date. Run: dart run build_runner build --delete-conflicting-outputs"
+            git --no-pager diff --stat -- '**/*.g.dart'
+            exit 1
+          fi
 
-      - name: Analyze (lib strict; tests scoped)
-        run: flutter analyze
+  test:
+    name: Unit & widget tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install sqlite3 (Drift in-memory tests)
+        run: sudo apt-get update && sudo apt-get install -y libsqlite3-dev
+      - uses: ./.github/actions/flutter-setup
+      - run: flutter test --coverage --reporter expanded
+      - name: Upload coverage
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-lcov
+          path: prsonal_app/coverage/lcov.info
+          if-no-files-found: warn
 
-      - name: Run tests
-        run: flutter test --reporter expanded
-
-      - name: Spec coverage gate
-        run: bash scripts/check_spec_coverage.sh
-
-  build:
+  build-debug:
     name: Build debug APK
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: "17"
-
-      - uses: subosito/flutter-action@v2
-        with:
-          flutter-version: ${{ env.FLUTTER_VERSION }}
-          channel: stable
-          cache: true
-
-      - name: Install dependencies
-        run: flutter pub get
-
-      - name: Generate Drift code
-        run: dart run build_runner build --delete-conflicting-outputs
-
-      - name: Build debug APK
-        run: flutter build apk --debug
-
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
+      - uses: ./.github/actions/flutter-setup
+      - run: flutter build apk --debug
+      - uses: actions/upload-artifact@v4
         with:
           name: app-debug-apk
           path: prsonal_app/build/app/outputs/flutter-apk/app-debug.apk

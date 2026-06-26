@@ -38,27 +38,25 @@ class BodyService {
 
   Stream<List<BodyMetric>> watchHistory(BodyMetricType? type, {int? days}) {
     if (type == null) return Stream.value([]);
-    return _db.watchBodyMetrics(type).map(
-      (rows) => rows.map(_toModel).toList(),
-    );
+    return _db
+        .watchBodyMetrics(type)
+        .map((rows) => rows.map(_toModel).toList());
   }
 
   // -------------------------------------------------------------------------
   // log — inserts a metric
   // -------------------------------------------------------------------------
 
-  Future<void> log(
-    BodyMetricType? type,
-    double value, {
-    DateTime? at,
-  }) async {
+  Future<void> log(BodyMetricType? type, double value, {DateTime? at}) async {
     if (type == null) return;
-    await _db.insertBodyMetricRow(db_lib.BodyMetricsCompanion.insert(
-      id: _uuid.v4(),
-      type: type,
-      value: value,
-      loggedAt: at ?? DateTime.now(),
-    ));
+    await _db.insertBodyMetricRow(
+      db_lib.BodyMetricsCompanion.insert(
+        id: _uuid.v4(),
+        type: type,
+        value: value,
+        loggedAt: at ?? DateTime.now(),
+      ),
+    );
   }
 
   // -------------------------------------------------------------------------
@@ -84,11 +82,11 @@ class BodyService {
 
   /// Maps a Drift row to the pure-model [BodyMetric].
   BodyMetric _toModel(db_lib.BodyMetric row) => BodyMetric(
-        id: row.id,
-        type: row.type,
-        value: row.value,
-        loggedAt: row.loggedAt,
-      );
+    id: row.id,
+    type: row.type,
+    value: row.value,
+    loggedAt: row.loggedAt,
+  );
 }
 
 // ---------------------------------------------------------------------------

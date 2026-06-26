@@ -42,15 +42,15 @@ class _BodyScreenState extends ConsumerState<BodyScreen> {
           children: [
             Text(
               'Log ${type.label}',
-              style: const TextStyle(
-                  fontSize: 18, fontWeight: FontWeight.w600),
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 16),
             TextField(
               controller: ctrl,
               autofocus: true,
-              keyboardType:
-                  const TextInputType.numberWithOptions(decimal: true),
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
               decoration: InputDecoration(
                 labelText: '${type.label} (${type.unit})',
               ),
@@ -97,50 +97,55 @@ class _BodyScreenState extends ConsumerState<BodyScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                  // 2-column grid of metric cards, built eagerly
-                  for (var row = 0; row < 3; row++) ...[
-                    Row(
-                      children: [
-                        for (var col = 0; col < 2; col++) ...[
-                          Expanded(
-                            child: Builder(builder: (_) {
-                              final typeIndex = row * 2 + col;
-                              final type = BodyMetricType.values[typeIndex];
-                              final metric = latest[type];
-                              final valueLabel = metric != null
-                                  ? '${metric.value} ${type.unit}'
-                                  : '—';
-                              final dateLabel = metric != null
-                                  ? dateFmt.format(metric.loggedAt)
-                                  : null;
-                              return BodyMetricCard(
-                                label: type.label,
-                                valueLabel: valueLabel,
-                                dateLabel: dateLabel,
-                                icon: _icons[type] ?? Icons.monitor_weight_outlined,
-                                onTap: () => _showLogSheet(type),
-                              );
-                            }),
-                          ),
-                          if (col == 0) const SizedBox(width: 12),
+                    // 2-column grid of metric cards, built eagerly
+                    for (var row = 0; row < 3; row++) ...[
+                      Row(
+                        children: [
+                          for (var col = 0; col < 2; col++) ...[
+                            Expanded(
+                              child: Builder(
+                                builder: (_) {
+                                  final typeIndex = row * 2 + col;
+                                  final type = BodyMetricType.values[typeIndex];
+                                  final metric = latest[type];
+                                  final valueLabel = metric != null
+                                      ? '${metric.value} ${type.unit}'
+                                      : '—';
+                                  final dateLabel = metric != null
+                                      ? dateFmt.format(metric.loggedAt)
+                                      : null;
+                                  return BodyMetricCard(
+                                    label: type.label,
+                                    valueLabel: valueLabel,
+                                    dateLabel: dateLabel,
+                                    icon:
+                                        _icons[type] ??
+                                        Icons.monitor_weight_outlined,
+                                    onTap: () => _showLogSheet(type),
+                                  );
+                                },
+                              ),
+                            ),
+                            if (col == 0) const SizedBox(width: 12),
+                          ],
                         ],
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                  ],
-                  const SizedBox(height: 8),
-                  if (weightHistory.isNotEmpty) ...[
-                    Text(
-                      'BODYWEIGHT HISTORY',
-                      style: TextStyle(
-                        color: colors.text3,
-                        fontSize: 11,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 1.2,
                       ),
-                    ),
+                      const SizedBox(height: 12),
+                    ],
                     const SizedBox(height: 8),
-                    ...weightHistory.map((m) => Padding(
+                    if (weightHistory.isNotEmpty) ...[
+                      Text(
+                        'BODYWEIGHT HISTORY',
+                        style: TextStyle(
+                          color: colors.text3,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 1.2,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      ...weightHistory.map(
+                        (m) => Padding(
                           padding: const EdgeInsets.symmetric(vertical: 4),
                           child: Row(
                             children: [
@@ -148,15 +153,18 @@ class _BodyScreenState extends ConsumerState<BodyScreen> {
                                 child: Text(
                                   dateFmt.format(m.loggedAt),
                                   style: TextStyle(
-                                      color: colors.text2, fontSize: 13),
+                                    color: colors.text2,
+                                    fontSize: 13,
+                                  ),
                                 ),
                               ),
                               Text(
                                 '${m.value} ${m.type.unit}',
                                 style: TextStyle(
-                                    color: colors.text1,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500),
+                                  color: colors.text1,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                ),
                               ),
                               const SizedBox(width: 12),
                               Semantics(
@@ -164,17 +172,20 @@ class _BodyScreenState extends ConsumerState<BodyScreen> {
                                 button: true,
                                 container: true,
                                 child: GestureDetector(
-                                  onTap: () =>
-                                      service.deleteEntry(m.id),
-                                  child: Icon(Icons.close,
-                                      color: colors.text3, size: 18),
+                                  onTap: () => service.deleteEntry(m.id),
+                                  child: Icon(
+                                    Icons.close,
+                                    color: colors.text3,
+                                    size: 18,
+                                  ),
                                 ),
                               ),
                             ],
                           ),
-                        )),
+                        ),
+                      ),
+                    ],
                   ],
-                ],
                 ),
               );
             },

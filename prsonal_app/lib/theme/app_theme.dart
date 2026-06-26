@@ -32,7 +32,8 @@ final ThemeData appTheme = ThemeData(
   ),
   navigationBarTheme: NavigationBarThemeData(
     backgroundColor: const Color(0xFF1A1A1A), // surface-1
-    indicatorColor: Colors.transparent, // no pill; gym-app tints the icon/label only
+    indicatorColor:
+        Colors.transparent, // no pill; gym-app tints the icon/label only
     surfaceTintColor: Colors.transparent,
     labelTextStyle: WidgetStateProperty.resolveWith(
       (states) => TextStyle(
@@ -58,12 +59,14 @@ final ThemeData appTheme = ThemeData(
     headlineSmall: TextStyle(fontSize: 24, fontWeight: FontWeight.w700), // 2xl
     titleLarge: TextStyle(fontSize: 20, fontWeight: FontWeight.w700), // xl
     titleMedium: TextStyle(fontSize: 18, fontWeight: FontWeight.w600), // lg
-    bodyLarge: TextStyle(fontSize: 16, fontWeight: FontWeight.w400, height: 1.5), // base
+    bodyLarge: TextStyle(
+      fontSize: 16,
+      fontWeight: FontWeight.w400,
+      height: 1.5,
+    ), // base
     bodyMedium: TextStyle(fontSize: 14, fontWeight: FontWeight.w400), // sm
     bodySmall: TextStyle(fontSize: 14, fontWeight: FontWeight.w400), // sm
     labelSmall: TextStyle(fontSize: 12, fontWeight: FontWeight.w400), // xs
   ),
-  extensions: const [
-    AppColors.dark,
-  ],
+  extensions: const [AppColors.dark],
 );

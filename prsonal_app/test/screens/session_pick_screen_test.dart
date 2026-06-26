@@ -1,7 +1,10 @@
+import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:prsonal_app/database/app_database.dart';
+import 'package:prsonal_app/providers/app_providers.dart';
 import 'package:prsonal_app/providers/session_pick_providers.dart';
 import 'package:prsonal_app/screens/session_pick_screen.dart';
 
@@ -104,6 +107,36 @@ void main() {
         (tester) async {
       await _pump(tester);
       expect(find.text('3'), findsOneWidget);
+    });
+
+    testWidgets('AC-009: The screen reactively reflects newly created or modified plans and routines without an app restart — its data sources recompute when plans, plan entries, routines, or completed sessions change',
+        (tester) async {
+      // Use a real (empty) in-memory database with the real providers, so the
+      // backing future providers exercise their reactive recompute path.
+      final db = AppDatabase.forTesting(NativeDatabase.memory());
+
+      await tester.pumpWidget(ProviderScope(
+        overrides: [appDatabaseProvider.overrideWithValue(db)],
+        child: MaterialApp.router(routerConfig: _router()),
+      ));
+      await tester.pumpAndSettle();
+
+      // Starts empty.
+      expect(find.text('Nothing here yet'), findsOneWidget);
+
+      // Create a routine after the screen has already built and cached.
+      await db.insertRoutine(name: 'Mobility');
+      await tester.pumpAndSettle();
+
+      // The newly created routine now appears without rebuilding the app.
+      expect(find.text('Nothing here yet'), findsNothing);
+      expect(find.text('Mobility'), findsOneWidget);
+
+      // Tear down the widget tree (cancels drift stream subscriptions) and
+      // close the database before the test ends so no timers stay pending.
+      await tester.pumpWidget(const SizedBox());
+      await tester.pumpAndSettle();
+      await db.close();
     });
   });
 }

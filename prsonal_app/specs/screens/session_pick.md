@@ -1,7 +1,7 @@
 ---
 name: SessionPick
 type: screen
-status: approved
+status: implemented
 ---
 
 ## Description
@@ -66,3 +66,4 @@ router redirects here straight to `session-active`, so no resume banner is shown
 - AC-006: Selecting "New routine" navigates to routine-create and "New plan" navigates to plan-create
 - AC-007: Shows an empty state when there are no plans and no routines
 - AC-008: A plan block shows its streak count when the streak is greater than zero
+- AC-009: The screen reactively reflects newly created or modified plans and routines without an app restart — its data sources recompute when plans, plan entries, routines, or completed sessions change

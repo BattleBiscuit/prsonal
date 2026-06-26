@@ -565,6 +565,11 @@ class AppDatabase extends _$AppDatabase {
   // PlanEntry queries
   // =========================================================================
 
+  /// Returns a stream that emits whenever any plan entry changes.
+  Stream<List<PlanEntry>> watchAllPlanEntries() {
+    return select(planEntries).watch();
+  }
+
   /// Returns all entries for a plan in order.
   Future<List<PlanEntry>> planEntriesForPlan(String planId) {
     return (select(planEntries)
@@ -592,6 +597,14 @@ class AppDatabase extends _$AppDatabase {
           ..orderBy([(s) => OrderingTerm.desc(s.startedAt)])
           ..limit(limit ?? -1, offset: offset))
         .get();
+  }
+
+  /// Returns a stream of completed sessions, newest first.
+  Stream<List<WorkoutSession>> watchCompletedSessions() {
+    return (select(workoutSessions)
+          ..where((s) => s.status.equals(SessionStatus.completed.name))
+          ..orderBy([(s) => OrderingTerm.desc(s.startedAt)]))
+        .watch();
   }
 
   /// Returns a count of all completed sessions.

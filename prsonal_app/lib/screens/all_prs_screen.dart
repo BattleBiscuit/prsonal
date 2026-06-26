@@ -1,0 +1,52 @@
+import 'package:flutter/material.dart';
+import '../widgets/brand_title.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
+import '../providers/progress_providers.dart';
+import '../theme/app_colors.dart';
+import '../widgets/pr_row_widget.dart';
+
+class AllPrsScreen extends ConsumerWidget {
+  const AllPrsScreen({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final colors = Theme.of(context).extension<AppColors>() ?? AppColors.dark;
+    final prsAsync = ref.watch(allPrsProvider);
+
+    return Scaffold(
+      backgroundColor: colors.bg,
+      appBar: AppBar(
+        title: const BrandTitle('Personal Records'),
+        backgroundColor: colors.bg,
+      ),
+      body: prsAsync.when(
+        data: (prs) {
+          if (prs.isEmpty) {
+            return Center(
+              child: Text(
+                'No personal records yet',
+                style: TextStyle(color: colors.text2, fontSize: 16),
+              ),
+            );
+          }
+          final fmt = DateFormat('d MMM yyyy');
+          return ListView.builder(
+            itemCount: prs.length,
+            itemBuilder: (context, i) {
+              final pr = prs[i];
+              return PrRow(
+                exerciseName: pr.exerciseName,
+                dateLabel: fmt.format(pr.date),
+                weightLabel: '${pr.weight}kg',
+                oneRmLabel: '1RM: ${pr.oneRepMax.toStringAsFixed(1)}kg',
+              );
+            },
+          );
+        },
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (e, _) => Center(child: Text('Error: $e')),
+      ),
+    );
+  }
+}

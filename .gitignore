@@ -1,0 +1,14 @@
+# Local Claude Code config (personal, not shared)
+.claude/
+
+# Flutter/Dart build artifacts (each app also has its own .gitignore;
+# these are repo-root safety nets so the multi-GB build dirs never get staged)
+**/build/
+**/.dart_tool/
+**/.flutter-plugins-dependencies
+**/.testlib/
+
+# IDE / OS
+*.iml
+.idea/
+.DS_Store

@@ -1,0 +1,17 @@
+include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  exclude:
+    - packages/**
+  errors:
+    missing_required_param: error
+    missing_return: error
+    dead_code: warning
+
+linter:
+  rules:
+    prefer_single_quotes: true
+    always_declare_return_types: true
+    avoid_dynamic_calls: true
+    avoid_print: true
+    unawaited_futures: true

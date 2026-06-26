@@ -6,7 +6,7 @@ const _bg = Color(0xFF0F0F0F);
 const _surface1 = Color(0xFF1A1A1A);
 const _surface2 = Color(0xFF242424);
 const _surface3 = Color(0xFF2E2E2E);
-const _accent = Color(0xFFE8FF47);
+const _accent = Color(0xFFEDEDED);
 const _onAccent = Color(0xFF0F0F0F);
 const _text1 = Color(0xFFF5F5F5);
 const _text2 = Color(0xFF9E9E9E);
@@ -156,7 +156,7 @@ final ThemeData appTheme = ThemeData(
     activeTrackColor: _accent,
     inactiveTrackColor: _surface3,
     thumbColor: _accent,
-    overlayColor: Color(0x33E8FF47),
+    overlayColor: Color(0x33EDEDED),
   ),
 
   switchTheme: SwitchThemeData(
@@ -183,7 +183,7 @@ final ThemeData appTheme = ThemeData(
 
   textSelectionTheme: const TextSelectionThemeData(
     cursorColor: _accent,
-    selectionColor: Color(0x4DE8FF47),
+    selectionColor: Color(0x4DEDEDED),
     selectionHandleColor: _accent,
   ),
 

@@ -21,17 +21,9 @@ class StatCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = Theme.of(context).extension<AppColors>() ?? AppColors.dark;
 
-    Color toneColor;
-    switch (tone) {
-      case StatTone.success:
-        toneColor = colors.success;
-      case StatTone.danger:
-        toneColor = colors.danger;
-      case StatTone.warning:
-        toneColor = colors.warning;
-      case StatTone.neutral:
-        toneColor = colors.accent;
-    }
+    // Graphite is monochrome: tone no longer maps to a hue. The value's own
+    // sign ("+8%" / "-5%") carries up/down; the icon stays chalk.
+    final Color toneColor = colors.accent;
 
     return Container(
       decoration: BoxDecoration(

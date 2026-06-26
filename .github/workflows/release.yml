@@ -1,9 +1,17 @@
 name: Release
 
-# On a version tag (vX.Y.Z): builds a signed App Bundle (.aab, for the Play
-# Store) and a signed APK (for direct download/sideload), attaches both to a
-# GitHub Release as versioned artifacts, and — when a Play service account is
-# configured — uploads the bundle to the Play internal track.
+# On every push to main: derives the next version automatically (patch-bumps the
+# latest vX.Y.Z git tag — the version in pubspec.yaml is ignored), builds a signed
+# App Bundle (.aab, for the Play Store) and a signed APK (for direct download/
+# sideload), tags the commit, attaches both binaries to a GitHub Release, and —
+# when a Play service account is configured — uploads the bundle to the Play
+# internal track.
+#
+# Versioning:
+#   build-name   (Android versionName) = X.Y.(Z+1), derived from the latest tag
+#   build-number (Android versionCode) = github.run_number (monotonic, never reused)
+# Both are passed to `flutter build` via --build-name/--build-number, so the
+# `version:` field in pubspec.yaml is never consulted.
 #
 # Required repository secrets (Settings → Secrets and variables → Actions):
 #   ANDROID_KEYSTORE_BASE64    - `base64 -w0 upload-keystore.jks`
@@ -17,8 +25,13 @@ name: Release
 
 on:
   push:
-    tags: ["v*.*.*"]
+    branches: [main]
   workflow_dispatch:
+
+# Serialize releases so two pushes can't race on tag creation / version numbers.
+concurrency:
+  group: release
+  cancel-in-progress: false
 
 defaults:
   run:
@@ -29,12 +42,41 @@ jobs:
     name: Build & publish versioned artifacts
     runs-on: ubuntu-latest
     permissions:
-      contents: write # required to create the GitHub Release
+      contents: write # required to create the tag and the GitHub Release
     env:
       KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
       PLAY_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # need full tag history to derive the next version
+
+      - name: Determine next version
+        id: version
+        working-directory: prsonal_app
+        run: |
+          # Latest semver tag (vX.Y.Z); default to v0.0.0 if none exist yet.
+          latest="$(git tag --list 'v*.*.*' --sort=-v:refname | head -n1)"
+          latest="${latest:-v0.0.0}"
+          echo "Latest tag: $latest"
+
+          ver="${latest#v}"
+          major="${ver%%.*}"
+          rest="${ver#*.}"
+          minor="${rest%%.*}"
+          patch="${rest##*.}"
+          patch=$((patch + 1))
+
+          version_name="${major}.${minor}.${patch}"
+          tag="v${version_name}"
+          build_number="${{ github.run_number }}"
+
+          echo "Next version: $tag (build $build_number)"
+          {
+            echo "version_name=$version_name"
+            echo "tag=$tag"
+            echo "build_number=$build_number"
+          } >> "$GITHUB_OUTPUT"
 
       - uses: actions/setup-java@v4
         with:
@@ -63,34 +105,42 @@ jobs:
         run: dart run build_runner build --delete-conflicting-outputs
 
       - name: Build App Bundle (.aab)
-        run: flutter build appbundle --release
+        run: |
+          flutter build appbundle --release \
+            --build-name=${{ steps.version.outputs.version_name }} \
+            --build-number=${{ steps.version.outputs.build_number }}
 
       - name: Build APK (.apk)
-        run: flutter build apk --release
+        run: |
+          flutter build apk --release \
+            --build-name=${{ steps.version.outputs.version_name }} \
+            --build-number=${{ steps.version.outputs.build_number }}
 
       - name: Stage versioned artifacts
         env:
-          VERSION: ${{ github.ref_name }}
+          TAG: ${{ steps.version.outputs.tag }}
         run: |
           mkdir -p dist
-          cp build/app/outputs/bundle/release/app-release.aab "dist/prsonal-${VERSION}.aab"
-          cp build/app/outputs/flutter-apk/app-release.apk "dist/prsonal-${VERSION}.apk"
+          cp build/app/outputs/bundle/release/app-release.aab "dist/prsonal-${TAG}.aab"
+          cp build/app/outputs/flutter-apk/app-release.apk "dist/prsonal-${TAG}.apk"
           ls -la dist
 
       - name: Upload workflow artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: prsonal-${{ github.ref_name }}
+          name: prsonal-${{ steps.version.outputs.tag }}
           path: prsonal_app/dist/*
           if-no-files-found: error
 
-      - name: Create GitHub Release
-        if: startsWith(github.ref, 'refs/tags/')
+      - name: Create tag and GitHub Release
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ steps.version.outputs.tag }}
+          target_commitish: ${{ github.sha }}
+          name: ${{ steps.version.outputs.tag }}
           files: |
-            prsonal_app/dist/prsonal-${{ github.ref_name }}.aab
-            prsonal_app/dist/prsonal-${{ github.ref_name }}.apk
+            prsonal_app/dist/prsonal-${{ steps.version.outputs.tag }}.aab
+            prsonal_app/dist/prsonal-${{ steps.version.outputs.tag }}.apk
           generate_release_notes: true
           fail_on_unmatched_files: true
 

@@ -91,3 +91,40 @@ jobs:
           name: app-debug-apk
           path: prsonal_app/build/app/outputs/flutter-apk/app-debug.apk
           if-no-files-found: error
+
+  # After a green build on main, patch-bump the latest vX.Y.Z tag and push the new
+  # tag. The push triggers the Release workflow (see release.yml). The tag is the
+  # source of truth for the version — pubspec.yaml is never consulted.
+  #
+  # NOTE: the tag MUST be pushed with a Personal Access Token (RELEASE_PAT secret),
+  # not the default GITHUB_TOKEN. GitHub deliberately does not start a new workflow
+  # run for events created by GITHUB_TOKEN, so a tag pushed with it would never fire
+  # release.yml. Create a fine-grained PAT with "Contents: read and write" on this
+  # repo and store it as the RELEASE_PAT secret.
+  tag:
+    name: Tag release
+    needs: [format, analyze, spec-coverage, verify-codegen, test, build-debug]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # need full tag history to derive the next version
+          token: ${{ secrets.RELEASE_PAT }}
+      - name: Compute and push next tag
+        working-directory: prsonal_app
+        run: |
+          latest="$(git tag --list 'v*.*.*' --sort=-v:refname | head -n1)"
+          latest="${latest:-v0.0.0}"
+          ver="${latest#v}"
+          major="${ver%%.*}"
+          rest="${ver#*.}"
+          minor="${rest%%.*}"
+          patch="${rest##*.}"
+          patch=$((patch + 1))
+          tag="v${major}.${minor}.${patch}"
+          echo "Latest tag: $latest -> new tag: $tag"
+          git tag "$tag"
+          git push origin "$tag"

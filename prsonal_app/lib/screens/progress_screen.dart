@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import '../providers/progress_providers.dart';
 import '../theme/app_colors.dart';
+import '../theme/app_spacing.dart';
 import '../widgets/chart_slider_widget.dart';
 import '../widgets/pr_row_widget.dart';
 import '../widgets/stat_card_widget.dart';
@@ -228,7 +229,7 @@ class _RangeButton extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(
           color: selected ? colors.accent : colors.surface2,
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(radiusFull),
         ),
         child: Text(
           label,

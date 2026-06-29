@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:prsonal_app/models/exercise.dart';
 import 'package:prsonal_app/theme/app_colors.dart';
+import 'package:prsonal_app/theme/app_spacing.dart';
 
 class LibraryExerciseData {
   const LibraryExerciseData({
@@ -219,7 +220,7 @@ class _TypeChip extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(
           color: selected ? colors.accent : colors.surface2,
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(radiusFull),
         ),
         child: Text(
           label,
@@ -256,7 +257,7 @@ class _MuscleChip extends StatelessWidget {
           color: selected
               ? colors.accentDim.withValues(alpha: 0.2)
               : colors.surface2,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(radiusFull),
           border: Border.all(color: selected ? colors.accent : colors.border),
         ),
         child: Text(

@@ -108,10 +108,12 @@ the brand accent.
 The app is **hard-edged**: panels have square 90° corners. The graduated rounded scale is retired —
 `sm`=`md`=`lg`=`xl`=**0**. Only genuine **pills/stadiums** stay round: `full`=9999 (pill/circle).
 
-- **Square (0):** buttons, inputs/textareas, bottom sheets & modals, dialogs, badges, the set-row
-  chips, metric tiles, progress bar, chart bars — every rounded rectangle.
-- **Pill (`full`):** FAB, filter chips, the range/type **toggles**, the switch, the pill `AppBadge`,
+- **Square (0):** buttons, inputs/textareas, bottom sheets & modals, dialogs, metric tiles,
+  cards, progress bar, chart bars — every panel and rounded rectangle.
+- **Pill (`full`):** FAB, filter chips, the range/type **toggles**, the switch, the `AppBadge`,
   and the set-kind chip. These read as deliberate round accents against the squared everything-else.
+- **Pills use the `radiusFull` token — never a hand-picked radius.** Any soft `circular(16…28)`
+  value is a bug: a pill is `radiusFull`, everything else is `0`. There is no in-between.
 - The brand mark's curves are logo geometry, not a panel radius, and are unaffected.
 
 ## Layout constants

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:prsonal_app/theme/app_colors.dart';
+import 'package:prsonal_app/theme/app_spacing.dart';
 
 enum AppBadgeVariant { neutral, success, danger, warning, accent }
 
@@ -47,7 +48,7 @@ class AppBadge extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 8),
       decoration: BoxDecoration(
         color: backgroundColor,
-        borderRadius: BorderRadius.circular(999),
+        borderRadius: BorderRadius.circular(radiusFull),
       ),
       child: Text(
         label,

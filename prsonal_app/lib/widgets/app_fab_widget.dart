@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:prsonal_app/theme/app_colors.dart';
+import 'package:prsonal_app/theme/app_spacing.dart';
 
 class AppFab extends StatelessWidget {
   const AppFab({
@@ -23,7 +24,7 @@ class AppFab extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
         decoration: BoxDecoration(
           color: colors.accent,
-          borderRadius: BorderRadius.circular(28),
+          borderRadius: BorderRadius.circular(radiusFull),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,

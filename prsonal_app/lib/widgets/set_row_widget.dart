@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:prsonal_app/models/exercise.dart';
 import 'package:prsonal_app/services/session_service.dart' show ActiveSetStatus;
 import 'package:prsonal_app/theme/app_colors.dart';
+import 'package:prsonal_app/theme/app_spacing.dart';
 
 class SetRow extends StatelessWidget {
   const SetRow({
@@ -245,7 +246,7 @@ class SetRow extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 8),
               decoration: BoxDecoration(
                 color: colors.surface3,
-                borderRadius: BorderRadius.circular(999),
+                borderRadius: BorderRadius.circular(radiusFull),
               ),
               child: Text(
                 'Skip',

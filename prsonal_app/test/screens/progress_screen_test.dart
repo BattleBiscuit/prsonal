@@ -124,6 +124,8 @@ void main() {
       tester,
     ) async {
       await _pump(tester);
+      await tester.ensureVisible(find.text('Push Day A'));
+      await tester.pumpAndSettle();
       await tester.tap(find.text('Push Day A'));
       await tester.pumpAndSettle();
       expect(find.text('DETAIL'), findsOneWidget);

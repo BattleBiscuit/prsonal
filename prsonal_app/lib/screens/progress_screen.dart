@@ -8,7 +8,9 @@ import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
 import '../widgets/chart_slider_widget.dart';
 import '../widgets/pr_row_widget.dart';
+import '../widgets/radar_chart_widget.dart';
 import '../widgets/stat_card_widget.dart';
+import '../widgets/volume_chart_widget.dart';
 
 class ProgressScreen extends ConsumerWidget {
   const ProgressScreen({super.key});
@@ -113,16 +115,23 @@ class ProgressScreen extends ConsumerWidget {
               error: (e, _) => Text('Error: $e'),
             ),
             const SizedBox(height: 8),
-            // Chart slider — compact height
-            SizedBox(
-              height: 120,
-              child: ChartSlider(
-                titles: const ['Muscle Balance', 'Volume'],
-                pages: [
-                  const Center(child: Text('Muscle Balance')),
-                  const Center(child: Text('Volume')),
-                ],
+            // Chart slider — muscle balance + volume
+            summaryAsync.when(
+              data: (summary) => SizedBox(
+                height: 240,
+                child: ChartSlider(
+                  titles: const ['Muscle Balance', 'Volume'],
+                  pages: [
+                    MuscleRadarChart(data: summary.muscleBalance),
+                    VolumeChart(data: summary.sessionVolumes),
+                  ],
+                ),
               ),
+              loading: () => const SizedBox(
+                height: 240,
+                child: Center(child: CircularProgressIndicator()),
+              ),
+              error: (e, _) => Text('Error: $e'),
             ),
             const SizedBox(height: 8),
             // Recent PRs

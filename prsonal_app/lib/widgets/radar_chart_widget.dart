@@ -12,7 +12,14 @@ class MuscleRadarChart extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = Theme.of(context).extension<AppColors>() ?? AppColors.dark;
 
-    if (data.isEmpty) {
+    // Plot the seven fixed muscle axes (missing muscles treated as 0) so the
+    // radar always has a stable shape. This also keeps the dataset at 7
+    // entries — fl_chart throws for a RadarDataSet with 1 or 2 entries.
+    final muscles = Muscle.values;
+    final values = muscles.map((m) => data[m] ?? 0.0).toList();
+
+    // Empty state when there is nothing to show (all counts zero).
+    if (values.every((v) => v == 0)) {
       return Center(
         child: Text(
           'Not enough data yet',
@@ -20,9 +27,6 @@ class MuscleRadarChart extends StatelessWidget {
         ),
       );
     }
-
-    final muscles = data.keys.toList();
-    final values = muscles.map((m) => data[m]!).toList();
 
     return RadarChart(
       RadarChartData(

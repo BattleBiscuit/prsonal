@@ -31,5 +31,23 @@ void main() {
         expect(find.text('Not enough data yet'), findsOneWidget);
       },
     );
+
+    testWidgets(
+      'AC-001: renders the radar with fewer than 3 trained muscles (all 7 axes)',
+      (tester) async {
+        // fl_chart throws for a RadarDataSet with 1–2 entries; plotting all
+        // seven fixed axes keeps the dataset valid regardless of how many
+        // muscles have data.
+        await tester.pumpWidget(
+          _wrap(
+            const app.MuscleRadarChart(
+              data: {Muscle.chest: 3, Muscle.legs: 2},
+            ),
+          ),
+        );
+        expect(tester.takeException(), isNull);
+        expect(find.byType(fl.RadarChart), findsOneWidget);
+      },
+    );
   });
 }

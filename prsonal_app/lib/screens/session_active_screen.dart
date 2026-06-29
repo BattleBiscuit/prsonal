@@ -66,8 +66,7 @@ class _SessionActiveScreenState extends ConsumerState<SessionActiveScreen> {
   }
 
   Future<void> _completeCurrentSet(ActiveSet currentSet) async {
-    final primary =
-        num.tryParse(_primaryValue) ?? currentSet.plannedReps ?? 0;
+    final primary = num.tryParse(_primaryValue) ?? currentSet.plannedReps ?? 0;
     final secondary =
         num.tryParse(_secondaryValue) ?? currentSet.plannedWeight ?? 0;
     await ref

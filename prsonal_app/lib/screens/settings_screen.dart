@@ -12,7 +12,10 @@ class SettingsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colors = Theme.of(context).extension<AppColors>() ?? AppColors.dark;
-    final version = ref.watch(appVersionProvider);
+    final version = ref.watch(appVersionProvider).maybeWhen(
+          data: (v) => 'Version $v',
+          orElse: () => 'Version …',
+        );
 
     return Scaffold(
       backgroundColor: colors.bg,
@@ -38,7 +41,7 @@ class SettingsScreen extends ConsumerWidget {
           Padding(
             padding: const EdgeInsets.all(16),
             child: Text(
-              'Version $version',
+              version,
               style: TextStyle(color: colors.text3, fontSize: 13),
             ),
           ),

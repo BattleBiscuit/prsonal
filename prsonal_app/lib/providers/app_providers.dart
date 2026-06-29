@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import '../database/app_database.dart';
 import '../services/library_service.dart';
 import '../services/plans_service.dart';
@@ -92,8 +93,16 @@ final planDraftProvider = FutureProvider.family<PlanDraft?, String?>((
 // App meta
 // ---------------------------------------------------------------------------
 
-/// App version string. Override in tests.
-final appVersionProvider = Provider<String>((ref) => '1.0.0');
+/// App version string, read at runtime from the build via `package_info_plus`.
+///
+/// In release builds this is the Android `versionName`, which the release
+/// workflow sets from the git tag (`--build-name=${tag#v}`), so the app
+/// reflects the GitHub Release version. In dev builds it falls back to the
+/// `version:` in `pubspec.yaml`. Override in tests.
+final appVersionProvider = FutureProvider<String>((ref) async {
+  final info = await PackageInfo.fromPlatform();
+  return info.version;
+});
 
 /// A function that presents a file picker and returns the JSON string or null.
 /// Override in tests with a stub.

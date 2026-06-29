@@ -8,7 +8,8 @@ import 'package:prsonal_app/services/backup_service.dart';
 
 class _MockBackupService extends Mock implements BackupService {}
 
-Future<_MockBackupService> _pump(WidgetTester tester, {String? pickedJson}) async {
+Future<_MockBackupService> _pump(WidgetTester tester,
+    {String? pickedJson, String version = '1.0.0'}) async {
   final service = _MockBackupService();
   when(() => service.counts()).thenAnswer((_) async => {
         BackupSection.library: 5,
@@ -23,7 +24,7 @@ Future<_MockBackupService> _pump(WidgetTester tester, {String? pickedJson}) asyn
   await tester.pumpWidget(ProviderScope(
     overrides: [
       backupServiceProvider.overrideWithValue(service),
-      appVersionProvider.overrideWithValue('1.0.0'),
+      appVersionProvider.overrideWith((ref) async => version),
       backupFilePickerProvider.overrideWithValue(() async => pickedJson),
     ],
     child: const MaterialApp(home: SettingsScreen()),
@@ -73,6 +74,14 @@ void main() {
     testWidgets('AC-005: Renders the app version', (tester) async {
       await _pump(tester);
       expect(find.textContaining('1.0.0'), findsOneWidget);
+    });
+
+    testWidgets(
+        'AC-006: The version shown reflects the value reported by appVersionProvider (the build version), not a hardcoded constant',
+        (tester) async {
+      await _pump(tester, version: '2.5.1');
+      expect(find.textContaining('2.5.1'), findsOneWidget);
+      expect(find.textContaining('1.0.0'), findsNothing);
     });
   });
 }

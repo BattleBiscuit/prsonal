@@ -33,7 +33,7 @@ the persistence layer).
 | resumeActiveSession | — | `Future<bool>` | if a session with status `active` exists, rebuilds state with cursor at the first incomplete set; returns whether one was found |
 | markCurrentSetComplete | `{num actualPrimary, num actualSecondary, bool isBodyweight}` | `Future<bool>` | freezes `effectiveWeight` + `estimated1RM`, sets `completedAt`, computes `isPR`; haptic (PR vs tap); advances cursor; starts rest if `restSeconds > 0`; returns whether it was a PR |
 | skipCurrentSet | — | `Future<void>` | marks `skipped`, advances cursor |
-| jumpToSet | `int exerciseIndex, int setIndex` | `void` | moves the cursor; cancels any active rest |
+| jumpToSet | `int exerciseIndex, int setIndex` | `void` | moves the cursor; makes the target the only active set (reverting the previously active set to pending); cancels any active rest |
 | uncheckSet | `int exerciseIndex, int setIndex` | `Future<void>` | clears completion/skip on a logged set and selects it |
 | addExerciseToSession | `{String exerciseId, List<SetTarget> sets}` | `Future<void>` | appends an exercise + its sets to the live session |
 | skipAllRemaining | — | `Future<void>` | marks every not-yet-logged set `skipped` |
@@ -66,3 +66,4 @@ uses the derived bodyweight (latest `weight` body metric, default 80 kg).
 - AC-009: abandonSession deletes the session and all of its sets and clears the active state
 - AC-010: startRest schedules a rest-complete notification and cancelRest cancels it
 - AC-011: a mutating method called with no active session throws a StateError
+- AC-012: jumpToSet makes the selected set the only active set, reverting any previously active set to pending

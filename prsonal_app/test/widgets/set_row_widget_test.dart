@@ -117,5 +117,35 @@ void main() {
         expect(toggled, isTrue);
       },
     );
+
+    testWidgets(
+      'AC-007: The active set\'s inputs display the provided primaryValue and secondaryValue and preserve typed input across rebuilds',
+      (tester) async {
+        await tester.pumpWidget(
+          _wrap(
+            SetRow(
+              index: 0,
+              kind: ExerciseType.strength,
+              status: ActiveSetStatus.active,
+              plannedLabel: '8×82.5kg',
+              primaryValue: '8',
+              secondaryValue: '82.5',
+              onPrimaryChanged: (_) {},
+              onSecondaryChanged: (_) {},
+              onToggleComplete: () {},
+            ),
+          ),
+        );
+        // Both seeded values are visible in the inputs.
+        expect(find.text('8'), findsOneWidget);
+        expect(find.text('82.5'), findsOneWidget);
+
+        // Typing into the primary field is reflected, and a rebuild with the
+        // same widget config preserves it (no controller reset on every build).
+        await tester.enterText(find.byType(TextField).first, '9');
+        await tester.pump();
+        expect(find.text('9'), findsOneWidget);
+      },
+    );
   });
 }

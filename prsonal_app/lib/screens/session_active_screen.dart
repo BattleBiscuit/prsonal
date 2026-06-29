@@ -36,6 +36,51 @@ class _SessionActiveScreenState extends ConsumerState<SessionActiveScreen> {
   String _primaryValue = '';
   String _secondaryValue = '';
 
+  // The cursor the editable values were last seeded for. When the active set
+  // changes we re-seed the inputs from the new set's planned targets.
+  SessionCursor? _seededCursor;
+
+  /// Seeds [_primaryValue]/[_secondaryValue] from the active set's planned
+  /// targets so the inputs show the expected reps/weight rather than empty
+  /// fields. No-op when the cursor has not changed since the last seed, so
+  /// in-progress typing is preserved across rebuilds.
+  void _seedForCursor(ActiveSessionState state) {
+    if (_seededCursor == state.cursor) return;
+    _seededCursor = state.cursor;
+    final set = state.currentSet;
+    _primaryValue = _plannedPrimary(set);
+    _secondaryValue = _plannedSecondary(set);
+  }
+
+  String _plannedPrimary(ActiveSet? set) {
+    final reps = set?.plannedReps;
+    return reps != null ? '$reps' : '';
+  }
+
+  String _plannedSecondary(ActiveSet? set) {
+    final weight = set?.plannedWeight;
+    if (weight == null) return '';
+    return weight == weight.truncateToDouble()
+        ? weight.truncate().toString()
+        : weight.toString();
+  }
+
+  Future<void> _completeCurrentSet(ActiveSet currentSet) async {
+    final primary =
+        num.tryParse(_primaryValue) ?? currentSet.plannedReps ?? 0;
+    final secondary =
+        num.tryParse(_secondaryValue) ?? currentSet.plannedWeight ?? 0;
+    await ref
+        .read(sessionEngineProvider.notifier)
+        .markCurrentSetComplete(
+          actualPrimary: primary,
+          actualSecondary: secondary,
+          isBodyweight: currentSet.isBodyweight,
+        );
+    // The cursor advances, so the next build re-seeds the inputs for the new
+    // active set via [_seedForCursor].
+  }
+
   void _onFinish() async {
     await _showAppModal(
       context,
@@ -142,6 +187,8 @@ class _SessionActiveScreenState extends ConsumerState<SessionActiveScreen> {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
+    _seedForCursor(state);
+
     final isResting = state.resting;
     final restRemaining = state.restRemaining;
     final isLastSet = state.isLastSet;
@@ -212,6 +259,12 @@ class _SessionActiveScreenState extends ConsumerState<SessionActiveScreen> {
                               setState(() => _primaryValue = v),
                           onSecondaryChanged: (v) =>
                               setState(() => _secondaryValue = v),
+                          onToggleComplete:
+                              ex.isCurrent &&
+                                  si == state.cursor.setIndex &&
+                                  i == state.cursor.exerciseIndex
+                              ? () => _completeCurrentSet(ex.sets[si])
+                              : null,
                           onSelect: () => ref
                               .read(sessionEngineProvider.notifier)
                               .jumpToSet(i, si),
@@ -232,25 +285,7 @@ class _SessionActiveScreenState extends ConsumerState<SessionActiveScreen> {
                     if (isResting) {
                       ref.read(sessionEngineProvider.notifier).cancelRest();
                     } else if (currentSet != null) {
-                      final primary =
-                          num.tryParse(_primaryValue) ??
-                          currentSet.plannedReps ??
-                          0;
-                      final secondary =
-                          num.tryParse(_secondaryValue) ??
-                          currentSet.plannedWeight ??
-                          0;
-                      await ref
-                          .read(sessionEngineProvider.notifier)
-                          .markCurrentSetComplete(
-                            actualPrimary: primary,
-                            actualSecondary: secondary,
-                            isBodyweight: currentSet.isBodyweight,
-                          );
-                      setState(() {
-                        _primaryValue = '';
-                        _secondaryValue = '';
-                      });
+                      await _completeCurrentSet(currentSet);
                     }
                   },
                   child: Text(

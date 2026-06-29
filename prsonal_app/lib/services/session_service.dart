@@ -1053,6 +1053,10 @@ class SessionEngine extends Notifier<ActiveSessionState?> {
           if (s.status == ActiveSetStatus.pending) {
             return s.copyWith(status: ActiveSetStatus.active);
           }
+        } else if (s.status == ActiveSetStatus.active) {
+          // Only one set is active at a time: revert any previously active
+          // set elsewhere back to pending when the cursor moves.
+          return s.copyWith(status: ActiveSetStatus.pending);
         }
         return s;
       }).toList();

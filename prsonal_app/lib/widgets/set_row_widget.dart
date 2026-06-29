@@ -4,7 +4,7 @@ import 'package:prsonal_app/services/session_service.dart' show ActiveSetStatus;
 import 'package:prsonal_app/theme/app_colors.dart';
 import 'package:prsonal_app/theme/app_spacing.dart';
 
-class SetRow extends StatelessWidget {
+class SetRow extends StatefulWidget {
   const SetRow({
     super.key,
     required this.index,
@@ -39,10 +39,54 @@ class SetRow extends StatelessWidget {
   final VoidCallback? onSelect;
 
   @override
+  State<SetRow> createState() => _SetRowState();
+}
+
+class _SetRowState extends State<SetRow> {
+  late final TextEditingController _primaryController;
+  late final TextEditingController _secondaryController;
+
+  @override
+  void initState() {
+    super.initState();
+    _primaryController = TextEditingController(text: widget.primaryValue ?? '');
+    _secondaryController = TextEditingController(
+      text: widget.secondaryValue ?? '',
+    );
+  }
+
+  @override
+  void didUpdateWidget(SetRow oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Sync controllers only when the externally provided value actually changes
+    // and differs from what the user has typed — keeps the caret stable while
+    // typing, but re-seeds when the active set switches.
+    _syncController(_primaryController, widget.primaryValue);
+    _syncController(_secondaryController, widget.secondaryValue);
+  }
+
+  void _syncController(TextEditingController controller, String? value) {
+    final next = value ?? '';
+    if (controller.text != next) {
+      controller.value = TextEditingValue(
+        text: next,
+        selection: TextSelection.collapsed(offset: next.length),
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    _primaryController.dispose();
+    _secondaryController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).extension<AppColors>() ?? AppColors.dark;
 
-    switch (status) {
+    switch (widget.status) {
       case ActiveSetStatus.upcoming:
       case ActiveSetStatus.pending:
         return _buildUpcoming(context, colors);
@@ -57,7 +101,7 @@ class SetRow extends StatelessWidget {
 
   Widget _buildUpcoming(BuildContext context, AppColors colors) {
     return GestureDetector(
-      onTap: onSelect,
+      onTap: widget.onSelect,
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
         child: Row(
@@ -65,7 +109,7 @@ class SetRow extends StatelessWidget {
             SizedBox(
               width: 32,
               child: Text(
-                '${index + 1}',
+                '${widget.index + 1}',
                 style: TextStyle(
                   color: colors.text3,
                   fontSize: 14,
@@ -76,7 +120,7 @@ class SetRow extends StatelessWidget {
             ),
             const SizedBox(width: 12),
             Text(
-              plannedLabel,
+              widget.plannedLabel,
               style: TextStyle(color: colors.text2, fontSize: 14),
             ),
           ],
@@ -97,7 +141,7 @@ class SetRow extends StatelessWidget {
           SizedBox(
             width: 32,
             child: Text(
-              '${index + 1}',
+              '${widget.index + 1}',
               style: TextStyle(
                 color: colors.text1,
                 fontSize: 14,
@@ -109,10 +153,11 @@ class SetRow extends StatelessWidget {
           const SizedBox(width: 8),
           Expanded(
             child: TextField(
-              controller: primaryValue != null
-                  ? (TextEditingController()..text = primaryValue!)
-                  : null,
-              onChanged: onPrimaryChanged,
+              controller: _primaryController,
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
+              onChanged: widget.onPrimaryChanged,
               style: TextStyle(color: colors.text1, fontSize: 14),
               decoration: InputDecoration(
                 hintText: 'Reps',
@@ -132,10 +177,11 @@ class SetRow extends StatelessWidget {
           const SizedBox(width: 8),
           Expanded(
             child: TextField(
-              controller: secondaryValue != null
-                  ? (TextEditingController()..text = secondaryValue!)
-                  : null,
-              onChanged: onSecondaryChanged,
+              controller: _secondaryController,
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
+              onChanged: widget.onSecondaryChanged,
               style: TextStyle(color: colors.text1, fontSize: 14),
               decoration: InputDecoration(
                 hintText: 'kg',
@@ -157,7 +203,7 @@ class SetRow extends StatelessWidget {
             label: 'Complete set',
             button: true,
             child: GestureDetector(
-              onTap: onToggleComplete,
+              onTap: widget.onToggleComplete,
               child: SizedBox(
                 width: 48,
                 height: 48,
@@ -186,7 +232,7 @@ class SetRow extends StatelessWidget {
             SizedBox(
               width: 32,
               child: Text(
-                '${index + 1}',
+                '${widget.index + 1}',
                 style: TextStyle(
                   color: colors.success,
                   fontSize: 14,
@@ -198,11 +244,11 @@ class SetRow extends StatelessWidget {
             const SizedBox(width: 12),
             Expanded(
               child: Text(
-                actualLabel ?? plannedLabel,
+                widget.actualLabel ?? widget.plannedLabel,
                 style: TextStyle(color: colors.success, fontSize: 14),
               ),
             ),
-            if (isPR)
+            if (widget.isPR)
               Semantics(
                 label: 'Personal record',
                 container: true,
@@ -232,7 +278,7 @@ class SetRow extends StatelessWidget {
             SizedBox(
               width: 32,
               child: Text(
-                '${index + 1}',
+                '${widget.index + 1}',
                 style: TextStyle(
                   color: colors.text3,
                   fontSize: 14,

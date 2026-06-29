@@ -69,3 +69,5 @@ abandoning.
 - AC-008: Tapping the quit action opens a confirm-abandon modal; confirming abandons the session and navigates to session-pick
 - AC-009: A completed set renders its logged values and a PR indicator when it set a personal record
 - AC-010: Tapping "Add exercise" opens the exercise form
+- AC-011: The active set's inputs are pre-filled with its planned reps and weight
+- AC-012: Tapping the active set's checkbox completes the current set

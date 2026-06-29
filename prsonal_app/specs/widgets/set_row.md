@@ -52,3 +52,4 @@ state.
 - AC-004: A completed set that set a personal record renders a PR indicator
 - AC-005: A skipped set renders a skipped treatment
 - AC-006: Tapping the active set's checkbox invokes onToggleComplete
+- AC-007: The active set's inputs display the provided primaryValue and secondaryValue and preserve typed input across rebuilds

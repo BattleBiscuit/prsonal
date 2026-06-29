@@ -274,5 +274,31 @@ void main() {
         );
       },
     );
+
+    test(
+      'AC-012: jumpToSet makes the selected set the only active set, reverting any previously active set to pending',
+      () async {
+        final routineId = await _seedRoutine(db, setCount: 3);
+        await engine().startSession(routineId: routineId);
+        // Set 0 starts active.
+        expect(state().exercises[0].sets[0].status, ActiveSetStatus.active);
+
+        engine().jumpToSet(0, 2);
+
+        expect(state().cursor, (exerciseIndex: 0, setIndex: 2));
+        expect(state().exercises[0].sets[2].status, ActiveSetStatus.active);
+        // The previously active set is reverted to pending — exactly one active.
+        expect(state().exercises[0].sets[0].status, ActiveSetStatus.pending);
+        final activeCount = state().exercises.fold<int>(
+          0,
+          (sum, ex) =>
+              sum +
+              ex.sets
+                  .where((s) => s.status == ActiveSetStatus.active)
+                  .length,
+        );
+        expect(activeCount, 1);
+      },
+    );
   });
 }

@@ -65,6 +65,8 @@ ActiveSessionState _state({
             kind: ExerciseType.strength,
             plannedLabel: '8×82.5kg',
             status: ActiveSetStatus.active,
+            plannedReps: 8,
+            plannedWeight: 82.5,
           ),
         ],
       ),
@@ -248,5 +250,26 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.textContaining('Add Exercise'), findsOneWidget);
     });
+
+    testWidgets(
+      'AC-011: The active set\'s inputs are pre-filled with its planned reps and weight',
+      (tester) async {
+        await _pump(tester);
+        // The active set plans 8 reps × 82.5 kg — both should be seeded into
+        // the editable inputs, not just shown as hints.
+        expect(find.widgetWithText(TextField, '8'), findsOneWidget);
+        expect(find.widgetWithText(TextField, '82.5'), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      'AC-012: Tapping the active set\'s checkbox completes the current set',
+      (tester) async {
+        final engine = await _pump(tester);
+        await tester.tap(find.bySemanticsLabel('Complete set'));
+        await tester.pumpAndSettle();
+        expect(engine.calls, contains('complete'));
+      },
+    );
   });
 }

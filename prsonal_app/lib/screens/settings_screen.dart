@@ -12,10 +12,9 @@ class SettingsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colors = Theme.of(context).extension<AppColors>() ?? AppColors.dark;
-    final version = ref.watch(appVersionProvider).maybeWhen(
-          data: (v) => 'Version $v',
-          orElse: () => 'Version …',
-        );
+    final version = ref
+        .watch(appVersionProvider)
+        .maybeWhen(data: (v) => 'Version $v', orElse: () => 'Version …');
 
     return Scaffold(
       backgroundColor: colors.bg,

@@ -13,6 +13,9 @@
 **/*.jks
 **/*.keystore
 **/upload-keystore.jks
+# Base64-encoded keystores are the signing secret in another form
+**/*.b64
+**/keystore.b64
 
 # IDE / OS
 *.iml

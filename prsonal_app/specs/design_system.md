@@ -160,8 +160,25 @@ FAB: `0 4 16 black@0.40`. Drag ghost (if reorder kept): `0 8 24 black@0.50`.
 
 ---
 
-## Reusable visual patterns (specced as widgets in `specs/widgets/`)
-- **Card**: `surface1` bg, 1px `border`, radius `lg`, padding `space4`.
+## Surface treatment — flat rows, not cards (decided)
+The app is **flat**. Lists and grids do **not** wrap each item in a bordered, filled box; that
+boxed-card look (ported verbatim from gym-app) is retired here as an intentional divergence — the
+same way the lime accent was retired for chalk. Hierarchy comes from **type, spacing and a single
+hairline**, not from chrome. Filled/bordered boxes (`surface1` + `border` + radius) survive **only**
+for genuinely elevated surfaces: modals/sheets, the workout & PR banners, and skeleton loaders.
+
+- **List row** (default for any item in a vertical list — routines, history, library, PRs): flat.
+  **No fill, no border, no radius.** Padding `space4` horizontal · ~`space3`–`space4` vertical, min
+  height `touchTargetMin`. Tap = ink ripple. Rows are separated by a **Divider** (below); the list
+  itself is edge-to-edge (vertical-only outer padding) so the hairline spans the full width.
+- **Metric tile** (KPI grids — progress stats, body metrics): flat. **No fill, no border.** A large
+  value (`xl`–`2xl`/700, `text1`) over an uppercase/secondary caption (`xs`/600, `text2`), optional
+  leading icon in `accent`. Tiles are separated by `space2`–`space3` **whitespace** within their
+  grid — never boxed, no dividers.
+- **Divider** (list-row separator): a 1px hairline in `border` (`#2E2E2E`). Centralised in
+  `dividerTheme`, so a bare Flutter `Divider()` renders it (`thickness: 1`, `space: 1`).
+- **Elevated card** (modals, banners, skeleton **only**): `surface1` bg, optional 1px `border`,
+  radius `lg`–`xl`, padding `space4`.
 - **Bottom sheet / modal**: bottom-aligned, `surface1`, top radius `xl`, scrim `black@0.70`,
   slide-up `normal`. (`AppModal`.)
 - **Pill button / toggle**: radius `full`, accent-filled when active with `onAccent` text.

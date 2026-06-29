@@ -39,5 +39,22 @@ void main() {
       await tester.tap(find.byType(BodyMetricCard));
       expect(tapped, isTrue);
     });
+
+    testWidgets('AC-004: Widget renders flat — no enclosing card chrome (no bordered/filled box)',
+        (tester) async {
+      await tester.pumpWidget(_wrap(BodyMetricCard(
+        label: 'Bodyweight',
+        valueLabel: '82.5 kg',
+        icon: Icons.monitor_weight_outlined,
+        onTap: () {},
+      )));
+      expect(
+        find.byWidgetPredicate((w) =>
+            w is Container &&
+            w.decoration is BoxDecoration &&
+            (w.decoration as BoxDecoration).border != null),
+        findsNothing,
+      );
+    });
   });
 }

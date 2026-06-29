@@ -5,9 +5,10 @@ status: approved
 ---
 
 ## Description
-A completed-workout row in the History list, ported from gym-app's `HistoryCard`. Shows the
-routine name (with an "· Abandoned" suffix in warning colour when abandoned), the date, and a
-"duration · volume" meta line, plus a delete button.
+A completed-workout **flat row** in the History list. Shows the routine name (with an "· Abandoned"
+suffix in warning colour when abandoned), the date, and a "duration · volume" meta line, plus a
+delete button. Per [[design_system]] the row carries **no card chrome** (no fill, border or radius)
+— grouped sections separate rows with hairline dividers.
 
 ## Parameters
 
@@ -28,3 +29,4 @@ routine name (with an "· Abandoned" suffix in warning colour when abandoned), t
 - AC-002: Widget renders an "Abandoned" label when abandoned is true
 - AC-003: Widget calls onTap when the card body is tapped
 - AC-004: Widget calls onDelete when the delete button is tapped
+- AC-005: Widget renders flat — no enclosing card chrome (no bordered/filled box)

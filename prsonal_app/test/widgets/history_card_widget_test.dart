@@ -58,5 +58,23 @@ void main() {
       await tester.tap(find.bySemanticsLabel('Delete workout'));
       expect(deleted, isTrue);
     });
+
+    testWidgets('AC-005: Widget renders flat — no enclosing card chrome (no bordered/filled box)',
+        (tester) async {
+      await tester.pumpWidget(_wrap(HistoryCard(
+        routineName: 'Push Day A',
+        dateLabel: 'Mon, 23 Jun',
+        metaLabel: '47m · 4,230 kg',
+        onTap: () {},
+        onDelete: () {},
+      )));
+      expect(
+        find.byWidgetPredicate((w) =>
+            w is Container &&
+            w.decoration is BoxDecoration &&
+            (w.decoration as BoxDecoration).border != null),
+        findsNothing,
+      );
+    });
   });
 }

@@ -132,10 +132,9 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                   );
                 }
                 return ListView.separated(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  padding: const EdgeInsets.symmetric(vertical: 8),
                   itemCount: filtered.length,
-                  separatorBuilder: (context, index) =>
-                      const SizedBox(height: 12),
+                  separatorBuilder: (context, index) => const Divider(),
                   itemBuilder: (context, i) {
                     final ex = filtered[i];
                     final musclesLabel = ex.primaryMuscles

@@ -5,9 +5,10 @@ status: approved
 ---
 
 ## Description
-A tappable card representing a routine in the Routines list, ported from gym-app's `RoutineCard`.
-Shows the routine name, a meta line ("N exercises · Updated 2h ago"), an optional 2-line notes
-preview, and a delete button.
+A tappable **flat row** representing a routine in the Routines list. Shows the routine name, a meta
+line ("N exercises · Updated 2h ago"), an optional 2-line notes preview, and a delete button.
+Per [[design_system]] the row carries **no card chrome** (no fill, border or radius) — the list
+separates rows with a hairline divider.
 
 ## Parameters
 
@@ -23,7 +24,7 @@ preview, and a delete button.
 
 | State | Appearance |
 |-------|------------|
-| default | surface-1 card, border, radius lg; name (lg/600), meta (sm/text-2), notes (sm/text-3) |
+| default | flat row, no fill/border/radius; name (base/600), meta (sm/text-2), notes (sm/text-3) |
 | pressed | ink ripple |
 
 ## Accessibility
@@ -34,3 +35,4 @@ preview, and a delete button.
 - AC-002: Widget renders the notes preview when provided and omits it when null
 - AC-003: Widget calls onTap when the card body is tapped
 - AC-004: Widget calls onDelete when the delete button is tapped
+- AC-005: Widget renders flat — no enclosing card chrome (no bordered/filled box)

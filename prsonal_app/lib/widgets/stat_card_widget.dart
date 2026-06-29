@@ -25,13 +25,8 @@ class StatCard extends StatelessWidget {
     // sign ("+8%" / "-5%") carries up/down; the icon stays chalk.
     final Color toneColor = colors.accent;
 
-    return Container(
-      decoration: BoxDecoration(
-        color: colors.surface1,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: colors.border),
-      ),
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

@@ -78,5 +78,24 @@ void main() {
       await tester.tap(find.bySemanticsLabel('Delete exercise'));
       expect(deleted, isTrue);
     });
+
+    testWidgets(
+        'AC-006: Widget renders flat — no enclosing card chrome (the row itself has no bordered/filled box)',
+        (tester) async {
+      await tester.pumpWidget(_wrap(LibraryExerciseCard(
+        name: 'Bench Press',
+        type: ExerciseType.strength,
+        musclesLabel: 'Chest',
+        onTap: () {},
+        onDelete: () {},
+      )));
+      expect(
+        find.byWidgetPredicate((w) =>
+            w is Container &&
+            w.decoration is BoxDecoration &&
+            (w.decoration as BoxDecoration).border != null),
+        findsNothing,
+      );
+    });
   });
 }

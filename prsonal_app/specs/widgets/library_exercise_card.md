@@ -5,9 +5,10 @@ status: approved
 ---
 
 ## Description
-An exercise row in the library list, ported from gym-app's lib-card. Shows the name, a type badge
-(strength/cardio), the primary muscles, and a PR chip when a best lift exists, plus a delete
-button.
+An exercise **flat row** in the library list. Shows the name, a type badge (strength/cardio), the
+primary muscles, and a PR chip when a best lift exists, plus a delete button. Per [[design_system]]
+the row carries **no card chrome** (no fill, border or radius) — the list separates rows with a
+hairline divider. (The type badge keeps its own small filled pill; that is not card chrome.)
 
 ## Parameters
 
@@ -26,3 +27,4 @@ button.
 - AC-003: Widget renders a PR chip when prLabel is provided and omits it when null
 - AC-004: Widget calls onTap when the card body is tapped
 - AC-005: Widget calls onDelete when the delete button is tapped
+- AC-006: Widget renders flat — no enclosing card chrome (the row itself has no bordered/filled box)

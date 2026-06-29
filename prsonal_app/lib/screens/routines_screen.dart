@@ -55,9 +55,9 @@ class RoutinesScreen extends ConsumerWidget {
             );
           }
           return ListView.separated(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.symmetric(vertical: 8),
             itemCount: routines.length,
-            separatorBuilder: (context, index) => const SizedBox(height: 12),
+            separatorBuilder: (context, index) => const Divider(),
             itemBuilder: (context, i) {
               final r = routines[i];
               return RoutineCard(

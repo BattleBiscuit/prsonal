@@ -144,17 +144,23 @@ class ProgressScreen extends ConsumerWidget {
             ),
             const SizedBox(height: 4),
             prsAsync.when(
-              data: (prs) => Column(
-                children: prs.map((pr) {
-                  final dateFmt = DateFormat('d MMM yyyy');
-                  return PrRow(
-                    exerciseName: pr.exerciseName,
-                    dateLabel: dateFmt.format(pr.date),
-                    weightLabel: '${pr.weight}kg',
-                    oneRmLabel: '1RM: ${pr.oneRepMax.toStringAsFixed(1)}kg',
-                  );
-                }).toList(),
-              ),
+              data: (prs) {
+                final dateFmt = DateFormat('d MMM yyyy');
+                return Column(
+                  children: [
+                    for (var j = 0; j < prs.length; j++) ...[
+                      if (j > 0) const Divider(),
+                      PrRow(
+                        exerciseName: prs[j].exerciseName,
+                        dateLabel: dateFmt.format(prs[j].date),
+                        weightLabel: '${prs[j].weight}kg',
+                        oneRmLabel:
+                            '1RM: ${prs[j].oneRepMax.toStringAsFixed(1)}kg',
+                      ),
+                    ],
+                  ],
+                );
+              },
               loading: () => const SizedBox.shrink(),
               error: (e, _) => Text('Error: $e'),
             ),
@@ -171,25 +177,26 @@ class ProgressScreen extends ConsumerWidget {
             const SizedBox(height: 4),
             historyAsync.when(
               data: (sessions) => Column(
-                children: sessions
-                    .map(
-                      (s) => ListTile(
-                        dense: true,
-                        title: Text(
-                          s.routineName,
-                          style: TextStyle(color: colors.text1),
-                        ),
-                        subtitle: Text(
-                          s.durationLabel,
-                          style: TextStyle(color: colors.text2),
-                        ),
-                        onTap: () => context.goNamed(
-                          'history-detail',
-                          pathParameters: {'id': s.id},
-                        ),
+                children: [
+                  for (var j = 0; j < sessions.length; j++) ...[
+                    if (j > 0) const Divider(),
+                    ListTile(
+                      dense: true,
+                      title: Text(
+                        sessions[j].routineName,
+                        style: TextStyle(color: colors.text1),
                       ),
-                    )
-                    .toList(),
+                      subtitle: Text(
+                        sessions[j].durationLabel,
+                        style: TextStyle(color: colors.text2),
+                      ),
+                      onTap: () => context.goNamed(
+                        'history-detail',
+                        pathParameters: {'id': sessions[j].id},
+                      ),
+                    ),
+                  ],
+                ],
               ),
               loading: () => const SizedBox.shrink(),
               error: (e, _) => Text('Error: $e'),

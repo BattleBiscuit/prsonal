@@ -23,5 +23,17 @@ void main() {
       final card = tester.widget<StatCard>(find.byType(StatCard));
       expect(card.tone, StatTone.neutral);
     });
+
+    testWidgets('AC-004: Widget renders flat — no enclosing card chrome (no bordered/filled box)',
+        (tester) async {
+      await tester.pumpWidget(_wrap(const StatCard(value: '12', label: 'WORKOUTS')));
+      expect(
+        find.byWidgetPredicate((w) =>
+            w is Container &&
+            w.decoration is BoxDecoration &&
+            (w.decoration as BoxDecoration).border != null),
+        findsNothing,
+      );
+    });
   });
 }

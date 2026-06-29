@@ -64,6 +64,14 @@ final ThemeData appTheme = ThemeData(
     scrim: Color(0xFF000000),
   ),
 
+  // List rows are flat (no card chrome); a 1px hairline in the border token
+  // (#2E2E2E) separates them. A bare `Divider()` picks this up everywhere.
+  dividerTheme: const DividerThemeData(
+    color: _surface3,
+    thickness: 1,
+    space: 1,
+  ),
+
   appBarTheme: const AppBarTheme(
     backgroundColor: _bg,
     foregroundColor: _text1,

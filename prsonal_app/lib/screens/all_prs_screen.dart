@@ -31,8 +31,10 @@ class AllPrsScreen extends ConsumerWidget {
             );
           }
           final fmt = DateFormat('d MMM yyyy');
-          return ListView.builder(
+          return ListView.separated(
+            padding: const EdgeInsets.symmetric(vertical: 8),
             itemCount: prs.length,
+            separatorBuilder: (context, index) => const Divider(),
             itemBuilder: (context, i) {
               final pr = prs[i];
               return PrRow(

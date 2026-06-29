@@ -114,7 +114,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
           ? const Center(child: CircularProgressIndicator())
           : ListView.builder(
               controller: _scrollCtrl,
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.symmetric(vertical: 8),
               itemCount: groupKeys.length + (_loading ? 1 : 0),
               itemBuilder: (context, i) {
                 if (i == groupKeys.length) {
@@ -127,11 +127,12 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                 }
                 final key = groupKeys[i];
                 final sessions = grouped[key]!;
+                final dateFmt = DateFormat('d MMM');
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
                       child: Text(
                         key,
                         style: TextStyle(
@@ -141,25 +142,22 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                         ),
                       ),
                     ),
-                    ...sessions.map((s) {
-                      final dateFmt = DateFormat('d MMM');
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 12),
-                        child: HistoryCard(
-                          routineName: s.routineName,
-                          dateLabel: dateFmt.format(s.startedAt),
-                          metaLabel: s.abandoned
-                              ? s.durationLabel
-                              : '${s.durationLabel} · ${s.volume.toStringAsFixed(0)}kg',
-                          abandoned: s.abandoned,
-                          onTap: () => context.goNamed(
-                            'history-detail',
-                            pathParameters: {'id': s.id},
-                          ),
-                          onDelete: () => _deleteSession(s.id),
+                    for (var j = 0; j < sessions.length; j++) ...[
+                      if (j > 0) const Divider(),
+                      HistoryCard(
+                        routineName: sessions[j].routineName,
+                        dateLabel: dateFmt.format(sessions[j].startedAt),
+                        metaLabel: sessions[j].abandoned
+                            ? sessions[j].durationLabel
+                            : '${sessions[j].durationLabel} · ${sessions[j].volume.toStringAsFixed(0)}kg',
+                        abandoned: sessions[j].abandoned,
+                        onTap: () => context.goNamed(
+                          'history-detail',
+                          pathParameters: {'id': sessions[j].id},
                         ),
-                      );
-                    }),
+                        onDelete: () => _deleteSession(sessions[j].id),
+                      ),
+                    ],
                   ],
                 );
               },

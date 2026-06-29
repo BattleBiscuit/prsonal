@@ -51,7 +51,7 @@ class HistoryCard extends StatelessWidget {
                           ),
                           decoration: BoxDecoration(
                             color: colors.danger.withValues(alpha: 0.15),
-                            borderRadius: BorderRadius.circular(4),
+                            borderRadius: BorderRadius.zero,
                           ),
                           child: Text(
                             'Abandoned',

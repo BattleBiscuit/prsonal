@@ -7,11 +7,76 @@ const _surface1 = Color(0xFF1A1A1A);
 const _surface2 = Color(0xFF242424);
 const _surface3 = Color(0xFF2E2E2E);
 const _accent = Color(0xFFEDEDED);
+const _accentDim = Color(0xFFC7C7CC);
 const _onAccent = Color(0xFF0F0F0F);
 const _text1 = Color(0xFFF5F5F5);
 const _text2 = Color(0xFF9E9E9E);
 const _text3 = Color(0xFF616161);
 const _danger = Color(0xFFF44336);
+
+// --- Button styles -------------------------------------------------------
+// Colour is driven by intent (see design_system.md "Buttons"): the signature
+// chalk only ever marks the affirmative action.
+
+/// Affirmative actions (save / accept / add / confirm-positive): chalk-white
+/// fill. Both Filled and Elevated map here so every positive CTA reads the same.
+final ButtonStyle _affirmativeButtonStyle = ButtonStyle(
+  backgroundColor: WidgetStateProperty.resolveWith(
+    (s) => s.contains(WidgetState.disabled)
+        ? _surface2
+        : s.contains(WidgetState.pressed)
+        ? _accentDim
+        : _accent,
+  ),
+  foregroundColor: WidgetStateProperty.resolveWith(
+    (s) => s.contains(WidgetState.disabled) ? _text3 : _onAccent,
+  ),
+  overlayColor: const WidgetStatePropertyAll(
+    Color(0x140F0F0F),
+  ), // onAccent @ 0.08
+  elevation: const WidgetStatePropertyAll(0),
+  shadowColor: const WidgetStatePropertyAll(Colors.transparent),
+  surfaceTintColor: const WidgetStatePropertyAll(Colors.transparent),
+  minimumSize: const WidgetStatePropertyAll(Size(0, 48)),
+  padding: const WidgetStatePropertyAll(EdgeInsets.symmetric(horizontal: 20)),
+  shape: const WidgetStatePropertyAll(
+    RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+  ),
+  textStyle: const WidgetStatePropertyAll(
+    TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+  ),
+);
+
+/// Neutral / quiet actions (cancel / edit / navigate): grey text2, never chalk.
+final ButtonStyle _neutralTextButtonStyle = ButtonStyle(
+  foregroundColor: WidgetStateProperty.resolveWith(
+    (s) => s.contains(WidgetState.disabled) ? _text3 : _text2,
+  ),
+  overlayColor: const WidgetStatePropertyAll(
+    Color(0x0FF5F5F5),
+  ), // text1 @ ~0.06
+  minimumSize: const WidgetStatePropertyAll(Size(0, 48)),
+  textStyle: const WidgetStatePropertyAll(
+    TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+  ),
+);
+
+/// Neutral secondary actions that need a border (e.g. a paired Cancel): grey
+/// ghost — transparent fill, text2 label, 1px border. Never chalk.
+final ButtonStyle _neutralOutlinedButtonStyle = ButtonStyle(
+  foregroundColor: WidgetStateProperty.resolveWith(
+    (s) => s.contains(WidgetState.disabled) ? _text3 : _text2,
+  ),
+  side: const WidgetStatePropertyAll(BorderSide(color: _surface3)),
+  overlayColor: const WidgetStatePropertyAll(Color(0x0FF5F5F5)),
+  minimumSize: const WidgetStatePropertyAll(Size(0, 48)),
+  shape: const WidgetStatePropertyAll(
+    RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+  ),
+  textStyle: const WidgetStatePropertyAll(
+    TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+  ),
+);
 
 /// The single Material 3 dark [ThemeData] for prsonal_app.
 ///
@@ -107,23 +172,23 @@ final ThemeData appTheme = ThemeData(
     hintStyle: const TextStyle(color: _text3),
     contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
     border: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(8),
+      borderRadius: BorderRadius.zero,
       borderSide: BorderSide.none,
     ),
     enabledBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(8),
+      borderRadius: BorderRadius.zero,
       borderSide: BorderSide.none,
     ),
     focusedBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(8),
+      borderRadius: BorderRadius.zero,
       borderSide: const BorderSide(color: _accent, width: 2),
     ),
     errorBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(8),
+      borderRadius: BorderRadius.zero,
       borderSide: const BorderSide(color: _danger, width: 2),
     ),
     focusedErrorBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(8),
+      borderRadius: BorderRadius.zero,
       borderSide: const BorderSide(color: _danger, width: 2),
     ),
   ),
@@ -131,6 +196,7 @@ final ThemeData appTheme = ThemeData(
   dialogTheme: const DialogThemeData(
     backgroundColor: _surface1,
     surfaceTintColor: Colors.transparent,
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
     titleTextStyle: TextStyle(
       color: _text1,
       fontSize: 18,
@@ -144,9 +210,7 @@ final ThemeData appTheme = ThemeData(
     surfaceTintColor: Colors.transparent,
     modalBackgroundColor: _surface1,
     showDragHandle: false,
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-    ),
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
   ),
 
   chipTheme: ChipThemeData(
@@ -182,11 +246,21 @@ final ThemeData appTheme = ThemeData(
     foregroundColor: _onAccent,
   ),
 
+  // Buttons by intent: filled/elevated = affirmative (chalk); text/outlined =
+  // neutral (grey). Destructive actions colour themselves danger per call site.
+  filledButtonTheme: FilledButtonThemeData(style: _affirmativeButtonStyle),
+  elevatedButtonTheme: ElevatedButtonThemeData(style: _affirmativeButtonStyle),
+  textButtonTheme: TextButtonThemeData(style: _neutralTextButtonStyle),
+  outlinedButtonTheme: OutlinedButtonThemeData(
+    style: _neutralOutlinedButtonStyle,
+  ),
+
   snackBarTheme: const SnackBarThemeData(
     backgroundColor: _surface2,
     contentTextStyle: TextStyle(color: _text1),
     actionTextColor: _accent,
     behavior: SnackBarBehavior.floating,
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
   ),
 
   textSelectionTheme: const TextSelectionThemeData(

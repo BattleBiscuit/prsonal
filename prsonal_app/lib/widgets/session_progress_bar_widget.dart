@@ -16,7 +16,7 @@ class SessionProgressBar extends StatelessWidget {
       width: double.infinity,
       decoration: BoxDecoration(
         color: colors.surface3,
-        borderRadius: BorderRadius.circular(3),
+        borderRadius: BorderRadius.zero,
       ),
       child: Align(
         alignment: Alignment.centerLeft,
@@ -25,7 +25,7 @@ class SessionProgressBar extends StatelessWidget {
           child: Container(
             decoration: BoxDecoration(
               color: colors.accent,
-              borderRadius: BorderRadius.circular(3),
+              borderRadius: BorderRadius.zero,
             ),
           ),
         ),

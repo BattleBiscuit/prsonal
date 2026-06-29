@@ -20,18 +20,27 @@ void main() {
       expect(find.byIcon(Icons.add), findsOneWidget);
     });
 
-    testWidgets('AC-003: Widget calls onPressed when tapped and onPressed is non-null',
-        (tester) async {
-      var tapped = false;
-      await tester.pumpWidget(
-        _wrap(AppFab(label: 'New', icon: Icons.add, onPressed: () => tapped = true)),
-      );
-      await tester.tap(find.byType(AppFab));
-      expect(tapped, isTrue);
-    });
+    testWidgets(
+      'AC-003: Widget calls onPressed when tapped and onPressed is non-null',
+      (tester) async {
+        var tapped = false;
+        await tester.pumpWidget(
+          _wrap(
+            AppFab(
+              label: 'New',
+              icon: Icons.add,
+              onPressed: () => tapped = true,
+            ),
+          ),
+        );
+        await tester.tap(find.byType(AppFab));
+        expect(tapped, isTrue);
+      },
+    );
 
-    testWidgets('AC-004: Widget does not call onPressed when onPressed is null',
-        (tester) async {
+    testWidgets('AC-004: Widget does not call onPressed when onPressed is null', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         _wrap(const AppFab(label: 'New', icon: Icons.add, onPressed: null)),
       );

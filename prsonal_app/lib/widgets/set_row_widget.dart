@@ -122,7 +122,7 @@ class SetRow extends StatelessWidget {
                   vertical: 8,
                 ),
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(4),
+                  borderRadius: BorderRadius.zero,
                   borderSide: BorderSide(color: colors.border),
                 ),
               ),
@@ -145,7 +145,7 @@ class SetRow extends StatelessWidget {
                   vertical: 8,
                 ),
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(4),
+                  borderRadius: BorderRadius.zero,
                   borderSide: BorderSide(color: colors.border),
                 ),
               ),

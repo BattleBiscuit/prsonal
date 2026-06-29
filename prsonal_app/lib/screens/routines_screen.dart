@@ -38,7 +38,7 @@ class RoutinesScreen extends ConsumerWidget {
         title: const BrandTitle('Routines'),
         backgroundColor: colors.bg,
         actions: [
-          TextButton(
+          FilledButton(
             onPressed: () => context.goNamed('routine-create'),
             child: const Text('New'),
           ),

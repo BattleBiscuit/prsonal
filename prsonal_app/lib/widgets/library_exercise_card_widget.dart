@@ -51,7 +51,7 @@ class LibraryExerciseCard extends StatelessWidget {
                         ),
                         decoration: BoxDecoration(
                           color: colors.surface3,
-                          borderRadius: BorderRadius.circular(4),
+                          borderRadius: BorderRadius.zero,
                         ),
                         child: Text(
                           type.name,

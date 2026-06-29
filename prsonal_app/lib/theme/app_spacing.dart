@@ -11,11 +11,12 @@ const double space8 = 32;
 const double space10 = 40;
 const double space12 = 48;
 
-// Border radius
-const double radiusSm = 4;
-const double radiusMd = 8;
-const double radiusLg = 16;
-const double radiusXl = 24;
+// Border radius — panels are squared (hard 90° corners); only true
+// pills/stadiums (FAB, chips, toggles, switch) stay round via radiusFull.
+const double radiusSm = 0;
+const double radiusMd = 0;
+const double radiusLg = 0;
+const double radiusXl = 0;
 const double radiusFull = 9999;
 
 // Layout constants

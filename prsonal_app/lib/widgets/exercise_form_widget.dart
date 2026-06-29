@@ -190,7 +190,7 @@ class _SetRow extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
                 color: set.isBodyweight ? colors.accent : colors.surface2,
-                borderRadius: BorderRadius.circular(4),
+                borderRadius: BorderRadius.zero,
               ),
               child: Text(
                 'BW',

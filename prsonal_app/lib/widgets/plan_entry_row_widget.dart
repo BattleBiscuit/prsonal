@@ -79,7 +79,7 @@ class PlanEntryRow extends StatelessWidget {
                     ),
                     decoration: BoxDecoration(
                       color: done ? colors.surface2 : colors.accent,
-                      borderRadius: BorderRadius.circular(6),
+                      borderRadius: BorderRadius.zero,
                     ),
                     child: Text(
                       'Start',

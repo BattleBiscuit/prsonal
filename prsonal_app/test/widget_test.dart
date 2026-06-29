@@ -6,7 +6,9 @@ import 'package:prsonal_app/providers/session_pick_providers.dart';
 import 'package:prsonal_app/screens/session_pick_screen.dart';
 
 void main() {
-  testWidgets('App root renders the session-pick screen', (WidgetTester tester) async {
+  testWidgets('App root renders the session-pick screen', (
+    WidgetTester tester,
+  ) async {
     final router = GoRouter(
       routes: [
         GoRoute(
@@ -42,13 +44,15 @@ void main() {
       ],
     );
 
-    await tester.pumpWidget(ProviderScope(
-      overrides: [
-        activePlansViewProvider.overrideWithValue(const []),
-        unplannedRoutinesProvider.overrideWithValue(const []),
-      ],
-      child: MaterialApp.router(routerConfig: router),
-    ));
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          activePlansViewProvider.overrideWithValue(const []),
+          unplannedRoutinesProvider.overrideWithValue(const []),
+        ],
+        child: MaterialApp.router(routerConfig: router),
+      ),
+    );
     await tester.pumpAndSettle();
     expect(find.text('Nothing here yet'), findsOneWidget);
   });

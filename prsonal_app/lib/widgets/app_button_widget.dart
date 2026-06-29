@@ -82,7 +82,7 @@ class AppButton extends StatelessWidget {
         padding: padding,
         decoration: BoxDecoration(
           color: backgroundColor,
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.zero,
           border: borderColor != null ? Border.all(color: borderColor) : null,
         ),
         child: content,

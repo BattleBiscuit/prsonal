@@ -104,8 +104,15 @@ the brand accent.
 `space1`=4 · `space2`=8 · `space3`=12 · `space4`=16 · `space5`=20 · `space6`=24 ·
 `space8`=32 · `space10`=40 · `space12`=48 (logical px → dp).
 
-## Border radius
-`sm`=4 · `md`=8 · `lg`=16 · `xl`=24 · `full`=9999 (pill/circle).
+## Border radius — squared panels (decided)
+The app is **hard-edged**: panels have square 90° corners. The graduated rounded scale is retired —
+`sm`=`md`=`lg`=`xl`=**0**. Only genuine **pills/stadiums** stay round: `full`=9999 (pill/circle).
+
+- **Square (0):** buttons, inputs/textareas, bottom sheets & modals, dialogs, badges, the set-row
+  chips, metric tiles, progress bar, chart bars — every rounded rectangle.
+- **Pill (`full`):** FAB, filter chips, the range/type **toggles**, the switch, the pill `AppBadge`,
+  and the set-kind chip. These read as deliberate round accents against the squared everything-else.
+- The brand mark's curves are logo geometry, not a panel radius, and are unaffected.
 
 ## Layout constants
 | Token | Value |
@@ -185,6 +192,78 @@ for genuinely elevated surfaces: modals/sheets, the workout & PR banners, and sk
 - **Badge**: pill, `xs`/500, colour pairs per *Semantic*. (`AppBadge`.)
 - **Skeleton loader**: `surface1` block, opacity pulse 1→0.4→1 over 1.5s (lists while loading).
 - **FAB**: pill, `accent` bg, `onAccent` content, `sm`/700, fixed above the nav. (`AppFab`.)
+
+## Buttons — semantic colour (decided)
+Button colour is driven by **intent, not widget type**, so navigating the app feels unified: the
+signature chalk only ever marks the affirmative action. Three roles:
+
+| Role | Used for | Treatment | Material widget | `AppButton` variant |
+|------|----------|-----------|-----------------|---------------------|
+| **Affirmative** | save · accept · add · create · log · confirm-positive · complete · finish | **`accent` chalk fill**, `onAccent` text, `accentDim` pressed | `FilledButton` / `ElevatedButton` | `accent` |
+| **Neutral** | cancel · edit · back · view / navigate · dismiss | **grey** — `text2` label (ghost border when a bordered secondary is needed) | `TextButton` / `OutlinedButton` | `ghost` |
+| **Destructive** | delete · abandon · discard · remove | **`danger`** text/border (never chalk) | danger-styled button | `danger` |
+
+Rules:
+- Every positive action is chalk; there may be more than one in a view (e.g. **Save** and **Add**).
+  Lightweight inline adds inside a form (e.g. "Add set") may use **chalk *text*** rather than a
+  full chalk fill so they don't compete with the view's primary affirmative — still the signature
+  colour, just quieter.
+- A neutral action is **never** chalk and **never** a filled grey box; grey filled boxes
+  (the legacy `primary` variant) read as a false affirmative and are avoided.
+- Destructive actions keep the semantic `danger` colour regardless of how prominent they are.
+- These mappings are centralised in `app_theme.dart`'s button themes, so a bare `FilledButton`
+  is affirmative and a bare `TextButton`/`OutlinedButton` is neutral without per-call styling.
+
+## Depth & elevation (decided)
+With surfaces flat and squared, elevation is carried by **surface step + a hairline + a scrim**, not
+by rounding or large shadows. Three tiers only:
+
+| Tier | Use | Treatment |
+|------|-----|-----------|
+| **Base** | the page | `bg` `#0F0F0F`, content sits directly on it |
+| **Raised** | section panels that need to detach (rare), the **nav bar** | `surface1`, top/edge 1px `border` hairline — no shadow |
+| **Overlay** | sheets, dialogs, the active-session add-sheet | `surface1` + full-screen scrim `black@0.70` + the one shadow `0 8 24 black@0.50` |
+
+Accent-tinted surfaces signal a **live/important** state, not mere elevation:
+- **Workout-in-progress banner** — `accent@0.08` bg, `accent@0.20` 1px hairline, a live dot + running timer; tappable back into the session.
+- **PR moment** — `accent@0.06` bg, `accent@0.20` hairline, a brief number-roll on the new value.
+
+## Interactive vs static (decided)
+The single most important finish: the eye must know what it can touch. One rule, applied everywhere.
+
+- **Interactive** (opens, navigates, toggles): carries a **trailing affordance** — a `chevron` (navigates)
+  or an action icon (toggles/deletes) in `text3` — **and** responds to touch with an ink ripple + a
+  press wash (`accent@0.04`). Min height `touchTargetMin`.
+- **The "now" item** (current set, active nav tab, today's plan): a **2px `accent` left-rail** marks it.
+  This is the only place chalk touches a row edge — it reads as "you are here / act here".
+- **Static** (readouts: set tables, history values, metric tiles, the version line): **no** trailing
+  affordance, **no** ripple, **no** rail. If it doesn't react, it must not look like it would.
+- **Focus**: a 2px `accent` ring on the focused control (keyboard/switch-access parity).
+
+## Data visualisation (decided)
+Charts are monochrome instruments, given the same care as type.
+- **Radar (muscle balance)** — 7 fixed axes (Chest, Shoulders, Arms, Back, Core, Legs, Glutes);
+  `surface3` grid rings + spokes; data polygon = `accent` stroke over `accent@0.12` fill; axis
+  labels `xs`/`text2`. Draws in (scale 0→1, `normal`).
+- **Volume (per-workout)** — bars `accent@0.50`, **latest bar full `accent`** as the emphasized
+  endpoint; faint `surface3` baseline; `mono` tabular axis. Bars grow on load (`normal`, staggered).
+- Numbers everywhere use **`mono` tabular** so columns and deltas line up.
+
+## Motion & life (decided)
+The app should feel **alive but still** — one live moment per context, calm everywhere else.
+- **Session heartbeat** (the signature): the live dot **breathes** (opacity/scale, 1.6s loop); the
+  session timer ticks in `mono`; the progress bar fills `400ms` on advance.
+- **On load**: lists/sections fade+rise (+8px, `normal`); chart series animate in once.
+- **On press**: `fast` press wash; affirmative buttons settle to `accentDim`.
+- **PR**: a one-shot number-roll + a brief accent flash on the row.
+- All motion respects `prefers-reduced-motion` / the OS "reduce motion" flag — it drops to instant.
+
+## Layout rhythm (decided)
+- Screens open with the content, not chrome: a `space4` top gap, then an `eyebrow`, then the list.
+- One **hero** per analytical screen (Progress leads with the biggest number — workouts or streak —
+  before the supporting tiles), so there's a clear entry point for the eye.
+- Vertical rhythm is on the 4-pt grid: `space4` between sections, `space2`–`space3` within a group.
+- Lists are edge-to-edge; section headers and hero content keep `space4` horizontal insets.
 
 ## Notes for "identical" fidelity
 - Accent `#EDEDED` is the signature; it appears on every primary action, active state, and PR.

@@ -36,9 +36,7 @@ class VolumeChart extends StatelessWidget {
                     toY: entry.value.volume,
                     color: colors.accent,
                     width: 16,
-                    borderRadius: const BorderRadius.vertical(
-                      top: Radius.circular(4),
-                    ),
+                    borderRadius: BorderRadius.zero,
                   ),
                 ],
               ),

@@ -128,7 +128,7 @@ class _HistoryDetailScreenState extends ConsumerState<HistoryDetailScreen> {
           if (!_editing)
             TextButton(onPressed: _enterEditMode, child: const Text('Edit'))
           else
-            TextButton(
+            FilledButton(
               onPressed: _saveEdits,
               child: const Text('Save changes'),
             ),
@@ -150,7 +150,7 @@ class _HistoryDetailScreenState extends ConsumerState<HistoryDetailScreen> {
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: colors.surface1,
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.zero,
                 border: Border.all(color: colors.border),
               ),
               child: Column(

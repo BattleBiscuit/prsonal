@@ -23,7 +23,7 @@ class AppModal extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: colors.surface1,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.zero,
         border: Border.all(color: colors.border),
       ),
       padding: const EdgeInsets.all(20),

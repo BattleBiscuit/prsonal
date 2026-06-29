@@ -25,12 +25,18 @@ gym-app sizing, radius, and the four colour treatments.
 
 ## Visual States
 
+Variants map to the semantic button roles in [[design_system]]: **`accent` = affirmative**
+(save/accept/add), **`ghost` = neutral** (cancel/secondary), **`danger` = destructive**. The
+filled-grey **`primary`** variant is **legacy** — a filled grey box reads as a false affirmative, so
+prefer `accent` for positive actions and `ghost` for neutral ones; `primary` is retained only for
+backward compatibility.
+
 | State | Appearance |
 |-------|------------|
-| primary | surface-2 bg, text-1, 1px border, radius md |
-| accent | accent bg, onAccent text, no border; pressed → accentDim |
-| ghost | transparent bg, text-2, 1px border |
-| danger | transparent bg, danger text, 1px danger border |
+| accent (affirmative) | accent bg, onAccent text, no border; pressed → accentDim |
+| ghost (neutral) | transparent bg, text-2, 1px border |
+| danger (destructive) | transparent bg, danger text, 1px danger border |
+| primary (legacy) | surface-2 bg, text-1, 1px border, radius md — avoid for new affirmatives |
 | disabled (onPressed null) | opacity 0.4, no tap response |
 | sizes | md: min-height 48, padding 0×20, text base/600 · sm: min-height 36, padding 0×12, text sm |
 

@@ -103,7 +103,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                 filled: true,
                 fillColor: colors.surface2,
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.zero,
                   borderSide: BorderSide.none,
                 ),
               ),

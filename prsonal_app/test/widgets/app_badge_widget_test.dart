@@ -11,11 +11,13 @@ void main() {
       expect(find.text('strength'), findsOneWidget);
     });
 
-    testWidgets('AC-002: Widget defaults to the neutral variant when no variant is provided',
-        (tester) async {
-      await tester.pumpWidget(_wrap(const AppBadge(label: 'strength')));
-      final badge = tester.widget<AppBadge>(find.byType(AppBadge));
-      expect(badge.variant, AppBadgeVariant.neutral);
-    });
+    testWidgets(
+      'AC-002: Widget defaults to the neutral variant when no variant is provided',
+      (tester) async {
+        await tester.pumpWidget(_wrap(const AppBadge(label: 'strength')));
+        final badge = tester.widget<AppBadge>(find.byType(AppBadge));
+        expect(badge.variant, AppBadgeVariant.neutral);
+      },
+    );
   });
 }

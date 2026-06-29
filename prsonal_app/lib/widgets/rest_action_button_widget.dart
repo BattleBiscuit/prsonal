@@ -28,7 +28,7 @@ class RestActionButton extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 20),
         decoration: BoxDecoration(
           color: resting ? colors.surface3 : colors.accent,
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.zero,
         ),
         child: Center(
           child: Text(

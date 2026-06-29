@@ -66,7 +66,11 @@ class _SessionActiveScreenState extends ConsumerState<SessionActiveScreen> {
           onPressed: () => Navigator.of(context).pop(),
           child: const Text('Cancel'),
         ),
-        ElevatedButton(
+        OutlinedButton(
+          style: OutlinedButton.styleFrom(
+            foregroundColor: Theme.of(context).colorScheme.error,
+            side: BorderSide(color: Theme.of(context).colorScheme.error),
+          ),
           onPressed: () async {
             Navigator.of(context).pop();
             await ref.read(sessionEngineProvider.notifier).abandonSession();
@@ -164,7 +168,7 @@ class _SessionActiveScreenState extends ConsumerState<SessionActiveScreen> {
                 itemCount: state.exercises.length + 1,
                 itemBuilder: (context, i) {
                   if (i == state.exercises.length) {
-                    return TextButton(
+                    return FilledButton(
                       onPressed: () => _showAddExercise(state),
                       child: const Text('Add exercise'),
                     );

@@ -40,7 +40,7 @@ class ExerciseSearchInput extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
         decoration: BoxDecoration(
           color: colors.surface2,
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.zero,
           border: Border.all(color: colors.border),
         ),
         child: Row(
@@ -126,7 +126,7 @@ class _ExerciseSearchSheetState extends State<_ExerciseSearchSheet> {
                 filled: true,
                 fillColor: colors.surface2,
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.zero,
                   borderSide: BorderSide.none,
                 ),
               ),

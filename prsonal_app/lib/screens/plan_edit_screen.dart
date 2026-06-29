@@ -158,7 +158,7 @@ class _PlanEditScreenState extends ConsumerState<PlanEditScreen> {
       appBar: AppBar(
         title: BrandTitle(widget.planId == null ? 'New Plan' : 'Edit Plan'),
         backgroundColor: colors.bg,
-        actions: [TextButton(onPressed: _save, child: const Text('Save'))],
+        actions: [FilledButton(onPressed: _save, child: const Text('Save'))],
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),
@@ -185,7 +185,7 @@ class _PlanEditScreenState extends ConsumerState<PlanEditScreen> {
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              TextButton(onPressed: _addEntry, child: const Text('Add')),
+              FilledButton(onPressed: _addEntry, child: const Text('Add')),
             ],
           ),
           const SizedBox(height: 8),
@@ -231,7 +231,7 @@ class _EntryRow extends StatelessWidget {
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: colors.surface1,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.zero,
         border: Border.all(color: colors.border),
       ),
       child: Column(

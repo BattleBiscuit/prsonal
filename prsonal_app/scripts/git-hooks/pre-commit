@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+# Auto-format staged Dart files in prsonal_app/lib before they are committed,
+# so the CI `format` job (dart format --set-exit-if-changed lib) never trips on
+# a formatting slip. Re-stages anything it reformats.
+#
+# Install once with:  prsonal_app/scripts/install-hooks.sh
+set -euo pipefail
+
+# Staged, added/copied/modified Dart files under prsonal_app/lib/.
+# (A plain `lib` pathspec matches every depth; filter to .dart in-shell, since
+# git pathspec wildcards don't cross '/' by default.)
+mapfile -t files < <(
+  git diff --cached --name-only --diff-filter=ACM -- 'prsonal_app/lib' \
+    | grep -E '\.dart$' || true
+)
+
+[ ${#files[@]} -eq 0 ] && exit 0
+
+if ! command -v dart >/dev/null 2>&1; then
+  echo "pre-commit: 'dart' not on PATH — skipping format. CI will still check." >&2
+  exit 0
+fi
+
+dart format "${files[@]}" >/dev/null
+git add -- "${files[@]}"

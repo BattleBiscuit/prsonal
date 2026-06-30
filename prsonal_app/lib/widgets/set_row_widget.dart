@@ -215,7 +215,9 @@ class _SetRowState extends State<SetRow> {
         contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.zero,
-          borderSide: BorderSide(color: colors.onAccent.withValues(alpha: 0.30)),
+          borderSide: BorderSide(
+            color: colors.onAccent.withValues(alpha: 0.30),
+          ),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.zero,

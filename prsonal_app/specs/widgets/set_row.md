@@ -37,9 +37,13 @@ state.
 | State | Appearance |
 |-------|------------|
 | upcoming | set number + ghost planned label; tappable to select; muted |
-| active | accent left border, accent@0.04 bg; editable inputs + BW toggle + unchecked box |
+| active | **Tier 3 polarity inversion**: solid `accent` chalk block with `onAccent` (`#0F0F0F`) content — dark set number, dark-text inputs with dark contours, dark unchecked box. The single loudest element in the session. |
 | completed | logged values in success; optional PR trophy; ▲/▼/= delta; checked box; 0.65 opacity |
 | skipped | "Skip" badge, 0.35 opacity, non-interactive |
+
+The active row is the design system's canonical Tier 3 "state-proposing / act here now" moment: it
+inverts the dark-on-light system rule to a chalk-on-dark block so the live set snaps out from the
+historical (Tier 2) logs around it.
 
 ## Accessibility
 - PR indicator semantic label: "Personal record"
@@ -53,3 +57,4 @@ state.
 - AC-005: A skipped set renders a skipped treatment
 - AC-006: Tapping the active set's checkbox invokes onToggleComplete
 - AC-007: The active set's inputs display the provided primaryValue and secondaryValue and preserve typed input across rebuilds
+- AC-008: The active set renders as a Tier 3 polarity-inverted block — a solid accent (chalk) background with onAccent (dark) content

@@ -130,11 +130,12 @@ class _SetRowState extends State<SetRow> {
   }
 
   Widget _buildActive(BuildContext context, AppColors colors) {
+    // Tier 3 — polarity inversion. The live set is the single loudest element
+    // in the session: a solid chalk (accent) block with deep-dark (onAccent)
+    // content, flipping the dark-on-light system rule so it snaps out from the
+    // Tier 2 logs around it. (Design system: Visual tiering architecture.)
     return Container(
-      decoration: BoxDecoration(
-        border: Border(left: BorderSide(color: colors.accent, width: 3)),
-        color: colors.accent.withValues(alpha: 0.04),
-      ),
+      color: colors.accent,
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
       child: Row(
         children: [
@@ -143,59 +144,29 @@ class _SetRowState extends State<SetRow> {
             child: Text(
               '${widget.index + 1}',
               style: TextStyle(
-                color: colors.text1,
+                color: colors.onAccent,
                 fontSize: 14,
-                fontWeight: FontWeight.w600,
+                fontWeight: FontWeight.w700,
               ),
               textAlign: TextAlign.center,
             ),
           ),
           const SizedBox(width: 8),
           Expanded(
-            child: TextField(
+            child: _buildInvertedField(
+              colors,
               controller: _primaryController,
-              keyboardType: const TextInputType.numberWithOptions(
-                decimal: true,
-              ),
+              hint: 'Reps',
               onChanged: widget.onPrimaryChanged,
-              style: TextStyle(color: colors.text1, fontSize: 14),
-              decoration: InputDecoration(
-                hintText: 'Reps',
-                hintStyle: TextStyle(color: colors.text3),
-                isDense: true,
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 8,
-                  vertical: 8,
-                ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.zero,
-                  borderSide: BorderSide(color: colors.border),
-                ),
-              ),
             ),
           ),
           const SizedBox(width: 8),
           Expanded(
-            child: TextField(
+            child: _buildInvertedField(
+              colors,
               controller: _secondaryController,
-              keyboardType: const TextInputType.numberWithOptions(
-                decimal: true,
-              ),
+              hint: 'kg',
               onChanged: widget.onSecondaryChanged,
-              style: TextStyle(color: colors.text1, fontSize: 14),
-              decoration: InputDecoration(
-                hintText: 'kg',
-                hintStyle: TextStyle(color: colors.text3),
-                isDense: true,
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 8,
-                  vertical: 8,
-                ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.zero,
-                  borderSide: BorderSide(color: colors.border),
-                ),
-              ),
             ),
           ),
           const SizedBox(width: 8),
@@ -210,7 +181,7 @@ class _SetRowState extends State<SetRow> {
                 child: Center(
                   child: Icon(
                     Icons.check_box_outline_blank,
-                    color: colors.text3,
+                    color: colors.onAccent,
                     size: 24,
                   ),
                 ),
@@ -218,6 +189,38 @@ class _SetRowState extends State<SetRow> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  // Input styled for the inverted (chalk) surface: dark text on chalk, with a
+  // discoverable dark contour even when un-focused (high-glare safeguard) that
+  // resolves to a solid dark border on focus.
+  Widget _buildInvertedField(
+    AppColors colors, {
+    required TextEditingController controller,
+    required String hint,
+    required ValueChanged<String>? onChanged,
+  }) {
+    return TextField(
+      controller: controller,
+      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+      onChanged: onChanged,
+      cursorColor: colors.onAccent,
+      style: TextStyle(color: colors.onAccent, fontSize: 14),
+      decoration: InputDecoration(
+        hintText: hint,
+        hintStyle: TextStyle(color: colors.onAccent.withValues(alpha: 0.45)),
+        isDense: true,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.zero,
+          borderSide: BorderSide(color: colors.onAccent.withValues(alpha: 0.30)),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.zero,
+          borderSide: BorderSide(color: colors.onAccent, width: 2),
+        ),
       ),
     );
   }

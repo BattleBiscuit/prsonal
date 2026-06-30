@@ -21,6 +21,21 @@ ported from gym-app; the original lime accent (`#E8FF47`) is retired in favour o
 red, a gain is green) and are deliberately exempt from the monochrome rule. They are never used as
 the brand accent.
 
+## Core design tenets
+Graphite is a dark-only, monochrome, flat, hard-edged instrument built for weightlifters. The brand
+lives in contrast, utility, and mathematical stability — not hue. Four tenets govern every screen:
+
+1. **Flat over boxed.** Avoid card-heavy layouts. Divide data blocks with structural hairline
+   dividers (`1px` `border` `#2E2E2E`) and composed spacing, not chrome. (See *Surface treatment*.)
+2. **Hard-edged.** Panels and layout blocks are square 90° corners. Only genuine functional pills
+   (chips, toggles, switch, badge, FAB) stay fully round. (See *Border radius*.)
+3. **Data stability.** Every metric, counter, stopwatch, and tracking number uses `mono` tabular
+   numerals (`fontFeatures: [FontFeature.tabularFigures()]`) so columns and deltas never shift
+   layout mid-training.
+4. **Color economy.** Standard interface elements are monochrome. `success` / `danger` / `warning`
+   are reserved for high-impact semantic events (a PR, an abandoned session, a delete) — never
+   decoration, never the brand accent.
+
 ---
 
 ## Implementation
@@ -91,7 +106,8 @@ the brand accent.
 | Modal scrim | `black @ 0.70` |
 | Workout banner bg / active | `accent @ 0.08` / `0.14` |
 | Workout banner border | `accent @ 0.20` |
-| Active set row bg | `accent @ 0.04` |
+| Active set row bg | **solid `accent`** (Tier 3 polarity inversion) |
+| Interactive press wash | `accent @ 0.06` |
 | Accent badge bg | `accent @ 0.15` |
 | Success / danger / warning badge bg | respective colour @ 0.20 |
 | PR banner bg / border | `accent @ 0.06` / `0.20` |
@@ -167,6 +183,20 @@ FAB: `0 4 16 black@0.40`. Drag ghost (if reorder kept): `0 8 24 black@0.50`.
 - Focused inputs: 1px → use a 2px `accent` border (`borderFocus`).
 - Disabled controls: opacity 0.4.
 
+## Mobile safeguards (decided)
+Production hardening for high-glare gyms and Android gesture navigation. These are hard rules, not
+suggestions.
+
+- **Touch-target isolation / edge padding.** Interactive list rows keep an absolute horizontal
+  buffer of at least `space4` (16) inside the phone layout, so taps never collide with edge-swipe
+  gestures on curved screens. (Satisfied by the flat list-row padding.)
+- **Android safe-area insets.** The bottom nav shell never crashes into the system home line — it
+  reserves bottom space equivalent to `clamp(space4, safeBottom, space6)` (16–24) via Flutter
+  `SafeArea` / `MediaQuery.padding`. Scrollable content adds `navHeight + safeBottom + space4`.
+- **High-glare input contours.** Inputs and layout cells keep a discoverable contour even when
+  un-focused: an un-focused field always renders its `border` baseline (`enabledBorder`), so forms
+  don't vanish under screen glare. Focus then raises it to the 2px `accent` ring.
+
 ---
 
 ## Surface treatment — flat rows, not cards (decided)
@@ -230,16 +260,43 @@ Accent-tinted surfaces signal a **live/important** state, not mere elevation:
 - **Workout-in-progress banner** — `accent@0.08` bg, `accent@0.20` 1px hairline, a live dot + running timer; tappable back into the session.
 - **PR moment** — `accent@0.06` bg, `accent@0.20` hairline, a brief number-roll on the new value.
 
-## Interactive vs static (decided)
-The single most important finish: the eye must know what it can touch. One rule, applied everywhere.
+## Visual tiering architecture — anti-confusion framework (decided)
+The single most important finish: the eye must know what it can touch, what is read-only, and what
+is live *right now*. In a monochrome interface, interactive elements risk blending with readouts
+(the "monochrome trap"). Every view sorts its contents into exactly three tiers.
 
-- **Interactive** (opens, navigates, toggles): carries a **trailing affordance** — a `chevron` (navigates)
-  or an action icon (toggles/deletes) in `text3` — **and** responds to touch with an ink ripple + a
-  press wash (`accent@0.04`). Min height `touchTargetMin`.
-- **The "now" item** (current set, active nav tab, today's plan): a **2px `accent` left-rail** marks it.
-  This is the only place chalk touches a row edge — it reads as "you are here / act here".
-- **Static** (readouts: set tables, history values, metric tiles, the version line): **no** trailing
-  affordance, **no** ripple, **no** rail. If it doesn't react, it must not look like it would.
+### Tier 1 — Interactive ("tap me")
+Opens, navigates, toggles, or edits.
+- **Surface**: raised — `surface1` (`#1A1A1A`) for tappable rows/containers, `surface2` (`#242424`)
+  for active text inputs.
+- **Typography**: high-contrast `text1` (`#F5F5F5`), medium/bold weight.
+- **Trailing affordance (required)**: every interactive row/target carries an explicit trailing
+  glyph — a `chevron` (navigates) or an action icon (toggle/edit/delete) in `text3` — to signal
+  momentum. No interactive row is left bare.
+- **Press feedback**: ink ripple **and** a press wash (`accent@0.06`). Min height `touchTargetMin`.
+
+### Tier 2 — Static ("read-only")
+Readouts: set tables, history values, metric tiles, logs, the version line.
+- **Surface**: **no** background box — static content is stamped directly onto the `bg` canvas
+  (`#0F0F0F`). If a container boundary is structurally unavoidable, it uses a **dashed** hairline
+  (`1px dashed` `border`), never a solid filled box — the dash reads "boundary, not button".
+- **Typography**: drop contrast to `text2` (`#9E9E9E`) or `text3` (`#616161`), normal weight.
+- **No affordance**: **never** a trailing chevron/arrow/menu icon, **no** ripple, **no** rail.
+  If it doesn't react, it must not look like it would.
+
+### Tier 3 — State-proposing ("live / active focus")
+The single element commanding immediate attention right now (the current active set mid-workout,
+a live readout). One per context.
+- **Polarity inversion (primary)**: flip the system brightness rule — a solid **chalk `#EDEDED`**
+  block containing deep dark `#0F0F0F` (`onAccent`) content. This is the loudest treatment in the
+  system and is reserved for genuine live execution.
+- **Chalk outline (alternative)**: where a solid block is too heavy, a thick **2px `accent`**
+  outline frames the element instead.
+- **Live "you are here" rail (lighter marker)**: secondary now-markers that are not the single
+  live-execution element — the active nav tab, today's plan row — keep a **2px `accent` left-rail**
+  rather than full inversion. The rail says "you are here"; inversion says "act here now".
+- **Heartbeat**: the live dot (`.live-dot`) runs the breathing pulse to declare a live routine
+  (see *Motion & life*).
 - **Focus**: a 2px `accent` ring on the focused control (keyboard/switch-access parity).
 
 ## Data visualisation (decided)

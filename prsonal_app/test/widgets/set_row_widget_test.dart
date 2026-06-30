@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:prsonal_app/models/exercise.dart';
 import 'package:prsonal_app/services/session_service.dart' show ActiveSetStatus;
+import 'package:prsonal_app/theme/app_colors.dart';
 import 'package:prsonal_app/widgets/set_row_widget.dart';
 
 Widget _wrap(Widget child) => MaterialApp(home: Scaffold(body: child));
@@ -145,6 +146,35 @@ void main() {
         await tester.enterText(find.byType(TextField).first, '9');
         await tester.pump();
         expect(find.text('9'), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      'AC-008: The active set renders as a Tier 3 polarity-inverted block — a solid accent (chalk) background with onAccent (dark) content',
+      (tester) async {
+        await tester.pumpWidget(
+          _wrap(
+            SetRow(
+              index: 0,
+              kind: ExerciseType.strength,
+              status: ActiveSetStatus.active,
+              plannedLabel: '8×82.5kg',
+              onToggleComplete: () {},
+            ),
+          ),
+        );
+
+        // The active row's outer container is filled with the solid accent
+        // (chalk) colour — the polarity inversion, not the old accent@0.04 wash.
+        final inverted = tester
+            .widgetList<Container>(find.byType(Container))
+            .where((c) {
+              final decoration = c.decoration;
+              return c.color == AppColors.dark.accent ||
+                  (decoration is BoxDecoration &&
+                      decoration.color == AppColors.dark.accent);
+            });
+        expect(inverted, isNotEmpty);
       },
     );
   });

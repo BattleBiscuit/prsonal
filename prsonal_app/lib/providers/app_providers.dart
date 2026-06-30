@@ -1,3 +1,8 @@
+import 'dart:convert';
+import 'dart:io';
+import 'dart:typed_data';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import '../database/app_database.dart';
@@ -104,9 +109,55 @@ final appVersionProvider = FutureProvider<String>((ref) async {
   return info.version;
 });
 
+// ---------------------------------------------------------------------------
+// Backup file IO
+//
+// The backup *logic* (serialise/restore) lives in BackupService and deals only
+// in JSON strings. These two providers are the thin platform glue that moves
+// those strings to and from a file the user chooses, backed by `file_picker`.
+// They are overridden with stubs in tests so widgets never touch the platform.
+// ---------------------------------------------------------------------------
+
+/// Presents a file picker and returns the chosen file's contents as a JSON
+/// string, or `null` if the user cancels.
+Future<String?> _pickBackupJson() async {
+  final result = await FilePicker.platform.pickFiles(withData: true);
+  if (result == null || result.files.isEmpty) return null;
+  final file = result.files.first;
+  if (file.bytes != null) return utf8.decode(file.bytes!);
+  final path = file.path;
+  if (path != null) return File(path).readAsString();
+  return null;
+}
+
+/// Presents a save dialog and writes [contents] to the chosen location.
+/// Returns the saved path/name, or `null` if the user cancels.
+Future<String?> _saveBackupJson(String fileName, String contents) async {
+  final bytes = Uint8List.fromList(utf8.encode(contents));
+  final path = await FilePicker.platform.saveFile(
+    dialogTitle: 'Save backup',
+    fileName: fileName,
+    bytes: bytes,
+  );
+  if (path == null) return null;
+  // On Android/iOS `saveFile` already wrote the bytes. On desktop it only
+  // returns the chosen (non-existing) path, so we write the file ourselves.
+  if (!Platform.isAndroid && !Platform.isIOS) {
+    await File(path).writeAsBytes(bytes);
+  }
+  return path;
+}
+
 /// A function that presents a file picker and returns the JSON string or null.
 /// Override in tests with a stub.
 final backupFilePickerProvider = Provider<Future<String?> Function()>(
-  (ref) =>
-      () async => null,
+  (ref) => _pickBackupJson,
 );
+
+/// A function that presents a save dialog, writes the export JSON to the chosen
+/// location, and returns the saved file name/path (or null if cancelled).
+/// Override in tests with a stub.
+final backupFileSaverProvider =
+    Provider<Future<String?> Function(String fileName, String contents)>(
+      (ref) => _saveBackupJson,
+    );

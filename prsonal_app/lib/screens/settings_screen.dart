@@ -28,13 +28,13 @@ class SettingsScreen extends ConsumerWidget {
             title: 'Export backup',
             subtitle: 'Save your data to a file',
             trailing: Icon(Icons.upload_outlined, color: colors.text3),
-            onTap: () => _showExportSheet(context, ref),
+            onTap: () => _runExport(context, ref),
           ),
           SettingsRow(
             title: 'Import backup',
             subtitle: 'Restore from a backup file',
             trailing: Icon(Icons.download_outlined, color: colors.text3),
-            onTap: () => _showImportSheet(context, ref),
+            onTap: () => _runImport(context, ref),
           ),
           const Divider(),
           Padding(
@@ -49,36 +49,75 @@ class SettingsScreen extends ConsumerWidget {
     );
   }
 
-  void _showExportSheet(BuildContext context, WidgetRef ref) {
-    showModalBottomSheet(
+  /// Pick sections, serialise them, then hand the JSON to the saver. Feedback is
+  /// shown via the screen's [ScaffoldMessenger] so it survives the sheet closing.
+  Future<void> _runExport(BuildContext context, WidgetRef ref) async {
+    final messenger = ScaffoldMessenger.of(context);
+    final sections = await showModalBottomSheet<Set<BackupSection>>(
       context: context,
       isScrollControlled: true,
-      builder: (ctx) => _ExportSheet(service: ref.read(backupServiceProvider)),
+      builder: (ctx) =>
+          const _SectionSheet(title: 'Export', confirmLabel: 'Export'),
     );
+    if (sections == null || sections.isEmpty) return;
+
+    final service = ref.read(backupServiceProvider);
+    final save = ref.read(backupFileSaverProvider);
+    try {
+      final json = await service.exportJson(sections: sections);
+      final saved = await save('prsonal-backup.json', json);
+      if (saved == null) return; // user cancelled the save dialog
+      messenger.showSnackBar(const SnackBar(content: Text('Backup saved')));
+    } catch (_) {
+      messenger.showSnackBar(const SnackBar(content: Text('Export failed')));
+    }
   }
 
-  void _showImportSheet(BuildContext context, WidgetRef ref) {
-    showModalBottomSheet(
+  /// Pick sections, read a file via the picker, then restore. Surfaces a
+  /// readable error if the file is not a recognised backup.
+  Future<void> _runImport(BuildContext context, WidgetRef ref) async {
+    final messenger = ScaffoldMessenger.of(context);
+    final sections = await showModalBottomSheet<Set<BackupSection>>(
       context: context,
       isScrollControlled: true,
-      builder: (ctx) => _ImportSheet(
-        service: ref.read(backupServiceProvider),
-        filePicker: ref.read(backupFilePickerProvider),
+      builder: (ctx) => const _SectionSheet(
+        title: 'Restore from backup',
+        confirmLabel: 'Restore selected',
       ),
     );
+    if (sections == null || sections.isEmpty) return;
+
+    final pick = ref.read(backupFilePickerProvider);
+    final json = await pick();
+    if (json == null) return; // user cancelled the file picker
+
+    final service = ref.read(backupServiceProvider);
+    try {
+      await service.importJson(json, sections: sections);
+      messenger.showSnackBar(const SnackBar(content: Text('Backup restored')));
+    } on FormatException {
+      messenger.showSnackBar(
+        const SnackBar(content: Text('Import failed: not a valid backup file')),
+      );
+    } catch (_) {
+      messenger.showSnackBar(const SnackBar(content: Text('Import failed')));
+    }
   }
 }
 
-class _ExportSheet extends StatefulWidget {
-  const _ExportSheet({required this.service});
+/// Bottom sheet that lets the user choose which [BackupSection]s to act on and
+/// pops with the selected set (or `null` if dismissed without confirming).
+class _SectionSheet extends StatefulWidget {
+  const _SectionSheet({required this.title, required this.confirmLabel});
 
-  final BackupService service;
+  final String title;
+  final String confirmLabel;
 
   @override
-  State<_ExportSheet> createState() => _ExportSheetState();
+  State<_SectionSheet> createState() => _SectionSheetState();
 }
 
-class _ExportSheetState extends State<_ExportSheet> {
+class _SectionSheetState extends State<_SectionSheet> {
   final Set<BackupSection> _selected = {...BackupSection.values};
 
   @override
@@ -89,9 +128,9 @@ class _ExportSheetState extends State<_ExportSheet> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const Text(
-            'Export',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+          Text(
+            widget.title,
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 16),
           ...BackupSection.values.map(
@@ -109,69 +148,10 @@ class _ExportSheetState extends State<_ExportSheet> {
           ),
           const SizedBox(height: 16),
           ElevatedButton(
-            onPressed: () async {
-              Navigator.of(context).pop();
-              await widget.service.exportJson(sections: _selected);
-            },
-            child: const Text('Export'),
-          ),
-          const SizedBox(height: 16),
-        ],
-      ),
-    );
-  }
-}
-
-class _ImportSheet extends StatefulWidget {
-  const _ImportSheet({required this.service, required this.filePicker});
-
-  final BackupService service;
-  final Future<String?> Function() filePicker;
-
-  @override
-  State<_ImportSheet> createState() => _ImportSheetState();
-}
-
-class _ImportSheetState extends State<_ImportSheet> {
-  final Set<BackupSection> _selected = {...BackupSection.values};
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          const Text(
-            'Restore from backup',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-          ),
-          const SizedBox(height: 16),
-          ...BackupSection.values.map(
-            (section) => CheckboxListTile(
-              title: Text(section.name),
-              value: _selected.contains(section),
-              onChanged: (v) => setState(() {
-                if (v == true) {
-                  _selected.add(section);
-                } else {
-                  _selected.remove(section);
-                }
-              }),
-            ),
-          ),
-          const SizedBox(height: 16),
-          ElevatedButton(
-            onPressed: () async {
-              final json = await widget.filePicker();
-              if (json == null) return;
-              if (!mounted) return;
-              // ignore: use_build_context_synchronously
-              Navigator.of(this.context).pop();
-              await widget.service.importJson(json, sections: _selected);
-            },
-            child: const Text('Restore selected'),
+            onPressed: _selected.isEmpty
+                ? null
+                : () => Navigator.of(context).pop(_selected),
+            child: Text(widget.confirmLabel),
           ),
           const SizedBox(height: 16),
         ],

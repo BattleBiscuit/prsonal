@@ -90,20 +90,31 @@ class PlanEntryRow extends StatelessWidget {
                   opacity: startDisabled ? 0.4 : 1.0,
                   child: Container(
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 6,
+                      horizontal: 14,
+                      vertical: 8,
                     ),
                     decoration: BoxDecoration(
                       color: done ? colors.surface2 : colors.accent,
                       borderRadius: BorderRadius.zero,
                     ),
-                    child: Text(
-                      'Start',
-                      style: TextStyle(
-                        color: done ? colors.text2 : colors.onAccent,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                      ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.play_arrow,
+                          color: done ? colors.text2 : colors.onAccent,
+                          size: 18,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          'Start',
+                          style: TextStyle(
+                            color: done ? colors.text2 : colors.onAccent,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),

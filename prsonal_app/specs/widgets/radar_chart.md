@@ -22,7 +22,12 @@ Glutes) with an accent stroke and a 12%-accent fill.
 | with data | accent line (width 2), accent@0.12 fill, grid in surface-3, labels in text-2, draws in (scale 0→1, `normal`) |
 | empty | empty-state caption "Not enough data yet" |
 
+Axis labels are always upright (angle 0), never rotated to follow their spoke — a label at the
+bottom of the circle must read the same left-to-right as one at the top.
+
 ## Acceptance Criteria
 - AC-001: Widget renders a radar chart for the provided muscle data
 - AC-002: Widget shows an empty state when all muscle counts are zero
 - AC-003: Widget scales in from 0 to 1 over `AppDurations.normal` on load
+- AC-004: Axis labels are never rotated — each title's angle is 0 regardless of its position
+  around the chart

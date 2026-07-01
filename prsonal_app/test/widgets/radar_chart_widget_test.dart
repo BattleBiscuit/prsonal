@@ -50,6 +50,28 @@ void main() {
     );
 
     testWidgets(
+      'AC-004: Axis labels are never rotated — each title\'s angle is 0 '
+      'regardless of its position around the chart',
+      (tester) async {
+        await tester.pumpWidget(
+          _wrap(
+            const app.MuscleRadarChart(
+              data: {Muscle.chest: 3, Muscle.back: 2, Muscle.legs: 4},
+            ),
+          ),
+        );
+        final chart = tester.widget<fl.RadarChart>(find.byType(fl.RadarChart));
+        final getTitle = chart.data.getTitle!;
+        for (var i = 0; i < 7; i++) {
+          // Pass a non-zero radial angle for each axis — the widget must
+          // ignore it and always render the label upright.
+          final title = getTitle(i, i * 360 / 7);
+          expect(title.angle, 0);
+        }
+      },
+    );
+
+    testWidgets(
       'AC-003: Widget scales in from 0 to 1 over AppDurations.normal on load',
       (tester) async {
         await tester.pumpWidget(

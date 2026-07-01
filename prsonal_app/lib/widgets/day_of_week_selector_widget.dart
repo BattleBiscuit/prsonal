@@ -14,41 +14,68 @@ class DayOfWeekSelector extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = Theme.of(context).extension<AppColors>() ?? AppColors.dark;
 
+    // Seven fixed touchTargetMin (48dp) circles don't fit inside the entry
+    // row's padded container on narrow phones (overflows ~74px at 320dp
+    // width) and visibly spill past the border. Each day instead gets an
+    // equal share of the available width via Expanded, with height following
+    // width via AspectRatio — always fits, whatever the screen.
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: List.generate(_days.length, (i) {
-        final isSelected = selected == i;
-        return GestureDetector(
-          onTap: () {
-            if (isSelected) {
-              onChanged(null);
-            } else {
-              onChanged(i);
-            }
-          },
-          child: Container(
-            width: touchTargetMin,
-            height: touchTargetMin,
-            decoration: BoxDecoration(
-              color: isSelected ? colors.accent : colors.surface2,
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: isSelected ? colors.accent : colors.border,
-              ),
+      children: [
+        for (var i = 0; i < _days.length; i++) ...[
+          if (i > 0) const SizedBox(width: space1),
+          Expanded(
+            child: _DayChip(
+              label: _days[i],
+              isSelected: selected == i,
+              onTap: () => onChanged(selected == i ? null : i),
+              colors: colors,
             ),
-            child: Center(
-              child: Text(
-                _days[i],
-                style: TextStyle(
-                  color: isSelected ? colors.onAccent : colors.text2,
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
-                ),
+          ),
+        ],
+      ],
+    );
+  }
+}
+
+class _DayChip extends StatelessWidget {
+  const _DayChip({
+    required this.label,
+    required this.isSelected,
+    required this.onTap,
+    required this.colors,
+  });
+
+  final String label;
+  final bool isSelected;
+  final VoidCallback onTap;
+  final AppColors colors;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: AspectRatio(
+        aspectRatio: 1,
+        child: Container(
+          decoration: BoxDecoration(
+            color: isSelected ? colors.accent : colors.surface2,
+            shape: BoxShape.circle,
+            border: Border.all(
+              color: isSelected ? colors.accent : colors.border,
+            ),
+          ),
+          child: Center(
+            child: Text(
+              label,
+              style: TextStyle(
+                color: isSelected ? colors.onAccent : colors.text2,
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
               ),
             ),
           ),
-        );
-      }),
+        ),
+      ),
     );
   }
 }

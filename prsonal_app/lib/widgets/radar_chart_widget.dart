@@ -38,8 +38,11 @@ class MuscleRadarChart extends StatelessWidget {
         radarBorderData: BorderSide(color: colors.surface3, width: 1),
         titlePositionPercentageOffset: 0.2,
         titleTextStyle: TextStyle(fontSize: 12, color: colors.text2),
+        // angle: 0 (not the axis's radial `angle`) — the label must stay
+        // upright and readable at every position around the chart, not
+        // rotate to follow the spoke it sits on.
         getTitle: (index, angle) =>
-            RadarChartTitle(text: muscles[index].label, angle: angle),
+            RadarChartTitle(text: muscles[index].label, angle: 0),
         dataSets: [
           RadarDataSet(
             fillColor: colors.accent.withValues(alpha: 0.12),

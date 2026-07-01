@@ -88,44 +88,21 @@ class PlanEntryRow extends StatelessWidget {
             ),
             const SizedBox(width: space2),
           ],
-          Semantics(
-            label: 'Start $routineName',
-            button: true,
-            container: true,
-            enabled: !startDisabled,
-            onTap: startDisabled ? null : onStart,
-            child: ExcludeSemantics(
+          Tooltip(
+            message: 'Start $routineName',
+            child: Semantics(
+              label: 'Start $routineName',
+              button: true,
+              enabled: !startDisabled,
               child: GestureDetector(
                 onTap: startDisabled ? null : onStart,
                 child: Opacity(
                   opacity: startDisabled ? 0.4 : 1.0,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: space4,
-                      vertical: space2,
-                    ),
-                    decoration: BoxDecoration(
-                      color: done ? colors.surface2 : colors.accent,
-                      borderRadius: BorderRadius.zero,
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          Icons.play_arrow_outlined,
-                          color: done ? colors.text2 : colors.onAccent,
-                          size: 18,
-                        ),
-                        const SizedBox(width: space1),
-                        Text(
-                          'Start',
-                          style: TextStyle(
-                            color: done ? colors.text2 : colors.onAccent,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
+                  child: Padding(
+                    padding: const EdgeInsets.all(space2),
+                    child: Icon(
+                      Icons.play_arrow_outlined,
+                      color: done ? colors.text2 : colors.accent,
                     ),
                   ),
                 ),

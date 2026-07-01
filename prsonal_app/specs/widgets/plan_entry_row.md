@@ -25,8 +25,8 @@ start (▶) button. Used both inside plan blocks (with a day label) and in the U
 
 | State | Appearance |
 |-------|------------|
-| default | day label (text-3) · routine name (text-1, medium) + trailing `edit_outlined` (text2, the tap-to-edit affordance) · done dot · accent ▶ start button |
-| done | done indicator is a success ✓ |
+| default | day label (text-3) · routine name (text-1, medium) + trailing `edit_outlined` (text2, the tap-to-edit affordance) · done dot · accent ▶ icon (icon-only, no button chrome — matches the delete affordance elsewhere in the app) |
+| done | done indicator is a success ✓; the ▶ icon mutes to text-2 |
 | startDisabled | start button at opacity 0.3, inert |
 
 ## Accessibility

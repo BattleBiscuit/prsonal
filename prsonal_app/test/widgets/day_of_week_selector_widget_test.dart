@@ -48,5 +48,31 @@ void main() {
         expect(changed, isNull);
       },
     );
+
+    testWidgets(
+      'Does not overflow its container on the narrowest common phone width '
+      '(320dp, matching the plan editor\'s padded entry row)',
+      (tester) async {
+        tester.view.physicalSize = const Size(320, 800);
+        tester.view.devicePixelRatio = 1.0;
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+
+        await tester.pumpWidget(
+          _wrap(
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(border: Border.all()),
+                child: DayOfWeekSelector(selected: 0, onChanged: (_) {}),
+              ),
+            ),
+          ),
+        );
+
+        expect(tester.takeException(), isNull);
+      },
+    );
   });
 }

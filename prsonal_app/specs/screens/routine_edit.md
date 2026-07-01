@@ -40,8 +40,8 @@ discard confirmation. Edit mode adds a "Delete routine" action.
 - `libraryOptionsProvider` — exercise options for the form picker
 
 ## Navigation
-- Entered from: Routines list (+ New / card) · session-pick add sheet
-- Navigates back to the previous screen on save / discard
+- Entered from: session-pick add sheet (+ New routine) · session-pick (tapping a routine name)
+- Navigates back to the previous screen (Workout home) on save / discard
 
 ## Acceptance Criteria
 - AC-001: In create mode the name field starts empty; in edit mode it is populated from the routine

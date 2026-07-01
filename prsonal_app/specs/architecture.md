@@ -74,8 +74,11 @@ not have one, and the previously-scaffolded Dashboard (and its `metric_card` / `
 widgets) is retired.
 
 Detail/editor routes pushed on top of the relevant tab stack:
-`session-active`, `routines`, `routine-create`, `routine-edit`, `plan-create`, `plan-edit`,
-`history`, `history-detail`, `all-prs`.
+`session-active`, `routine-create`, `routine-edit`, `plan-create`, `plan-edit`,
+`history`, `history-detail`, `all-prs`. There is **no standalone routine-list screen** —
+routines are created/edited directly from the Workout tab's add sheet and routine rows, and the
+routine editor returns to the Workout home. `history` / `history-detail` live under the Progress
+tab (`/progress/history`), reached via the Progress screen's "View all history" action.
 
 **Active-session guard (`redirect`):** matches gym-app — navigating to `session-active` with no
 active session redirects to `session-pick`; navigating to `session-pick` while a session is

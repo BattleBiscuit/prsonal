@@ -31,12 +31,12 @@ GoRouter _router() => GoRouter(
       builder: (_, __) => const Text('ALL PRS'),
     ),
     GoRoute(
-      path: '/history',
+      path: '/progress/history',
       name: 'history',
       builder: (_, __) => const Text('HISTORY'),
     ),
     GoRoute(
-      path: '/history/:id',
+      path: '/progress/history/:id',
       name: 'history-detail',
       builder: (_, __) => const Text('DETAIL'),
     ),
@@ -129,6 +129,17 @@ void main() {
       await tester.tap(find.text('Push Day A'));
       await tester.pumpAndSettle();
       expect(find.text('DETAIL'), findsOneWidget);
+    });
+
+    testWidgets('AC-007: "View all history" navigates to history', (
+      tester,
+    ) async {
+      await _pump(tester);
+      await tester.ensureVisible(find.text('View all history'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('View all history'));
+      await tester.pumpAndSettle();
+      expect(find.text('HISTORY'), findsOneWidget);
     });
   });
 }

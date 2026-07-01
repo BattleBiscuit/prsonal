@@ -48,3 +48,4 @@ recent PRs, and a recent-history preview.
 - AC-004: Renders recent PRs, each as a PR row
 - AC-005: "View all PRs" navigates to all-prs
 - AC-006: A history preview row navigates to history-detail
+- AC-007: "View all history" navigates to history

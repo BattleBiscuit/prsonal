@@ -176,13 +176,22 @@ class ProgressScreen extends ConsumerWidget {
             ),
             const SizedBox(height: 8),
             // History preview
-            Text(
-              'Recent sessions',
-              style: TextStyle(
-                color: colors.text1,
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Recent sessions',
+                  style: TextStyle(
+                    color: colors.text1,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                TextButton(
+                  onPressed: () => context.goNamed('history'),
+                  child: const Text('View all history'),
+                ),
+              ],
             ),
             const SizedBox(height: 4),
             historyAsync.when(

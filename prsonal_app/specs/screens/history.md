@@ -5,8 +5,8 @@ status: approved
 ---
 
 ## Description
-A chronological list of completed workouts (route `/history`, reached from the Progress area),
-grouped by month, newest first, with infinite scroll and per-card delete.
+A chronological list of completed workouts (route `/progress/history`, reached from the Progress
+area), grouped by month, newest first, with infinite scroll and per-card delete.
 
 ## Layout
 
@@ -33,7 +33,7 @@ grouped by month, newest first, with infinite scroll and per-card delete.
 - `historyPageProvider` / `historyServiceProvider` — paged completed sessions + count
 
 ## Navigation
-- Entered from: Progress (View all history) · Progress tab
+- Entered from: Progress screen (View all history) · after finishing a session (session-active)
 - Navigates to: `history-detail` (tap a card)
 
 ## Acceptance Criteria

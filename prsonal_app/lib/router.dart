@@ -11,7 +11,6 @@ import 'screens/library_screen.dart';
 import 'screens/plan_edit_screen.dart';
 import 'screens/progress_screen.dart';
 import 'screens/routine_edit_screen.dart';
-import 'screens/routines_screen.dart';
 import 'screens/session_active_screen.dart';
 import 'screens/session_pick_screen.dart';
 import 'screens/settings_screen.dart';
@@ -52,23 +51,16 @@ final routerProvider = Provider<GoRouter>((ref) {
                 builder: (context, state) => const SessionPickScreen(),
                 routes: [
                   GoRoute(
-                    path: 'routines',
-                    name: 'routines',
-                    builder: (context, state) => const RoutinesScreen(),
-                    routes: [
-                      GoRoute(
-                        path: 'new',
-                        name: 'routine-create',
-                        builder: (context, state) => const RoutineEditScreen(),
-                      ),
-                      GoRoute(
-                        path: ':id/edit',
-                        name: 'routine-edit',
-                        builder: (context, state) => RoutineEditScreen(
-                          routineId: state.pathParameters['id'],
-                        ),
-                      ),
-                    ],
+                    path: 'routines/new',
+                    name: 'routine-create',
+                    builder: (context, state) => const RoutineEditScreen(),
+                  ),
+                  GoRoute(
+                    path: 'routines/:id/edit',
+                    name: 'routine-edit',
+                    builder: (context, state) => RoutineEditScreen(
+                      routineId: state.pathParameters['id'],
+                    ),
                   ),
                   GoRoute(
                     path: 'plans/new',
@@ -80,20 +72,6 @@ final routerProvider = Provider<GoRouter>((ref) {
                     name: 'plan-edit',
                     builder: (context, state) =>
                         PlanEditScreen(planId: state.pathParameters['id']),
-                  ),
-                  GoRoute(
-                    path: 'history',
-                    name: 'history',
-                    builder: (context, state) => const HistoryScreen(),
-                    routes: [
-                      GoRoute(
-                        path: ':id',
-                        name: 'history-detail',
-                        builder: (context, state) => HistoryDetailScreen(
-                          sessionId: state.pathParameters['id']!,
-                        ),
-                      ),
-                    ],
                   ),
                 ],
               ),
@@ -134,6 +112,20 @@ final routerProvider = Provider<GoRouter>((ref) {
                     path: 'prs',
                     name: 'all-prs',
                     builder: (context, state) => const AllPrsScreen(),
+                  ),
+                  GoRoute(
+                    path: 'history',
+                    name: 'history',
+                    builder: (context, state) => const HistoryScreen(),
+                    routes: [
+                      GoRoute(
+                        path: ':id',
+                        name: 'history-detail',
+                        builder: (context, state) => HistoryDetailScreen(
+                          sessionId: state.pathParameters['id']!,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),

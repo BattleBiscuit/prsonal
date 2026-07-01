@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:prsonal_app/theme/app_colors.dart';
 
-enum AppButtonVariant { primary, ghost, danger, accent }
+enum AppButtonVariant { ghost, danger, accent }
 
 enum AppButtonSize { md, sm }
 
@@ -9,8 +9,8 @@ class AppButton extends StatelessWidget {
   const AppButton({
     super.key,
     required this.label,
+    required this.variant,
     this.onPressed,
-    this.variant = AppButtonVariant.primary,
     this.size = AppButtonSize.md,
     this.full = false,
     this.icon,
@@ -37,11 +37,6 @@ class AppButton extends StatelessWidget {
     Color? borderColor;
 
     switch (variant) {
-      case AppButtonVariant.primary:
-        backgroundColor = colors.surface2;
-        textColor = colors.text1;
-        borderColor = colors.border;
-        break;
       case AppButtonVariant.accent:
         backgroundColor = colors.accent;
         textColor = colors.onAccent;

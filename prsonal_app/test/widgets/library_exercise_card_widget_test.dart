@@ -138,5 +138,24 @@ void main() {
         );
       },
     );
+
+    testWidgets(
+      'AC-007: Widget renders a trailing chevron marking the row\'s own '
+      'navigate affordance, distinct from the delete icon',
+      (tester) async {
+        await tester.pumpWidget(
+          _wrap(
+            LibraryExerciseCard(
+              name: 'Bench Press',
+              type: ExerciseType.strength,
+              musclesLabel: 'Chest',
+              onTap: () {},
+              onDelete: () {},
+            ),
+          ),
+        );
+        expect(find.byIcon(Icons.chevron_right_outlined), findsOneWidget);
+      },
+    );
   });
 }

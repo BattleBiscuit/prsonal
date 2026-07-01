@@ -25,7 +25,7 @@ start (▶) button. Used both inside plan blocks (with a day label) and in the U
 
 | State | Appearance |
 |-------|------------|
-| default | day label (text-3) · routine name (text-1, medium) · done dot · accent ▶ start button |
+| default | day label (text-3) · routine name (text-1, medium) + trailing `edit_outlined` (text2, the tap-to-edit affordance) · done dot · accent ▶ start button |
 | done | done indicator is a success ✓ |
 | startDisabled | start button at opacity 0.3, inert |
 
@@ -41,3 +41,5 @@ start (▶) button. Used both inside plan blocks (with a day label) and in the U
 - AC-003: Widget calls onStart when the start button is tapped
 - AC-004: The start button is inert when startDisabled is true
 - AC-005: Widget calls onOpen when the routine name is tapped
+- AC-006: Widget renders a trailing edit affordance icon next to the routine name, marking it as
+  interactive (design_system.md Tier 1: "no interactive row is left bare")

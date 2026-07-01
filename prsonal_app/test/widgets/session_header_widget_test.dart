@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:prsonal_app/theme/app_colors.dart';
+import 'package:prsonal_app/widgets/live_dot_widget.dart';
 import 'package:prsonal_app/widgets/session_header_widget.dart';
 
 Widget _wrap(Widget child) => MaterialApp(home: Scaffold(body: child));
@@ -54,7 +55,10 @@ void main() {
         );
         final elapsed = tester.widget<Text>(find.text('12:31'));
         expect(elapsed.style!.fontFamily, 'monospace');
-        expect(elapsed.style!.fontFeatures, contains(FontFeature.tabularFigures()));
+        expect(
+          elapsed.style!.fontFeatures,
+          contains(FontFeature.tabularFigures()),
+        );
         expect(elapsed.style!.color, AppColors.dark.text3);
       },
     );
@@ -93,6 +97,23 @@ void main() {
         );
         await tester.tap(find.bySemanticsLabel('Finish workout'));
         expect(finished, isTrue);
+      },
+    );
+
+    testWidgets(
+      'AC-005: Widget renders a LiveDot next to the elapsed time (the session heartbeat)',
+      (tester) async {
+        await tester.pumpWidget(
+          _wrap(
+            SessionHeader(
+              routineName: 'Push Day A',
+              elapsed: const Duration(minutes: 12, seconds: 31),
+              onQuit: () {},
+              onFinish: () {},
+            ),
+          ),
+        );
+        expect(find.byType(LiveDot), findsOneWidget);
       },
     );
   });

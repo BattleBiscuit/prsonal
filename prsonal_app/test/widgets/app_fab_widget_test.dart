@@ -53,9 +53,7 @@ void main() {
       'AC-005: Widget renders the bare-icon circular form (no visible text) when label is omitted',
       (tester) async {
         await tester.pumpWidget(
-          _wrap(
-            AppFab(icon: Icons.add, tooltip: 'Add', onPressed: () {}),
-          ),
+          _wrap(AppFab(icon: Icons.add, tooltip: 'Add', onPressed: () {})),
         );
         expect(find.byIcon(Icons.add), findsOneWidget);
         expect(find.byType(Text), findsNothing);

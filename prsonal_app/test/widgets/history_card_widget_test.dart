@@ -108,5 +108,24 @@ void main() {
         );
       },
     );
+
+    testWidgets(
+      'AC-006: Widget renders a trailing chevron marking the row\'s own '
+      'navigate affordance, distinct from the delete icon',
+      (tester) async {
+        await tester.pumpWidget(
+          _wrap(
+            HistoryCard(
+              routineName: 'Push Day A',
+              dateLabel: 'Mon, 23 Jun',
+              metaLabel: '47m · 4,230 kg',
+              onTap: () {},
+              onDelete: () {},
+            ),
+          ),
+        );
+        expect(find.byIcon(Icons.chevron_right_outlined), findsOneWidget);
+      },
+    );
   });
 }

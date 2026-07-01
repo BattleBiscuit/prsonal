@@ -6,6 +6,7 @@ import '../providers/session_pick_providers.dart';
 import '../services/session_service.dart';
 import '../theme/app_colors.dart';
 import '../widgets/app_fab_widget.dart';
+import '../widgets/fade_rise_in_widget.dart';
 import '../widgets/plan_entry_row_widget.dart';
 
 class SessionPickScreen extends ConsumerWidget {
@@ -20,6 +21,7 @@ class SessionPickScreen extends ConsumerWidget {
           children: [
             ListTile(
               title: const Text('New routine'),
+              trailing: const Icon(Icons.chevron_right_outlined),
               onTap: () {
                 Navigator.of(ctx).pop();
                 context.goNamed('routine-create');
@@ -27,6 +29,7 @@ class SessionPickScreen extends ConsumerWidget {
             ),
             ListTile(
               title: const Text('New plan'),
+              trailing: const Icon(Icons.chevron_right_outlined),
               onTap: () {
                 Navigator.of(ctx).pop();
                 context.goNamed('plan-create');
@@ -60,7 +63,7 @@ class SessionPickScreen extends ConsumerWidget {
                 padding: const EdgeInsets.all(16),
                 children: [
                   for (final plan in plans) ...[
-                    _PlanBlock(plan: plan),
+                    FadeRiseIn(child: _PlanBlock(plan: plan)),
                     const SizedBox(height: 16),
                   ],
                   if (unplanned.isNotEmpty) ...[
@@ -74,21 +77,23 @@ class SessionPickScreen extends ConsumerWidget {
                     ),
                     const SizedBox(height: 8),
                     for (final r in unplanned)
-                      PlanEntryRow(
-                        dayLabel: '',
-                        routineName: r.name,
-                        done: false,
-                        onOpen: () => context.goNamed(
-                          'routine-edit',
-                          pathParameters: {'id': r.id},
+                      FadeRiseIn(
+                        child: PlanEntryRow(
+                          dayLabel: '',
+                          routineName: r.name,
+                          done: false,
+                          onOpen: () => context.goNamed(
+                            'routine-edit',
+                            pathParameters: {'id': r.id},
+                          ),
+                          onStart: () {
+                            context.goNamed('session-active');
+                            ref
+                                .read(sessionEngineProvider.notifier)
+                                .startSession(routineId: r.id)
+                                .catchError((_) {});
+                          },
                         ),
-                        onStart: () {
-                          context.goNamed('session-active');
-                          ref
-                              .read(sessionEngineProvider.notifier)
-                              .startSession(routineId: r.id)
-                              .catchError((_) {});
-                        },
                       ),
                   ],
                 ],
@@ -112,12 +117,7 @@ class _PlanBlock extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final colors = Theme.of(context).extension<AppColors>() ?? AppColors.dark;
 
-    return Container(
-      decoration: BoxDecoration(
-        color: colors.surface1,
-        borderRadius: BorderRadius.zero,
-        border: Border.all(color: colors.border),
-      ),
+    return Padding(
       padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

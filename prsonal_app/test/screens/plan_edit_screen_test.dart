@@ -146,5 +146,15 @@ void main() {
         verify(() => service.deletePlan('p1')).called(1);
       },
     );
+
+    testWidgets(
+      'AC-008: Each row in the routine-picker sheet carries a trailing affordance icon',
+      (tester) async {
+        await _pump(tester);
+        await tester.tap(find.byTooltip('Add entry'));
+        await tester.pumpAndSettle();
+        expect(find.byIcon(Icons.chevron_right_outlined), findsOneWidget);
+      },
+    );
   });
 }

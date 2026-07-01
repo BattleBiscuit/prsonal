@@ -88,5 +88,16 @@ void main() {
       await tester.tap(find.text('Push Day A'));
       expect(opened, isTrue);
     });
+
+    testWidgets(
+      'AC-006: Widget renders a trailing edit affordance icon next to the '
+      'routine name, marking it as interactive',
+      (tester) async {
+        await tester.pumpWidget(
+          _wrap(const PlanEntryRow(dayLabel: 'Mon', routineName: 'Push Day A')),
+        );
+        expect(find.byIcon(Icons.edit_outlined), findsOneWidget);
+      },
+    );
   });
 }

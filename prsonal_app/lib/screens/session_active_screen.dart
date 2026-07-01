@@ -6,6 +6,7 @@ import '../services/session_service.dart';
 import '../theme/app_colors.dart';
 import '../widgets/app_button_widget.dart';
 import '../widgets/app_modal_widget.dart';
+import '../widgets/app_skeleton_widget.dart';
 import '../widgets/exercise_form_widget.dart';
 import '../widgets/session_header_widget.dart';
 import '../widgets/session_progress_bar_widget.dart';
@@ -157,7 +158,7 @@ class _SessionActiveScreenState extends ConsumerState<SessionActiveScreen> {
     final state = ref.watch(sessionEngineProvider);
 
     if (state == null) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      return const Scaffold(body: SafeArea(child: _SessionActiveSkeleton()));
     }
 
     _seedForCursor(state);
@@ -308,6 +309,34 @@ class _SessionActiveScreenState extends ConsumerState<SessionActiveScreen> {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// Skeleton sketch of the active session screen while the session engine's
+/// first state is still loading (design_system.md "Motion & life" —
+/// skeleton loaders, not a bare spinner).
+class _SessionActiveSkeleton extends StatelessWidget {
+  const _SessionActiveSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Padding(
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          AppSkeleton(height: 48),
+          SizedBox(height: 16),
+          AppSkeleton(height: 6),
+          SizedBox(height: 16),
+          AppSkeleton(height: 64),
+          SizedBox(height: 8),
+          AppSkeleton(height: 64),
+          SizedBox(height: 8),
+          AppSkeleton(height: 64),
+        ],
       ),
     );
   }

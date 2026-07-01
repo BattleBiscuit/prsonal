@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:prsonal_app/theme/app_colors.dart';
+import 'package:prsonal_app/theme/app_motion.dart';
 
 class SessionProgressBar extends StatelessWidget {
   const SessionProgressBar({super.key, required this.progress});
@@ -20,12 +21,17 @@ class SessionProgressBar extends StatelessWidget {
       ),
       child: Align(
         alignment: Alignment.centerLeft,
-        child: FractionallySizedBox(
-          widthFactor: clamped,
-          child: Container(
-            decoration: BoxDecoration(
-              color: colors.accent,
-              borderRadius: BorderRadius.zero,
+        child: TweenAnimationBuilder<double>(
+          duration: AppDurations.slow,
+          curve: Curves.easeOut,
+          tween: Tween(begin: 0.0, end: clamped),
+          builder: (context, value, child) => FractionallySizedBox(
+            widthFactor: value,
+            child: Container(
+              decoration: BoxDecoration(
+                color: colors.accent,
+                borderRadius: BorderRadius.zero,
+              ),
             ),
           ),
         ),

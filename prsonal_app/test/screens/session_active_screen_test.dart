@@ -124,6 +124,15 @@ Future<_FakeEngine> _pump(
     ProviderScope(
       overrides: [sessionEngineProvider.overrideWith(() => engine)],
       child: MaterialApp.router(
+        // The session heartbeat (LiveDot) breathes on an infinite loop by
+        // design (design_system.md "Motion & life"); pumpAndSettle below
+        // would never terminate without dropping to the documented
+        // reduced-motion behaviour, exactly as it does under the OS
+        // "reduce motion" flag.
+        builder: (context, child) => MediaQuery(
+          data: MediaQuery.of(context).copyWith(disableAnimations: true),
+          child: child!,
+        ),
         routerConfig: GoRouter(
           routes: [
             GoRoute(

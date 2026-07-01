@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:prsonal_app/theme/app_colors.dart';
+import 'package:prsonal_app/theme/app_typography.dart';
 
 class BodyMetricCard extends StatelessWidget {
   const BodyMetricCard({
@@ -31,23 +32,28 @@ class BodyMetricCard extends StatelessWidget {
               children: [
                 Icon(icon, color: colors.accent, size: 20),
                 const SizedBox(width: 8),
-                Text(
-                  label,
-                  style: TextStyle(
-                    color: colors.text2,
-                    fontSize: 13,
-                    fontWeight: FontWeight.w500,
+                Expanded(
+                  child: Text(
+                    label,
+                    style: TextStyle(
+                      color: colors.text2,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                 ),
+                Icon(Icons.edit_outlined, color: colors.text2, size: 18),
               ],
             ),
             const SizedBox(height: 12),
             Text(
               valueLabel,
-              style: TextStyle(
-                color: colors.text1,
-                fontSize: 24,
-                fontWeight: FontWeight.w700,
+              style: monoNumerals(
+                TextStyle(
+                  color: colors.text1,
+                  fontSize: 24,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
             ),
             if (dateLabel != null) ...[

@@ -161,9 +161,7 @@ void main() {
       'AC-009: Tapping "Delete routine" shows a delete confirmation; confirming deletes the routine and navigates back to Workout home',
       (tester) async {
         final service = await _pump(tester, routineId: 'r1', draft: _draft());
-        when(
-          () => service.deleteRoutine(any()),
-        ).thenAnswer((_) async {});
+        when(() => service.deleteRoutine(any())).thenAnswer((_) async {});
         await tester.tap(find.text('Delete routine'));
         await tester.pumpAndSettle();
         expect(find.text('Delete routine?'), findsOneWidget);
@@ -173,6 +171,26 @@ void main() {
         await tester.pumpAndSettle();
 
         verify(() => service.deleteRoutine('r1')).called(1);
+      },
+    );
+
+    testWidgets(
+      'AC-010: Each exercise row carries a trailing edit affordance icon '
+      'distinct from the drag handle',
+      (tester) async {
+        await _pump(tester, routineId: 'r1', draft: _draft());
+        final row = find.ancestor(
+          of: find.text('Bench Press'),
+          matching: find.byType(ListTile),
+        );
+        expect(
+          find.descendant(of: row, matching: find.byIcon(Icons.drag_handle)),
+          findsOneWidget,
+        );
+        expect(
+          find.descendant(of: row, matching: find.byIcon(Icons.edit_outlined)),
+          findsOneWidget,
+        );
       },
     );
   });

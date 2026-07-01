@@ -12,18 +12,20 @@ router redirects here straight to `session-active`, so no resume banner is shown
 
 ## Layout
 
+Flat — no card chrome (`design_system.md` "Surface treatment"): plan blocks and the "Unplanned"
+block sit directly on `bg`, separated by spacing and typography, not a filled/bordered box.
+
 ```
 ┌───────────────────────────────────────┐
 │ PRsonal · Workout                     │  header
 ├───────────────────────────────────────┤
-│ ┌ PUSH/PULL/LEGS            🔥3   ✎ ┐ │  plan block header
-│ │ Mon   Push Day A          ✓   ▶  │ │  entry row (done this week)
-│ │ Wed   Pull Day            ·   ▶  │ │  entry row
-│ └───────────────────────────────────┘ │
-│ ┌ Unplanned ──────────────────────── ┐ │
-│ │ ·     Mobility            ·   ▶  │ │
-│ └───────────────────────────────────┘ │
-│                                ( + ) │  icon-only FAB → add sheet
+│   PUSH/PULL/LEGS            🔥3   ✎   │  plan block header (no box)
+│   Mon   Push Day A          ✓   ▶     │  entry row (done this week)
+│   Wed   Pull Day            ·   ▶     │  entry row
+│                                        │
+│   Unplanned                           │
+│   ·     Mobility            ·   ▶     │
+│                                ( + )  │  icon-only FAB → add sheet
 └───────────────────────────────────────┘
 ```
 
@@ -68,3 +70,6 @@ router redirects here straight to `session-active`, so no resume banner is shown
 - AC-008: A plan block shows its streak count when the streak is greater than zero
 - AC-009: The screen reactively reflects newly created or modified plans and routines without an app restart — its data sources recompute when plans, plan entries, routines, or completed sessions change
 - AC-010: Tapping a routine name (plan entry or unplanned) opens routine-edit for that routine
+- AC-011: A plan block renders flat — no enclosing card chrome (no bordered/filled box)
+- AC-012: Each row in the add sheet ("New routine" / "New plan") carries a trailing affordance
+  icon (design_system.md Tier 1: "no interactive row is left bare")

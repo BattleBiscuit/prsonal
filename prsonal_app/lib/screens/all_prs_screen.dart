@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../providers/progress_providers.dart';
 import '../theme/app_colors.dart';
+import '../widgets/app_skeleton_widget.dart';
+import '../widgets/fade_rise_in_widget.dart';
 import '../widgets/pr_row_widget.dart';
 
 class AllPrsScreen extends ConsumerWidget {
@@ -37,17 +39,39 @@ class AllPrsScreen extends ConsumerWidget {
             separatorBuilder: (context, index) => const Divider(),
             itemBuilder: (context, i) {
               final pr = prs[i];
-              return PrRow(
-                exerciseName: pr.exerciseName,
-                dateLabel: fmt.format(pr.date),
-                weightLabel: '${pr.weight}kg',
-                oneRmLabel: '1RM: ${pr.oneRepMax.toStringAsFixed(1)}kg',
+              return FadeRiseIn(
+                child: PrRow(
+                  exerciseName: pr.exerciseName,
+                  dateLabel: fmt.format(pr.date),
+                  weightLabel: '${pr.weight}kg',
+                  oneRmLabel: '1RM: ${pr.oneRepMax.toStringAsFixed(1)}kg',
+                ),
               );
             },
           );
         },
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => const _AllPrsSkeleton(),
         error: (e, _) => Center(child: Text('Error: $e')),
+      ),
+    );
+  }
+}
+
+/// Skeleton sketch of a loading PR list (design_system.md "Motion & life" —
+/// skeleton loaders, not a bare spinner).
+class _AllPrsSkeleton extends StatelessWidget {
+  const _AllPrsSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      children: List.generate(
+        6,
+        (_) => const Padding(
+          padding: EdgeInsets.symmetric(vertical: 8),
+          child: AppSkeleton(height: 44),
+        ),
       ),
     );
   }

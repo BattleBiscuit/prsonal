@@ -54,5 +54,20 @@ void main() {
         );
       },
     );
+
+    testWidgets(
+      'Value renders mono tabular numerals (design_system.md tenet #3 "Data stability")',
+      (tester) async {
+        await tester.pumpWidget(
+          _wrap(const StatCard(value: '12', label: 'WORKOUTS')),
+        );
+        final value = tester.widget<Text>(find.text('12'));
+        expect(value.style!.fontFamily, 'monospace');
+        expect(
+          value.style!.fontFeatures,
+          contains(const FontFeature.tabularFigures()),
+        );
+      },
+    );
   });
 }

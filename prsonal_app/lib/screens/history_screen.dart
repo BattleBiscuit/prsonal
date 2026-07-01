@@ -6,6 +6,8 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import '../services/history_service.dart';
 import '../theme/app_colors.dart';
+import '../widgets/app_skeleton_widget.dart';
+import '../widgets/fade_rise_in_widget.dart';
 import '../widgets/history_card_widget.dart';
 
 class HistoryScreen extends ConsumerStatefulWidget {
@@ -111,7 +113,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
         backgroundColor: colors.bg,
       ),
       body: _sessions.isEmpty && _loading
-          ? const Center(child: CircularProgressIndicator())
+          ? const _HistorySkeleton()
           : ListView.builder(
               controller: _scrollCtrl,
               padding: const EdgeInsets.symmetric(vertical: 8),
@@ -128,40 +130,62 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                 final key = groupKeys[i];
                 final sessions = grouped[key]!;
                 final dateFmt = DateFormat('d MMM');
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
-                      child: Text(
-                        key,
-                        style: TextStyle(
-                          color: colors.text2,
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
+                return FadeRiseIn(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+                        child: Text(
+                          key,
+                          style: TextStyle(
+                            color: colors.text2,
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ),
-                    ),
-                    for (var j = 0; j < sessions.length; j++) ...[
-                      if (j > 0) const Divider(),
-                      HistoryCard(
-                        routineName: sessions[j].routineName,
-                        dateLabel: dateFmt.format(sessions[j].startedAt),
-                        metaLabel: sessions[j].abandoned
-                            ? sessions[j].durationLabel
-                            : '${sessions[j].durationLabel} · ${sessions[j].volume.toStringAsFixed(0)}kg',
-                        abandoned: sessions[j].abandoned,
-                        onTap: () => context.goNamed(
-                          'history-detail',
-                          pathParameters: {'id': sessions[j].id},
+                      for (var j = 0; j < sessions.length; j++) ...[
+                        if (j > 0) const Divider(),
+                        HistoryCard(
+                          routineName: sessions[j].routineName,
+                          dateLabel: dateFmt.format(sessions[j].startedAt),
+                          metaLabel: sessions[j].abandoned
+                              ? sessions[j].durationLabel
+                              : '${sessions[j].durationLabel} · ${sessions[j].volume.toStringAsFixed(0)}kg',
+                          abandoned: sessions[j].abandoned,
+                          onTap: () => context.goNamed(
+                            'history-detail',
+                            pathParameters: {'id': sessions[j].id},
+                          ),
+                          onDelete: () => _deleteSession(sessions[j].id),
                         ),
-                        onDelete: () => _deleteSession(sessions[j].id),
-                      ),
+                      ],
                     ],
-                  ],
+                  ),
                 );
               },
             ),
+    );
+  }
+}
+
+/// Skeleton sketch of a loading history list (design_system.md "Motion &
+/// life" — skeleton loaders, not a bare spinner).
+class _HistorySkeleton extends StatelessWidget {
+  const _HistorySkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      children: List.generate(
+        6,
+        (_) => const Padding(
+          padding: EdgeInsets.symmetric(vertical: 8),
+          child: AppSkeleton(height: 56),
+        ),
+      ),
     );
   }
 }

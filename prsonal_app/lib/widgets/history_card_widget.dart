@@ -92,6 +92,7 @@ class HistoryCard extends StatelessWidget {
                 ),
               ),
             ),
+            Icon(Icons.chevron_right_outlined, color: colors.text2),
           ],
         ),
       ),

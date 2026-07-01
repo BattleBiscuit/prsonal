@@ -141,5 +141,23 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('HISTORY'), findsOneWidget);
     });
+
+    testWidgets(
+      'AC-008: A history preview row carries a trailing affordance icon',
+      (tester) async {
+        await _pump(tester);
+        final row = find.ancestor(
+          of: find.text('Push Day A'),
+          matching: find.byType(ListTile),
+        );
+        expect(
+          find.descendant(
+            of: row,
+            matching: find.byIcon(Icons.chevron_right_outlined),
+          ),
+          findsOneWidget,
+        );
+      },
+    );
   });
 }

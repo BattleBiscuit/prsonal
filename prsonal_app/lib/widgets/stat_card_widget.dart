@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:prsonal_app/theme/app_colors.dart';
+import 'package:prsonal_app/theme/app_typography.dart';
 
 enum StatTone { neutral, success, danger, warning }
 
@@ -34,10 +35,12 @@ class StatCard extends StatelessWidget {
           if (icon != null) const SizedBox(height: 4),
           Text(
             value,
-            style: TextStyle(
-              color: colors.text1,
-              fontSize: 20,
-              fontWeight: FontWeight.w700,
+            style: monoNumerals(
+              TextStyle(
+                color: colors.text1,
+                fontSize: 20,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ),
           const SizedBox(height: 2),

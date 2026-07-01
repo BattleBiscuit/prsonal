@@ -16,27 +16,27 @@ gym-app sizing, radius, and the four colour treatments.
 |-----------|------|----------|---------|-------------|
 | label | String | yes | — | Button text |
 | onPressed | VoidCallback? | no | null | Tap handler; button is disabled when null |
-| variant | AppButtonVariant | no | primary | `primary`, `ghost`, `danger`, `accent` |
+| variant | AppButtonVariant | **yes** | — | `ghost`, `danger`, `accent` |
 | size | AppButtonSize | no | md | `md` (48dp), `sm` (36dp) |
 | full | bool | no | false | Expands to full available width |
 | icon | Widget? | no | null | Leading icon shown before the label |
 
-`AppButtonVariant { primary, ghost, danger, accent }` · `AppButtonSize { md, sm }`.
+`AppButtonVariant { ghost, danger, accent }` · `AppButtonSize { md, sm }`.
 
 ## Visual States
 
 Variants map to the semantic button roles in [[design_system]]: **`accent` = affirmative**
 (save/accept/add), **`ghost` = neutral** (cancel/secondary), **`danger` = destructive**. The
-filled-grey **`primary`** variant is **legacy** — a filled grey box reads as a false affirmative, so
-prefer `accent` for positive actions and `ghost` for neutral ones; `primary` is retained only for
-backward compatibility.
+filled-grey **`primary`** variant named in [[design_system]]'s "Forbidden button variant" note has
+been **removed** — a filled grey box reads as a false affirmative, and it had zero call sites, so
+there was nothing to stay backward-compatible with. `variant` is now **required**: there is no
+default that could silently render the banned look.
 
 | State | Appearance |
 |-------|------------|
 | accent (affirmative) | accent bg, onAccent text, no border; pressed → accentDim |
 | ghost (neutral) | transparent bg, text-2, 1px border |
 | danger (destructive) | transparent bg, danger text, 1px danger border |
-| primary (legacy) | surface-2 bg, text-1, 1px border, radius md — avoid for new affirmatives |
 | disabled (onPressed null) | opacity 0.4, no tap response |
 | sizes | md: min-height 48, padding 0×20, text base/600 · sm: min-height 36, padding 0×12, text sm |
 

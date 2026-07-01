@@ -6,9 +6,13 @@ status: approved
 
 ## Description
 An exercise **flat row** in the library list. Shows the name, a type badge (strength/cardio), the
-primary muscles, and a PR chip when a best lift exists, plus a delete button. Per [[design_system]]
-the row carries **no card chrome** (no fill, border or radius) — the list separates rows with a
-hairline divider. (The type badge keeps its own small filled pill; that is not card chrome.)
+primary muscles, and a PR chip when a best lift exists, plus a delete button and a trailing
+`chevron_right_outlined` (text2) marking the row's own tap-to-open affordance — per
+[[design_system]]'s Tier 1 rule ("no interactive row is left bare"), the delete icon maps to a
+*different* action than the row's `onTap`, so the navigate affordance needs its own glyph. Per
+[[design_system]] the row carries **no card chrome** (no fill, border or radius) — the list
+separates rows with a hairline divider. (The type badge keeps its own small filled pill; that is
+not card chrome.)
 
 ## Parameters
 
@@ -28,3 +32,5 @@ hairline divider. (The type badge keeps its own small filled pill; that is not c
 - AC-004: Widget calls onTap when the card body is tapped
 - AC-005: Widget calls onDelete when the delete button is tapped
 - AC-006: Widget renders flat — no enclosing card chrome (the row itself has no bordered/filled box)
+- AC-007: Widget renders a trailing chevron marking the row's own navigate affordance, distinct
+  from the delete icon

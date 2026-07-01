@@ -211,5 +211,32 @@ void main() {
         expect(find.text('EDIT ROUTINE'), findsOneWidget);
       },
     );
+
+    testWidgets(
+      'AC-011: A plan block renders flat — no enclosing card chrome (no bordered/filled box)',
+      (tester) async {
+        await _pump(tester);
+        expect(
+          find.byWidgetPredicate(
+            (w) =>
+                w is Container &&
+                w.decoration is BoxDecoration &&
+                (w.decoration as BoxDecoration).border != null,
+          ),
+          findsNothing,
+        );
+      },
+    );
+
+    testWidgets(
+      'AC-012: Each row in the add sheet ("New routine" / "New plan") carries '
+      'a trailing affordance icon',
+      (tester) async {
+        await _pump(tester);
+        await tester.tap(find.byTooltip('Add'));
+        await tester.pumpAndSettle();
+        expect(find.byIcon(Icons.chevron_right_outlined), findsNWidgets(2));
+      },
+    );
   });
 }

@@ -7,6 +7,7 @@ import 'package:prsonal_app/models/exercise.dart';
 import 'package:prsonal_app/providers/app_providers.dart';
 import 'package:prsonal_app/screens/history_detail_screen.dart';
 import 'package:prsonal_app/services/history_service.dart';
+import 'package:prsonal_app/theme/app_colors.dart';
 import 'package:prsonal_app/widgets/history_set_table_widget.dart';
 
 class _MockHistoryService extends Mock implements HistoryService {}
@@ -88,11 +89,26 @@ void main() {
     );
 
     testWidgets(
-      'AC-003: Shows a PR banner listing exercises that set a personal record',
+      'AC-003: Shows a PR banner listing exercises that set a personal record, '
+      'styled as the accent-tinted "live/important" surface (accent@0.06 bg, '
+      'accent@0.20 hairline)',
       (tester) async {
         await _pump(tester);
         expect(find.textContaining('PRs this session'), findsOneWidget);
         expect(find.text('Bench Press'), findsWidgets);
+
+        final banner = tester
+            .widgetList<Container>(find.byType(Container))
+            .map((c) => c.decoration)
+            .whereType<BoxDecoration>()
+            .where((d) {
+              final border = d.border;
+              return d.color == AppColors.dark.accent.withValues(alpha: 0.06) &&
+                  border is Border &&
+                  border.top.color ==
+                      AppColors.dark.accent.withValues(alpha: 0.20);
+            });
+        expect(banner, isNotEmpty);
       },
     );
 

@@ -68,5 +68,54 @@ void main() {
         expect(find.byType(TextField), findsWidgets);
       },
     );
+
+    group(
+      'Mono tabular numerals (design_system.md tenet #3 "Data stability")',
+      () {
+        Matcher isMono() => isA<TextStyle>()
+            .having((s) => s.fontFamily, 'fontFamily', 'monospace')
+            .having(
+              (s) => s.fontFeatures,
+              'fontFeatures',
+              contains(const FontFeature.tabularFigures()),
+            );
+
+        testWidgets('Set index renders mono', (tester) async {
+          await tester.pumpWidget(
+            _wrap(
+              const HistorySetTable(exerciseName: 'Bench Press', rows: _rows),
+            ),
+          );
+          expect(tester.widget<Text>(find.text('1')).style, isMono());
+        });
+
+        testWidgets('Read-only actual-value readout renders mono', (
+          tester,
+        ) async {
+          await tester.pumpWidget(
+            _wrap(
+              const HistorySetTable(exerciseName: 'Bench Press', rows: _rows),
+            ),
+          );
+          expect(tester.widget<Text>(find.text('8×82.5kg')).style, isMono());
+        });
+
+        testWidgets('Editable actual-value input renders mono', (tester) async {
+          await tester.pumpWidget(
+            _wrap(
+              const HistorySetTable(
+                exerciseName: 'Bench Press',
+                rows: _rows,
+                editing: true,
+              ),
+            ),
+          );
+          final fields = tester.widgetList<TextField>(find.byType(TextField));
+          for (final field in fields) {
+            expect(field.style, isMono());
+          }
+        });
+      },
+    );
   });
 }

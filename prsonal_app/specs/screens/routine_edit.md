@@ -53,3 +53,6 @@ discard confirmation. Edit mode adds a "Delete routine" action.
 - AC-007: Attempting to leave with unsaved changes prompts a discard confirmation
 - AC-008: The "Delete routine" action is shown in edit mode only — hidden in create mode
 - AC-009: Tapping "Delete routine" shows a delete confirmation; confirming deletes the routine and navigates back to Workout home without persisting other pending edits
+- AC-010: Each exercise row carries a trailing edit affordance icon distinct from the drag handle
+  (design_system.md Tier 1: a `drag_handle` alone communicates "reorder," not "tap to edit," so the
+  row's own `onTap` needs its own glyph)

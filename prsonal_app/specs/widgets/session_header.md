@@ -6,8 +6,9 @@ status: approved
 
 ## Description
 The fixed header of the active-session screen, ported from gym-app's `SessionHeader`. Shows the
-routine name, the elapsed time (monospaced), and two circular actions: quit (danger ✕) and finish
-(accent ✓).
+routine name, a breathing `LiveDot` + the elapsed time (monospaced) — the "session heartbeat"
+signature from `design_system.md` ("Motion & life") — and two circular actions: quit (danger ✕)
+and finish (accent ✓).
 
 ## Parameters
 
@@ -24,7 +25,7 @@ Elapsed is formatted `M:SS` under an hour and `H:MM:SS` at or above an hour.
 
 | State | Appearance |
 |-------|------------|
-| default | routine name (text-2, sm, truncated) · elapsed (text-3, mono) · ✕ danger 32dp circle · ✓ accent 32dp circle |
+| default | routine name (text-2, sm, truncated) · `LiveDot` + elapsed (text-3, mono) · ✕ danger 32dp circle · ✓ accent 32dp circle |
 
 ## Accessibility
 - Quit action semantic label: "Quit workout"
@@ -35,3 +36,4 @@ Elapsed is formatted `M:SS` under an hour and `H:MM:SS` at or above an hour.
 - AC-002: Widget renders the elapsed time formatted as M:SS under an hour
 - AC-003: Widget calls onQuit when the quit action is tapped
 - AC-004: Widget calls onFinish when the finish action is tapped
+- AC-005: Widget renders a LiveDot next to the elapsed time (the session heartbeat)

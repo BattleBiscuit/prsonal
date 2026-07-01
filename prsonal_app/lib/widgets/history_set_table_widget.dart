@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:prsonal_app/models/exercise.dart';
 import 'package:prsonal_app/theme/app_colors.dart';
+import 'package:prsonal_app/theme/app_typography.dart';
 
 @immutable
 class SetTableRow {
@@ -86,7 +87,7 @@ class _SetRow extends StatelessWidget {
             width: 28,
             child: Text(
               '${row.setIndex + 1}',
-              style: TextStyle(color: colors.text3, fontSize: 13),
+              style: monoNumerals(TextStyle(color: colors.text3, fontSize: 13)),
             ),
           ),
           Expanded(
@@ -124,7 +125,9 @@ class _SetRow extends StatelessWidget {
               width: 80,
               child: TextField(
                 controller: TextEditingController(text: row.actualLabel ?? ''),
-                style: TextStyle(color: colors.text1, fontSize: 13),
+                style: monoNumerals(
+                  TextStyle(color: colors.text1, fontSize: 13),
+                ),
                 decoration: InputDecoration(
                   isDense: true,
                   contentPadding: const EdgeInsets.symmetric(
@@ -137,10 +140,12 @@ class _SetRow extends StatelessWidget {
           else
             Text(
               row.actualLabel ?? '—',
-              style: TextStyle(
-                color: colors.text1,
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
+              style: monoNumerals(
+                TextStyle(
+                  color: colors.text1,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ),
         ],

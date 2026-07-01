@@ -49,3 +49,5 @@ recent PRs, and a recent-history preview.
 - AC-005: "View all PRs" navigates to all-prs
 - AC-006: A history preview row navigates to history-detail
 - AC-007: "View all history" navigates to history
+- AC-008: A history preview row carries a trailing affordance icon (design_system.md Tier 1: "no
+  interactive row is left bare")

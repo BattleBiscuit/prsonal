@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import '../providers/progress_providers.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
+import '../widgets/app_skeleton_widget.dart';
 import '../widgets/chart_slider_widget.dart';
 import '../widgets/pr_row_widget.dart';
 import '../widgets/radar_chart_widget.dart';
@@ -110,7 +111,13 @@ class ProgressScreen extends ConsumerWidget {
               ),
               loading: () => const SizedBox(
                 height: 80,
-                child: Center(child: CircularProgressIndicator()),
+                child: Row(
+                  children: [
+                    Expanded(child: AppSkeleton(height: 80)),
+                    SizedBox(width: 8),
+                    Expanded(child: AppSkeleton(height: 80)),
+                  ],
+                ),
               ),
               error: (e, _) => Text('Error: $e'),
             ),
@@ -129,7 +136,10 @@ class ProgressScreen extends ConsumerWidget {
               ),
               loading: () => const SizedBox(
                 height: 240,
-                child: Center(child: CircularProgressIndicator()),
+                child: Padding(
+                  padding: EdgeInsets.all(space4),
+                  child: AppSkeleton(height: 208),
+                ),
               ),
               error: (e, _) => Text('Error: $e'),
             ),
@@ -214,6 +224,10 @@ class ProgressScreen extends ConsumerWidget {
                       subtitle: Text(
                         sessions[j].durationLabel,
                         style: TextStyle(color: colors.text2),
+                      ),
+                      trailing: Icon(
+                        Icons.chevron_right_outlined,
+                        color: colors.text2,
                       ),
                       onTap: () => context.goNamed(
                         'history-detail',

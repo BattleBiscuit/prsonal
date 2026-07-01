@@ -6,6 +6,8 @@ import '../services/library_service.dart';
 import '../theme/app_colors.dart';
 import '../widgets/app_fab_widget.dart';
 import '../widgets/app_modal_widget.dart';
+import '../widgets/app_skeleton_widget.dart';
+import '../widgets/fade_rise_in_widget.dart';
 import '../widgets/library_exercise_card_widget.dart';
 import '../widgets/library_exercise_form_widget.dart';
 
@@ -141,20 +143,22 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                     final musclesLabel = ex.primaryMuscles
                         .map((m) => m.label)
                         .join(', ');
-                    return LibraryExerciseCard(
-                      name: ex.name,
-                      type: ex.type,
-                      musclesLabel: musclesLabel,
-                      prLabel: ex.bestOneRepMax != null
-                          ? '1RM: ${ex.bestOneRepMax!.toStringAsFixed(1)}kg'
-                          : null,
-                      onTap: () => _showForm(exercise: ex),
-                      onDelete: () => _deleteExercise(ex.id, ex.name),
+                    return FadeRiseIn(
+                      child: LibraryExerciseCard(
+                        name: ex.name,
+                        type: ex.type,
+                        musclesLabel: musclesLabel,
+                        prLabel: ex.bestOneRepMax != null
+                            ? '1RM: ${ex.bestOneRepMax!.toStringAsFixed(1)}kg'
+                            : null,
+                        onTap: () => _showForm(exercise: ex),
+                        onDelete: () => _deleteExercise(ex.id, ex.name),
+                      ),
                     );
                   },
                 );
               },
-              loading: () => const Center(child: CircularProgressIndicator()),
+              loading: () => const _LibrarySkeleton(),
               error: (e, _) => Center(child: Text('Error: $e')),
             ),
           ),
@@ -164,6 +168,26 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
         icon: Icons.add,
         tooltip: 'New exercise',
         onPressed: () => _showForm(),
+      ),
+    );
+  }
+}
+
+/// Skeleton sketch of a loading exercise list (design_system.md "Motion &
+/// life" — skeleton loaders, not a bare spinner).
+class _LibrarySkeleton extends StatelessWidget {
+  const _LibrarySkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      children: List.generate(
+        6,
+        (_) => const Padding(
+          padding: EdgeInsets.symmetric(vertical: 8),
+          child: AppSkeleton(height: 48),
+        ),
       ),
     );
   }

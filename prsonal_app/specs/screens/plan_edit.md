@@ -49,3 +49,5 @@ mode adds a "Delete plan" action.
 - AC-005: Tapping Save persists the plan name and entries and navigates back
 - AC-006: Saving with an empty name shows a validation error and does not persist
 - AC-007: In edit mode, deleting the plan removes it and navigates back
+- AC-008: Each row in the routine-picker sheet carries a trailing affordance icon
+  (design_system.md Tier 1: "no interactive row is left bare")

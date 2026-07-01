@@ -31,7 +31,7 @@ class BrandTitle extends StatelessWidget {
               TextSpan(
                 text: 'sonal',
                 style: TextStyle(
-                  color: colors.text2,
+                  color: colors.accent,
                   fontWeight: FontWeight.w700,
                 ),
               ),

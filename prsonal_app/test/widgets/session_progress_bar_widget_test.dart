@@ -41,5 +41,31 @@ void main() {
         );
       },
     );
+
+    testWidgets(
+      'AC-003: A progress change animates the fill\'s width over AppDurations.slow (400ms) '
+      'instead of snapping instantly',
+      (tester) async {
+        await tester.pumpWidget(_wrap(const SessionProgressBar(progress: 0.0)));
+        await tester.pumpAndSettle();
+
+        await tester.pumpWidget(_wrap(const SessionProgressBar(progress: 1.0)));
+        // Immediately after the change (before the 400ms animation completes)
+        // the fill must not yet be at its final width.
+        await tester.pump();
+        final midway = tester
+            .widget<FractionallySizedBox>(find.byType(FractionallySizedBox))
+            .widthFactor!;
+        expect(midway, lessThan(1.0));
+
+        await tester.pumpAndSettle();
+        expect(
+          tester
+              .widget<FractionallySizedBox>(find.byType(FractionallySizedBox))
+              .widthFactor,
+          1.0,
+        );
+      },
+    );
   });
 }

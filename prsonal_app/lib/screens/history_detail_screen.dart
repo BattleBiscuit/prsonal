@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../services/history_service.dart';
 import '../theme/app_colors.dart';
+import '../widgets/app_skeleton_widget.dart';
 import '../widgets/history_set_table_widget.dart';
 import '../widgets/workout_summary_header_widget.dart';
 
@@ -111,7 +112,7 @@ class _HistoryDetailScreenState extends ConsumerState<HistoryDetailScreen> {
     final colors = Theme.of(context).extension<AppColors>() ?? AppColors.dark;
 
     if (_loading) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      return const Scaffold(body: SafeArea(child: _HistoryDetailSkeleton()));
     }
 
     final detail = _detail!;
@@ -156,9 +157,11 @@ class _HistoryDetailScreenState extends ConsumerState<HistoryDetailScreen> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: colors.surface1,
+                color: colors.accent.withValues(alpha: 0.06),
                 borderRadius: BorderRadius.zero,
-                border: Border.all(color: colors.border),
+                border: Border.all(
+                  color: colors.accent.withValues(alpha: 0.20),
+                ),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -255,6 +258,31 @@ class _HistoryDetailScreenState extends ConsumerState<HistoryDetailScreen> {
               decoration: const InputDecoration(hintText: 'kg', isDense: true),
             ),
           ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Skeleton sketch of a loading session detail (design_system.md "Motion &
+/// life" — skeleton loaders, not a bare spinner).
+class _HistoryDetailSkeleton extends StatelessWidget {
+  const _HistoryDetailSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Padding(
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          AppSkeleton(height: 72),
+          SizedBox(height: 16),
+          AppSkeleton(height: 48),
+          SizedBox(height: 8),
+          AppSkeleton(height: 48),
+          SizedBox(height: 8),
+          AppSkeleton(height: 48),
         ],
       ),
     );

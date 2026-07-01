@@ -58,3 +58,6 @@ the live routine name (both derived from the active-session provider).
 - AC-004: Widget hides the workout-in-progress banner when showWorkoutBanner is false
 - AC-005: Widget calls onResumeWorkout when the banner is tapped
 - AC-006: Widget renders its body child
+- AC-007: The banner renders accent@0.08 background and an accent@0.20 1px border, not a mismatched
+  fill with no border
+- AC-008: Widget renders the "sonal" portion of the brand wordmark in the accent colour

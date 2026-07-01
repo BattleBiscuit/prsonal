@@ -24,3 +24,5 @@ of completed sets. The fill animates width changes over 400ms.
 ## Acceptance Criteria
 - AC-001: Widget renders a fill whose width factor equals progress
 - AC-002: Widget clamps progress below 0 to 0 and above 1 to 1
+- AC-003: A progress change animates the fill's width over `AppDurations.slow` (400ms) instead of
+  snapping instantly

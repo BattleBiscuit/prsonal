@@ -306,7 +306,14 @@ class _RoutineEditScreenState extends ConsumerState<RoutineEditScreen> {
                       '${ex.sets.length} set${ex.sets.length == 1 ? '' : 's'}',
                       style: TextStyle(color: colors.text2, fontSize: 12),
                     ),
-                    trailing: const Icon(Icons.drag_handle),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.edit_outlined, color: colors.text2),
+                        const SizedBox(width: 8),
+                        Icon(Icons.drag_handle, color: colors.text3),
+                      ],
+                    ),
                     onTap: () =>
                         _showExerciseForm(existing: ex, options: options),
                   ),

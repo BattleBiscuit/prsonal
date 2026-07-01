@@ -50,7 +50,7 @@ class AppPageShell extends StatelessWidget {
                                 ),
                                 TextSpan(
                                   text: 'sonal',
-                                  style: TextStyle(color: colors.text2),
+                                  style: TextStyle(color: colors.accent),
                                 ),
                               ],
                             ),
@@ -76,7 +76,13 @@ class AppPageShell extends StatelessWidget {
               GestureDetector(
                 onTap: onResumeWorkout,
                 child: Container(
-                  color: colors.accent.withValues(alpha: 0.15),
+                  decoration: BoxDecoration(
+                    color: colors.accent.withValues(alpha: 0.08),
+                    border: Border.all(
+                      color: colors.accent.withValues(alpha: 0.20),
+                      width: 1,
+                    ),
+                  ),
                   padding: const EdgeInsets.symmetric(
                     horizontal: 16,
                     vertical: 10,

@@ -8,7 +8,13 @@ void main() {
   group('AppButton', () {
     testWidgets('AC-001: Widget renders the label', (tester) async {
       await tester.pumpWidget(
-        _wrap(AppButton(label: 'Save', onPressed: () {})),
+        _wrap(
+          AppButton(
+            label: 'Save',
+            variant: AppButtonVariant.accent,
+            onPressed: () {},
+          ),
+        ),
       );
       expect(find.text('Save'), findsOneWidget);
     });
@@ -18,7 +24,13 @@ void main() {
       (tester) async {
         var tapped = false;
         await tester.pumpWidget(
-          _wrap(AppButton(label: 'Save', onPressed: () => tapped = true)),
+          _wrap(
+            AppButton(
+              label: 'Save',
+              variant: AppButtonVariant.accent,
+              onPressed: () => tapped = true,
+            ),
+          ),
         );
         await tester.tap(find.byType(AppButton));
         expect(tapped, isTrue);
@@ -29,7 +41,13 @@ void main() {
       'AC-003: Widget does not call onPressed and renders at reduced opacity when onPressed is null',
       (tester) async {
         await tester.pumpWidget(
-          _wrap(const AppButton(label: 'Save', onPressed: null)),
+          _wrap(
+            const AppButton(
+              label: 'Save',
+              variant: AppButtonVariant.accent,
+              onPressed: null,
+            ),
+          ),
         );
         await tester.tap(find.byType(AppButton), warnIfMissed: false);
         final opacity = tester.widget<Opacity>(
@@ -49,12 +67,24 @@ void main() {
           _wrap(
             AppButton(
               label: 'Save',
+              variant: AppButtonVariant.accent,
               icon: const Icon(Icons.check),
               onPressed: () {},
             ),
           ),
         );
         expect(find.byIcon(Icons.check), findsOneWidget);
+      },
+    );
+
+    test(
+      'The forbidden filled-grey "primary" variant has been removed '
+      '(design_system.md: a grey filled box reads as a false affirmative)',
+      () {
+        expect(
+          AppButtonVariant.values.map((v) => v.name),
+          isNot(contains('primary')),
+        );
       },
     );
   });

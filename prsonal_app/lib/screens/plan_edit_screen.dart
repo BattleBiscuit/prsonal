@@ -52,6 +52,7 @@ class _PlanEditScreenState extends ConsumerState<PlanEditScreen> {
         children: routines.map((r) {
           return ListTile(
             title: Text(r.name),
+            trailing: const Icon(Icons.chevron_right_outlined),
             onTap: () {
               Navigator.of(ctx).pop();
               setState(() {

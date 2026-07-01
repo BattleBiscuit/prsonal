@@ -51,13 +51,23 @@ class PlanEntryRow extends StatelessWidget {
                 child: GestureDetector(
                   behavior: HitTestBehavior.opaque,
                   onTap: onOpen,
-                  child: Text(
-                    routineName,
-                    style: TextStyle(
-                      color: colors.text1,
-                      fontSize: 15,
-                      fontWeight: FontWeight.w500,
-                    ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Flexible(
+                        child: Text(
+                          routineName,
+                          style: TextStyle(
+                            color: colors.text1,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w500,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      Icon(Icons.edit_outlined, color: colors.text2, size: 16),
+                    ],
                   ),
                 ),
               ),

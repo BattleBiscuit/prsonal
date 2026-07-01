@@ -302,28 +302,25 @@ void main() {
           expect(tester.widget<Text>(find.text('1')).style, isMono());
         });
 
-        testWidgets(
-          'Active set live weight/reps input fields render mono',
-          (tester) async {
-            await tester.pumpWidget(
-              _wrap(
-                SetRow(
-                  index: 0,
-                  kind: ExerciseType.strength,
-                  status: ActiveSetStatus.active,
-                  plannedLabel: '8×82.5kg',
-                  onToggleComplete: () {},
-                ),
+        testWidgets('Active set live weight/reps input fields render mono', (
+          tester,
+        ) async {
+          await tester.pumpWidget(
+            _wrap(
+              SetRow(
+                index: 0,
+                kind: ExerciseType.strength,
+                status: ActiveSetStatus.active,
+                plannedLabel: '8×82.5kg',
+                onToggleComplete: () {},
               ),
-            );
-            final fields = tester.widgetList<TextField>(
-              find.byType(TextField),
-            );
-            for (final field in fields) {
-              expect(field.style, isMono());
-            }
-          },
-        );
+            ),
+          );
+          final fields = tester.widgetList<TextField>(find.byType(TextField));
+          for (final field in fields) {
+            expect(field.style, isMono());
+          }
+        });
       },
     );
   });

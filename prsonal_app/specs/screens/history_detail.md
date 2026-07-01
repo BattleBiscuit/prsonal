@@ -42,7 +42,9 @@ changes.
 ## Acceptance Criteria
 - AC-001: Shows the workout summary (routine, date, duration, volume, status)
 - AC-002: Shows a per-exercise set table of planned and actual values
-- AC-003: Shows a PR banner listing exercises that set a personal record
+- AC-003: Shows a PR banner listing exercises that set a personal record, styled as the "live/
+  important" accent-tinted surface from design_system.md ("Depth & elevation" / "PR moment"):
+  `accent@0.06` background, `accent@0.20` 1px hairline — not a plain `surface1` + `border` card
 - AC-004: Tapping Edit makes the actual values editable
 - AC-005: Saving edits persists the changes and exits edit mode
 - AC-006: A skipped set is shown distinctly

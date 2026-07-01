@@ -67,3 +67,5 @@ uses the derived bodyweight (latest `weight` body metric, default 80 kg).
 - AC-010: startRest schedules a rest-complete notification and cancelRest cancels it
 - AC-011: a mutating method called with no active session throws a StateError
 - AC-012: jumpToSet makes the selected set the only active set, reverting any previously active set to pending
+- AC-013: uncheckSet clears a completed set's completion and selects it as the active editable set (cursor moves to it)
+- AC-014: completing a set marked bodyweight stores effectiveWeight = bodyweight + the entered (signed) added weight and persists the bodyweight flag on the set

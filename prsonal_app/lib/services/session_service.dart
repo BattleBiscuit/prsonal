@@ -55,6 +55,7 @@ class ActiveSet {
     String? actualLabel,
     bool? isPR,
     String? dbId,
+    bool? isBodyweight,
   }) {
     return ActiveSet(
       index: index,
@@ -67,7 +68,7 @@ class ActiveSet {
       restSeconds: restSeconds,
       plannedReps: plannedReps,
       plannedWeight: plannedWeight,
-      isBodyweight: isBodyweight,
+      isBodyweight: isBodyweight ?? this.isBodyweight,
     );
   }
 }
@@ -571,6 +572,7 @@ class SessionEngine extends Notifier<ActiveSessionState?> {
           effectiveWeight: Value(effectiveWeight),
           estimated1RM: Value(estimated1RM),
           completedAt: Value(now),
+          isBodyweight: Value(isBodyweight),
           isPR: Value(isPR),
           skipped: const Value(false),
         ),
@@ -589,6 +591,7 @@ class SessionEngine extends Notifier<ActiveSessionState?> {
       status: ActiveSetStatus.completed,
       actualLabel: actualLabel,
       isPR: isPR,
+      isBodyweight: isBodyweight,
     );
 
     var updatedExercises = _updateSet(current.exercises, cursor, updatedSet);

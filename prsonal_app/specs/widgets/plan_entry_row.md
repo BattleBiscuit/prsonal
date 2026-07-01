@@ -32,9 +32,12 @@ start (▶) button. Used both inside plan blocks (with a day label) and in the U
 ## Accessibility
 - Done indicator semantic label (when done): "Completed this week"
 - Start button semantic label: "Start {routineName}"
+- Routine name (edit) semantic label: "Edit {routineName}" — tapping the name opens the routine
+  editor (matches the tap-to-edit pattern used by RoutineCard on the Exercises screen).
 
 ## Acceptance Criteria
 - AC-001: Widget renders the day label and routine name
 - AC-002: Widget renders a "Completed this week" indicator when done is true
 - AC-003: Widget calls onStart when the start button is tapped
 - AC-004: The start button is inert when startDisabled is true
+- AC-005: Widget calls onOpen when the routine name is tapped

@@ -167,13 +167,16 @@ class _SetRowState extends State<SetRow> {
             ),
           ),
           const SizedBox(width: 8),
+          _buildBodyweightToggle(colors),
+          const SizedBox(width: 8),
           Expanded(
             child: _buildField(
               colors,
               controller: _secondaryController,
-              hint: 'kg',
+              hint: widget.isBodyweight ? '±kg' : 'kg',
               onChanged: widget.onSecondaryChanged,
               border: fieldBorder,
+              signed: widget.isBodyweight,
             ),
           ),
           const SizedBox(width: 8),
@@ -202,19 +205,58 @@ class _SetRowState extends State<SetRow> {
     );
   }
 
+  // Bodyweight pill toggle: flips the set to bodyweight-relative. Off reads as a
+  // neutral surface3 pill; on is the accent-filled toggle (onAccent label), per
+  // the design system's pill-toggle rule.
+  Widget _buildBodyweightToggle(AppColors colors) {
+    final on = widget.isBodyweight;
+    return Semantics(
+      label: 'Bodyweight',
+      button: true,
+      toggled: on,
+      container: true,
+      onTap: widget.onToggleBodyweight,
+      child: ExcludeSemantics(
+        child: GestureDetector(
+          onTap: widget.onToggleBodyweight,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+            decoration: BoxDecoration(
+              color: on ? colors.accent : colors.surface3,
+              borderRadius: BorderRadius.circular(radiusFull),
+            ),
+            child: Text(
+              'BW',
+              style: TextStyle(
+                color: on ? colors.onAccent : colors.text2,
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   // Live-row input: light (text1) text on the dark tint, with a thicker
   // dim-grey contour (accent @ 30%) that stays the same on focus — a firmer
-  // edge for high-glare gyms, never a bright white outline.
+  // edge for high-glare gyms, never a bright white outline. [signed] allows a
+  // leading minus for assisted bodyweight sets.
   Widget _buildField(
     AppColors colors, {
     required TextEditingController controller,
     required String hint,
     required ValueChanged<String>? onChanged,
     required Color border,
+    bool signed = false,
   }) {
     return TextField(
       controller: controller,
-      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+      keyboardType: TextInputType.numberWithOptions(
+        decimal: true,
+        signed: signed,
+      ),
       onChanged: onChanged,
       cursorColor: colors.text1,
       style: TextStyle(color: colors.text1, fontSize: 14),
@@ -239,44 +281,49 @@ class _SetRowState extends State<SetRow> {
     // Read-only log. The logged values are the data you review, so they stay at
     // full strength in primary text1 (no blanket dimming). Colour marks the
     // event, not the readout: success on the checked box, and a warning PR star.
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-      child: Row(
-        children: [
-          SizedBox(
-            width: 32,
-            child: Text(
-              '${widget.index + 1}',
-              style: TextStyle(
-                color: colors.text3,
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
+    // Tapping the row re-opens the set for editing (onSelect).
+    return GestureDetector(
+      onTap: widget.onSelect,
+      behavior: HitTestBehavior.opaque,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+        child: Row(
+          children: [
+            SizedBox(
+              width: 32,
+              child: Text(
+                '${widget.index + 1}',
+                style: TextStyle(
+                  color: colors.text3,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                ),
+                textAlign: TextAlign.center,
               ),
-              textAlign: TextAlign.center,
             ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              widget.actualLabel ?? widget.plannedLabel,
-              style: TextStyle(color: colors.text1, fontSize: 14),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                widget.actualLabel ?? widget.plannedLabel,
+                style: TextStyle(color: colors.text1, fontSize: 14),
+              ),
             ),
-          ),
-          if (widget.isPR)
-            Semantics(
-              label: 'Personal record',
-              container: true,
-              child: ExcludeSemantics(
-                child: Icon(
-                  Icons.star_outline,
-                  color: colors.warning,
-                  size: 18,
+            if (widget.isPR)
+              Semantics(
+                label: 'Personal record',
+                container: true,
+                child: ExcludeSemantics(
+                  child: Icon(
+                    Icons.star_outline,
+                    color: colors.warning,
+                    size: 18,
+                  ),
                 ),
               ),
-            ),
-          const SizedBox(width: 8),
-          Icon(Icons.check_box_outlined, color: colors.success, size: 22),
-        ],
+            const SizedBox(width: 8),
+            Icon(Icons.check_box_outlined, color: colors.success, size: 22),
+          ],
+        ),
       ),
     );
   }

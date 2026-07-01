@@ -71,3 +71,5 @@ abandoning.
 - AC-010: Tapping "Add exercise" opens the exercise form
 - AC-011: The active set's inputs are pre-filled with its planned reps and weight
 - AC-012: Tapping the active set's checkbox completes the current set
+- AC-013: Tapping a completed set re-opens it as the active editable set
+- AC-014: The active set's bodyweight toggle can be flipped per set, and the chosen value is used when the set is completed

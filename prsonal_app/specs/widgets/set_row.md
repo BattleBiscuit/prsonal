@@ -28,7 +28,7 @@ state.
 | onSecondaryChanged | ValueChanged\<String\>? | no | null | Active row secondary edit |
 | onToggleBodyweight | VoidCallback? | no | null | Active row BW toggle |
 | onToggleComplete | VoidCallback? | no | null | Checkbox toggled (complete / uncheck) |
-| onSelect | VoidCallback? | no | null | Tapped an upcoming row to make it active |
+| onSelect | VoidCallback? | no | null | Tapped an upcoming row to make it active, or a completed row to re-open it for editing |
 
 `ActiveSetStatus { upcoming, active, completed, skipped }`.
 
@@ -37,7 +37,7 @@ state.
 | State | Appearance |
 |-------|------------|
 | upcoming | set number + ghost planned label; tappable to select; muted |
-| active | **Tier 3 live row**: a faint `accent @ 0.06` tint with a **2px `accent` left rail** and light (`text1`) content — light set number, light-text inputs and unchecked box, each with a **thicker 2px `accent @ 0.30`** contour (never a white outline). The live focus, without the glare of a solid block. |
+| active | **Tier 3 live row**: a faint `accent @ 0.06` tint with a **2px `accent` left rail** and light (`text1`) content — light set number, light-text inputs and unchecked box, each with a **thicker 2px `accent @ 0.30`** contour (never a white outline). A **`BW` pill toggle** (pill, `surface3`/`text2` off · `accent`/`onAccent` on) flips the set to bodyweight-relative; when on, the weight field accepts a **signed +/- added/assisted weight** (hint `±kg`, signed keyboard). The live focus, without the glare of a solid block. |
 | completed | logged values at full strength in `text1`; `success` checked box; optional `warning` PR **star**; no blanket dimming |
 | skipped | struck-through planned label in `text3` + a readable "Skip" badge (`surface3`/`text2`); non-interactive |
 
@@ -58,3 +58,5 @@ out of the historical (Tier 2) logs around it without the glare of a full chalk-
 - AC-006: Tapping the active set's checkbox invokes onToggleComplete
 - AC-007: The active set's inputs display the provided primaryValue and secondaryValue and preserve typed input across rebuilds
 - AC-008: The active set renders as a Tier 3 live row — a faint accent tint background with a 2px accent left rail and light (text1) content
+- AC-009: Tapping a completed set invokes onSelect (to re-open it for editing)
+- AC-010: The active set renders a BW toggle that invokes onToggleBodyweight when tapped, and reflects the isBodyweight state

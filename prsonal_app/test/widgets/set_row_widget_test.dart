@@ -173,8 +173,7 @@ void main() {
             .whereType<BoxDecoration>()
             .where((d) {
               final border = d.border;
-              return d.color ==
-                      AppColors.dark.accent.withValues(alpha: 0.06) &&
+              return d.color == AppColors.dark.accent.withValues(alpha: 0.06) &&
                   border is Border &&
                   border.left.color == AppColors.dark.accent &&
                   border.left.width == 2;
@@ -184,6 +183,53 @@ void main() {
         // Content is light (text1), not dark onAccent.
         final setNumber = tester.widget<Text>(find.text('1'));
         expect(setNumber.style?.color, AppColors.dark.text1);
+      },
+    );
+
+    testWidgets(
+      'AC-009: Tapping a completed set invokes onSelect (to re-open it for editing)',
+      (tester) async {
+        var selected = false;
+        await tester.pumpWidget(
+          _wrap(
+            SetRow(
+              index: 0,
+              kind: ExerciseType.strength,
+              status: ActiveSetStatus.completed,
+              plannedLabel: '8×80kg',
+              actualLabel: '8×82.5kg',
+              onSelect: () => selected = true,
+            ),
+          ),
+        );
+        await tester.tap(find.text('8×82.5kg'));
+        expect(selected, isTrue);
+      },
+    );
+
+    testWidgets(
+      'AC-010: The active set renders a BW toggle that invokes onToggleBodyweight when tapped, and reflects the isBodyweight state',
+      (tester) async {
+        var toggled = false;
+        await tester.pumpWidget(
+          _wrap(
+            SetRow(
+              index: 0,
+              kind: ExerciseType.strength,
+              status: ActiveSetStatus.active,
+              plannedLabel: '8×82.5kg',
+              isBodyweight: true,
+              onToggleBodyweight: () => toggled = true,
+              onToggleComplete: () {},
+            ),
+          ),
+        );
+        // The BW toggle is present and tapping it invokes the callback.
+        expect(find.text('BW'), findsOneWidget);
+        await tester.tap(find.bySemanticsLabel('Bodyweight'));
+        expect(toggled, isTrue);
+        // When bodyweight, the weight field hints a signed added weight.
+        expect(find.text('±kg'), findsOneWidget);
       },
     );
   });

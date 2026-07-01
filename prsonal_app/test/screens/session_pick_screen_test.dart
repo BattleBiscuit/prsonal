@@ -200,5 +200,16 @@ void main() {
         await db.close();
       },
     );
+
+    testWidgets(
+      'AC-010: Tapping a routine name (plan entry or unplanned) opens routine-edit for that routine',
+      (tester) async {
+        await _pump(tester);
+        // Plan-entry routine name opens the editor.
+        await tester.tap(find.text('Push Day A'));
+        await tester.pumpAndSettle();
+        expect(find.text('EDIT ROUTINE'), findsOneWidget);
+      },
+    );
   });
 }

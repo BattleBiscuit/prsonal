@@ -9,6 +9,7 @@ class PlanEntryRow extends StatelessWidget {
     this.done = false,
     this.startDisabled = false,
     this.onStart,
+    this.onOpen,
   });
 
   final String dayLabel;
@@ -16,6 +17,9 @@ class PlanEntryRow extends StatelessWidget {
   final bool done;
   final bool startDisabled;
   final VoidCallback? onStart;
+
+  /// Tapped the routine name to open the routine editor.
+  final VoidCallback? onOpen;
 
   @override
   Widget build(BuildContext context) {
@@ -38,12 +42,24 @@ class PlanEntryRow extends StatelessWidget {
           ),
           const SizedBox(width: 12),
           Expanded(
-            child: Text(
-              routineName,
-              style: TextStyle(
-                color: colors.text1,
-                fontSize: 15,
-                fontWeight: FontWeight.w500,
+            child: Semantics(
+              label: 'Edit $routineName',
+              button: true,
+              container: true,
+              onTap: onOpen,
+              child: ExcludeSemantics(
+                child: GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: onOpen,
+                  child: Text(
+                    routineName,
+                    style: TextStyle(
+                      color: colors.text1,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
               ),
             ),
           ),

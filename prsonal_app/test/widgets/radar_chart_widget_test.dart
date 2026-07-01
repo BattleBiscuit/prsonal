@@ -40,9 +40,7 @@ void main() {
         // muscles have data.
         await tester.pumpWidget(
           _wrap(
-            const app.MuscleRadarChart(
-              data: {Muscle.chest: 3, Muscle.legs: 2},
-            ),
+            const app.MuscleRadarChart(data: {Muscle.chest: 3, Muscle.legs: 2}),
           ),
         );
         expect(tester.takeException(), isNull);

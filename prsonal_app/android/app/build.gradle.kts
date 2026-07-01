@@ -30,7 +30,9 @@ val isAssemblingRelease = gradle.startParameter.taskNames.any {
 
 android {
     namespace = "com.prsonal.prsonal_app"
-    compileSdk = flutter.compileSdkVersion
+    // Overridden from flutter.compileSdkVersion (34): transitive plugin
+    // flutter_plugin_android_lifecycle (via file_picker) requires compileSdk 36+.
+    compileSdk = 36
     ndkVersion = flutter.ndkVersion
 
     compileOptions {

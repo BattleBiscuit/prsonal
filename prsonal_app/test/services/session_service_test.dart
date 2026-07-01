@@ -293,11 +293,62 @@ void main() {
           0,
           (sum, ex) =>
               sum +
-              ex.sets
-                  .where((s) => s.status == ActiveSetStatus.active)
-                  .length,
+              ex.sets.where((s) => s.status == ActiveSetStatus.active).length,
         );
         expect(activeCount, 1);
+      },
+    );
+
+    test(
+      'AC-013: uncheckSet clears a completed set\'s completion and selects it as the active editable set (cursor moves to it)',
+      () async {
+        final routineId = await _seedRoutine(db, setCount: 3);
+        await engine().startSession(routineId: routineId);
+        // Complete set 0; the cursor advances to set 1.
+        await engine().markCurrentSetComplete(
+          actualPrimary: 8,
+          actualSecondary: 80,
+          isBodyweight: false,
+        );
+        expect(state().exercises[0].sets[0].status, ActiveSetStatus.completed);
+
+        await engine().uncheckSet(0, 0);
+
+        // Set 0 is now the active editable set again, cursor sits on it.
+        expect(state().cursor, (exerciseIndex: 0, setIndex: 0));
+        expect(state().exercises[0].sets[0].status, ActiveSetStatus.active);
+        // Exactly one active set.
+        final activeCount = state().exercises.fold<int>(
+          0,
+          (sum, ex) =>
+              sum +
+              ex.sets.where((s) => s.status == ActiveSetStatus.active).length,
+        );
+        expect(activeCount, 1);
+        // Its completion is cleared in the database.
+        final set0 = (await db.workoutSetsForSession(
+          state().session.id,
+        )).firstWhere((s) => s.setIndex == 0);
+        expect(set0.completedAt, isNull);
+        expect(set0.actualReps, isNull);
+      },
+    );
+
+    test(
+      'AC-014: completing a set marked bodyweight stores effectiveWeight = bodyweight + the entered (signed) added weight and persists the bodyweight flag on the set',
+      () async {
+        final routineId = await _seedRoutine(db);
+        await engine().startSession(routineId: routineId);
+        // No body metric logged → bodyweight defaults to 80 kg. Add +20 kg.
+        await engine().markCurrentSetComplete(
+          actualPrimary: 5,
+          actualSecondary: 20,
+          isBodyweight: true,
+        );
+        final set = (await db.workoutSetsForSession(state().session.id)).first;
+        expect(set.isBodyweight, isTrue);
+        expect(set.actualWeight, 20);
+        expect(set.effectiveWeight, 100); // 80 bodyweight + 20 added
       },
     );
   });

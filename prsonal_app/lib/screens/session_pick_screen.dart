@@ -77,6 +77,10 @@ class SessionPickScreen extends ConsumerWidget {
                         dayLabel: '',
                         routineName: r.name,
                         done: false,
+                        onOpen: () => context.goNamed(
+                          'routine-edit',
+                          pathParameters: {'id': r.id},
+                        ),
                         onStart: () {
                           context.goNamed('session-active');
                           ref
@@ -161,6 +165,10 @@ class _PlanBlock extends ConsumerWidget {
               dayLabel: entry.dayLabel ?? '',
               routineName: entry.routineName,
               done: entry.doneThisWeek,
+              onOpen: () => context.goNamed(
+                'routine-edit',
+                pathParameters: {'id': entry.routineId},
+              ),
               onStart: () {
                 // Navigate first so the active-session screen starts building
                 // while startSession() runs in the background.

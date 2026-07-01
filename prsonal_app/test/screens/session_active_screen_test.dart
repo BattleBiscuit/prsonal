@@ -11,6 +11,7 @@ class _FakeEngine extends SessionEngine {
   _FakeEngine(this._initial);
   final ActiveSessionState _initial;
   final List<String> calls = [];
+  bool? lastIsBodyweight;
 
   @override
   ActiveSessionState? build() => _initial;
@@ -22,11 +23,20 @@ class _FakeEngine extends SessionEngine {
     required bool isBodyweight,
   }) async {
     calls.add('complete');
+    lastIsBodyweight = isBodyweight;
     return false;
   }
 
   @override
   void cancelRest() => calls.add('cancelRest');
+
+  @override
+  Future<void> uncheckSet(int exerciseIndex, int setIndex) async =>
+      calls.add('uncheck:$exerciseIndex,$setIndex');
+
+  @override
+  void jumpToSet(int exerciseIndex, int setIndex) =>
+      calls.add('jump:$exerciseIndex,$setIndex');
 
   @override
   Future<void> finishSession() async => calls.add('finish');
@@ -269,6 +279,31 @@ void main() {
         await tester.tap(find.bySemanticsLabel('Complete set'));
         await tester.pumpAndSettle();
         expect(engine.calls, contains('complete'));
+      },
+    );
+
+    testWidgets(
+      'AC-013: Tapping a completed set re-opens it as the active editable set',
+      (tester) async {
+        final engine = await _pump(tester);
+        // The completed set (exercise 0, set 0) shows its logged values.
+        await tester.tap(find.text('10×80kg').first);
+        await tester.pumpAndSettle();
+        expect(engine.calls, contains('uncheck:0,0'));
+      },
+    );
+
+    testWidgets(
+      'AC-014: The active set\'s bodyweight toggle can be flipped per set, and the chosen value is used when the set is completed',
+      (tester) async {
+        final engine = await _pump(tester);
+        // The active set starts non-bodyweight; flip the BW toggle on.
+        await tester.tap(find.bySemanticsLabel('Bodyweight'));
+        await tester.pumpAndSettle();
+        // Complete the set — the engine receives the toggled bodyweight value.
+        await tester.tap(find.bySemanticsLabel('Complete set'));
+        await tester.pumpAndSettle();
+        expect(engine.lastIsBodyweight, isTrue);
       },
     );
   });

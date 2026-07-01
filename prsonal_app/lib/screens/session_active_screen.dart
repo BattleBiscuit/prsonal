@@ -36,20 +36,25 @@ class _SessionActiveScreenState extends ConsumerState<SessionActiveScreen> {
   String _primaryValue = '';
   String _secondaryValue = '';
 
+  // Per-active-set bodyweight choice. Seeded from the set's routine value but
+  // freely toggled during the workout; the chosen value is logged on complete.
+  bool _isBodyweight = false;
+
   // The cursor the editable values were last seeded for. When the active set
   // changes we re-seed the inputs from the new set's planned targets.
   SessionCursor? _seededCursor;
 
-  /// Seeds [_primaryValue]/[_secondaryValue] from the active set's planned
-  /// targets so the inputs show the expected reps/weight rather than empty
-  /// fields. No-op when the cursor has not changed since the last seed, so
-  /// in-progress typing is preserved across rebuilds.
+  /// Seeds [_primaryValue]/[_secondaryValue]/[_isBodyweight] from the active
+  /// set's planned targets so the inputs show the expected reps/weight rather
+  /// than empty fields. No-op when the cursor has not changed since the last
+  /// seed, so in-progress typing is preserved across rebuilds.
   void _seedForCursor(ActiveSessionState state) {
     if (_seededCursor == state.cursor) return;
     _seededCursor = state.cursor;
     final set = state.currentSet;
     _primaryValue = _plannedPrimary(set);
     _secondaryValue = _plannedSecondary(set);
+    _isBodyweight = set?.isBodyweight ?? false;
   }
 
   String _plannedPrimary(ActiveSet? set) {
@@ -74,7 +79,7 @@ class _SessionActiveScreenState extends ConsumerState<SessionActiveScreen> {
         .markCurrentSetComplete(
           actualPrimary: primary,
           actualSecondary: secondary,
-          isBodyweight: currentSet.isBodyweight,
+          isBodyweight: _isBodyweight,
         );
     // The cursor advances, so the next build re-seeds the inputs for the new
     // active set via [_seedForCursor].
@@ -242,6 +247,20 @@ class _SessionActiveScreenState extends ConsumerState<SessionActiveScreen> {
                           plannedLabel: ex.sets[si].plannedLabel,
                           actualLabel: ex.sets[si].actualLabel,
                           isPR: ex.sets[si].isPR,
+                          isBodyweight:
+                              ex.isCurrent &&
+                                  si == state.cursor.setIndex &&
+                                  i == state.cursor.exerciseIndex
+                              ? _isBodyweight
+                              : ex.sets[si].isBodyweight,
+                          onToggleBodyweight:
+                              ex.isCurrent &&
+                                  si == state.cursor.setIndex &&
+                                  i == state.cursor.exerciseIndex
+                              ? () => setState(
+                                  () => _isBodyweight = !_isBodyweight,
+                                )
+                              : null,
                           primaryValue:
                               ex.isCurrent &&
                                   si == state.cursor.setIndex &&
@@ -264,9 +283,20 @@ class _SessionActiveScreenState extends ConsumerState<SessionActiveScreen> {
                                   i == state.cursor.exerciseIndex
                               ? () => _completeCurrentSet(ex.sets[si])
                               : null,
-                          onSelect: () => ref
-                              .read(sessionEngineProvider.notifier)
-                              .jumpToSet(i, si),
+                          onSelect: () {
+                            final notifier = ref.read(
+                              sessionEngineProvider.notifier,
+                            );
+                            // A finished set is re-opened for editing (which
+                            // clears its completion); any other selectable set
+                            // just moves the cursor.
+                            if (ex.sets[si].status ==
+                                ActiveSetStatus.completed) {
+                              notifier.uncheckSet(i, si);
+                            } else {
+                              notifier.jumpToSet(i, si);
+                            }
+                          },
                         ),
                     ],
                   );

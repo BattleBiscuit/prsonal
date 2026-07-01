@@ -71,5 +71,22 @@ void main() {
         expect(started, isFalse);
       },
     );
+
+    testWidgets('AC-005: Widget calls onOpen when the routine name is tapped', (
+      tester,
+    ) async {
+      var opened = false;
+      await tester.pumpWidget(
+        _wrap(
+          PlanEntryRow(
+            dayLabel: 'Mon',
+            routineName: 'Push Day A',
+            onOpen: () => opened = true,
+          ),
+        ),
+      );
+      await tester.tap(find.text('Push Day A'));
+      expect(opened, isTrue);
+    });
   });
 }

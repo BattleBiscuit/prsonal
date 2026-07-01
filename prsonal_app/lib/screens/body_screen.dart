@@ -170,16 +170,19 @@ class _BodyScreenState extends ConsumerState<BodyScreen> {
                                 ),
                               ),
                               const SizedBox(width: 12),
-                              Semantics(
-                                label: 'Delete entry',
-                                button: true,
-                                container: true,
-                                child: GestureDetector(
-                                  onTap: () => service.deleteEntry(m.id),
-                                  child: Icon(
-                                    Icons.close,
-                                    color: colors.text3,
-                                    size: 18,
+                              Tooltip(
+                                message: 'Delete entry',
+                                child: Semantics(
+                                  label: 'Delete entry',
+                                  button: true,
+                                  container: true,
+                                  child: GestureDetector(
+                                    onTap: () => service.deleteEntry(m.id),
+                                    child: Icon(
+                                      Icons.close,
+                                      color: colors.text3,
+                                      size: 18,
+                                    ),
                                   ),
                                 ),
                               ),

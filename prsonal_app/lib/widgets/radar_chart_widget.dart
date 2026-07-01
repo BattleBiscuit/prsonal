@@ -2,6 +2,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:prsonal_app/models/exercise.dart';
 import 'package:prsonal_app/theme/app_colors.dart';
+import 'package:prsonal_app/theme/app_motion.dart';
 
 class MuscleRadarChart extends StatelessWidget {
   const MuscleRadarChart({super.key, required this.data});
@@ -28,27 +29,40 @@ class MuscleRadarChart extends StatelessWidget {
       );
     }
 
-    return RadarChart(
+    final chart = RadarChart(
       RadarChartData(
         radarShape: RadarShape.polygon,
         tickCount: 4,
         ticksTextStyle: const TextStyle(fontSize: 0),
-        gridBorderData: BorderSide(color: colors.border, width: 1),
-        radarBorderData: BorderSide(color: colors.border, width: 1),
+        gridBorderData: BorderSide(color: colors.surface3, width: 1),
+        radarBorderData: BorderSide(color: colors.surface3, width: 1),
         titlePositionPercentageOffset: 0.2,
+        titleTextStyle: TextStyle(fontSize: 12, color: colors.text2),
         getTitle: (index, angle) =>
             RadarChartTitle(text: muscles[index].label, angle: angle),
         dataSets: [
           RadarDataSet(
-            fillColor: colors.accent.withValues(alpha: 0.2),
+            fillColor: colors.accent.withValues(alpha: 0.12),
             borderColor: colors.accent,
             borderWidth: 2,
             entryRadius: 3,
             dataEntries: values.map((v) => RadarEntry(value: v)).toList(),
           ),
         ],
-        tickBorderData: BorderSide(color: colors.border),
+        tickBorderData: BorderSide(color: colors.surface3),
       ),
+    );
+
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0, end: 1),
+      duration: AppDurations.normal,
+      curve: Curves.easeOut,
+      builder: (context, scale, child) => Transform.scale(
+        key: const ValueKey('radarChartScale'),
+        scale: scale,
+        child: child,
+      ),
+      child: chart,
     );
   }
 }

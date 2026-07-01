@@ -28,12 +28,15 @@ class ExerciseListItem extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Semantics(
-              label: 'Reorder exercise',
-              container: true,
-              child: Padding(
-                padding: const EdgeInsets.all(4.0),
-                child: Icon(Icons.drag_handle, size: 20, color: colors.text3),
+            Tooltip(
+              message: 'Reorder exercise',
+              child: Semantics(
+                label: 'Reorder exercise',
+                container: true,
+                child: Padding(
+                  padding: const EdgeInsets.all(4.0),
+                  child: Icon(Icons.drag_handle, size: 20, color: colors.text3),
+                ),
               ),
             ),
             const SizedBox(width: 12),
@@ -57,14 +60,17 @@ class ExerciseListItem extends StatelessWidget {
                 ],
               ),
             ),
-            Semantics(
-              label: 'Remove exercise',
-              button: true,
-              child: GestureDetector(
-                onTap: onDelete,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Icon(Icons.close, color: colors.text3),
+            Tooltip(
+              message: 'Remove exercise',
+              child: Semantics(
+                label: 'Remove exercise',
+                button: true,
+                child: GestureDetector(
+                  onTap: onDelete,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Icon(Icons.close, color: colors.text3),
+                  ),
                 ),
               ),
             ),

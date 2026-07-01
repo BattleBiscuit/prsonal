@@ -101,7 +101,7 @@ class PlanEntryRow extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Icon(
-                          Icons.play_arrow,
+                          Icons.play_arrow_outlined,
                           color: done ? colors.text2 : colors.onAccent,
                           size: 18,
                         ),

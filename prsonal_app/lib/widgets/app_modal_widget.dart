@@ -44,12 +44,15 @@ class AppModal extends StatelessWidget {
                     ),
                   ),
                 ),
-                Semantics(
-                  label: 'Close',
-                  button: true,
-                  child: GestureDetector(
-                    onTap: onClose,
-                    child: Icon(Icons.close, color: colors.text2),
+                Tooltip(
+                  message: 'Close',
+                  child: Semantics(
+                    label: 'Close',
+                    button: true,
+                    child: GestureDetector(
+                      onTap: onClose,
+                      child: Icon(Icons.close, color: colors.text2),
+                    ),
                   ),
                 ),
               ],

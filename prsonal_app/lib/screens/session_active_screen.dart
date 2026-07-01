@@ -4,24 +4,13 @@ import 'package:go_router/go_router.dart';
 import '../models/routine_exercise.dart';
 import '../services/session_service.dart';
 import '../theme/app_colors.dart';
+import '../widgets/app_button_widget.dart';
+import '../widgets/app_modal_widget.dart';
 import '../widgets/exercise_form_widget.dart';
 import '../widgets/session_header_widget.dart';
 import '../widgets/session_progress_bar_widget.dart';
 import '../widgets/set_row_widget.dart';
 import '../providers/app_providers.dart';
-
-Future<void> _showAppModal(
-  BuildContext context, {
-  required String title,
-  required List<Widget> actions,
-  Widget? body,
-}) {
-  return showDialog<void>(
-    context: context,
-    builder: (ctx) =>
-        AlertDialog(title: Text(title), content: body, actions: actions),
-  );
-}
 
 class SessionActiveScreen extends ConsumerStatefulWidget {
   const SessionActiveScreen({super.key});
@@ -86,49 +75,29 @@ class _SessionActiveScreenState extends ConsumerState<SessionActiveScreen> {
   }
 
   void _onFinish() async {
-    await _showAppModal(
+    final confirmed = await showConfirmSheet(
       context,
       title: 'Finish workout?',
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Cancel'),
-        ),
-        ElevatedButton(
-          onPressed: () async {
-            Navigator.of(context).pop();
-            await ref.read(sessionEngineProvider.notifier).finishSession();
-            if (mounted) context.goNamed('history');
-          },
-          child: const Text('Save to history'),
-        ),
-      ],
+      confirmLabel: 'Save to history',
+      cancelLabel: 'Keep going',
+      confirmVariant: AppButtonVariant.accent,
     );
+    if (!confirmed) return;
+    await ref.read(sessionEngineProvider.notifier).finishSession();
+    if (mounted) context.goNamed('history');
   }
 
   void _onQuit() async {
-    await _showAppModal(
+    final confirmed = await showConfirmSheet(
       context,
       title: 'Abandon workout?',
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Cancel'),
-        ),
-        OutlinedButton(
-          style: OutlinedButton.styleFrom(
-            foregroundColor: Theme.of(context).colorScheme.error,
-            side: BorderSide(color: Theme.of(context).colorScheme.error),
-          ),
-          onPressed: () async {
-            Navigator.of(context).pop();
-            await ref.read(sessionEngineProvider.notifier).abandonSession();
-            if (mounted) context.goNamed('session-pick');
-          },
-          child: const Text('Abandon'),
-        ),
-      ],
+      confirmLabel: 'Abandon',
+      cancelLabel: 'Continue',
+      confirmVariant: AppButtonVariant.danger,
     );
+    if (!confirmed) return;
+    await ref.read(sessionEngineProvider.notifier).abandonSession();
+    if (mounted) context.goNamed('session-pick');
   }
 
   void _showAddExercise(ActiveSessionState state) {

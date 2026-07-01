@@ -83,14 +83,17 @@ class LibraryExerciseCard extends StatelessWidget {
                 ],
               ),
             ),
-            Semantics(
-              label: 'Delete exercise',
-              button: true,
-              child: GestureDetector(
-                onTap: onDelete,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Icon(Icons.delete_outline, color: colors.text3),
+            Tooltip(
+              message: 'Delete exercise',
+              child: Semantics(
+                label: 'Delete exercise',
+                button: true,
+                child: GestureDetector(
+                  onTap: onDelete,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Icon(Icons.delete_outline, color: colors.danger),
+                  ),
                 ),
               ),
             ),

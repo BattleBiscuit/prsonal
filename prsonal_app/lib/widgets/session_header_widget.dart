@@ -34,14 +34,17 @@ class SessionHeader extends StatelessWidget {
 
     return Row(
       children: [
-        Semantics(
-          label: 'Quit workout',
-          button: true,
-          child: GestureDetector(
-            onTap: onQuit,
-            child: Container(
-              padding: const EdgeInsets.all(8),
-              child: Icon(Icons.close, color: colors.danger, size: 22),
+        Tooltip(
+          message: 'Quit workout',
+          child: Semantics(
+            label: 'Quit workout',
+            button: true,
+            child: GestureDetector(
+              onTap: onQuit,
+              child: Container(
+                padding: const EdgeInsets.all(8),
+                child: Icon(Icons.close, color: colors.danger, size: 22),
+              ),
             ),
           ),
         ),
@@ -69,14 +72,17 @@ class SessionHeader extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 8),
-        Semantics(
-          label: 'Finish workout',
-          button: true,
-          child: GestureDetector(
-            onTap: onFinish,
-            child: Container(
-              padding: const EdgeInsets.all(8),
-              child: Icon(Icons.check, color: colors.accent, size: 22),
+        Tooltip(
+          message: 'Finish workout',
+          child: Semantics(
+            label: 'Finish workout',
+            button: true,
+            child: GestureDetector(
+              onTap: onFinish,
+              child: Container(
+                padding: const EdgeInsets.all(8),
+                child: Icon(Icons.check, color: colors.accent, size: 22),
+              ),
             ),
           ),
         ),

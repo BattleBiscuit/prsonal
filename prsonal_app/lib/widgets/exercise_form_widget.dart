@@ -241,16 +241,19 @@ class _SetRow extends StatelessWidget {
             ),
           ),
           // Remove button - always shown but disabled (inert) when can't remove
-          Semantics(
-            label: 'Remove set',
-            button: true,
-            child: GestureDetector(
-              onTap: canRemove ? onRemove : null,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Icon(
-                  Icons.remove_circle_outline,
-                  color: canRemove ? colors.danger : colors.text3,
+          Tooltip(
+            message: 'Remove set',
+            child: Semantics(
+              label: 'Remove set',
+              button: true,
+              child: GestureDetector(
+                onTap: canRemove ? onRemove : null,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Icon(
+                    Icons.remove_circle_outline,
+                    color: canRemove ? colors.danger : colors.text3,
+                  ),
                 ),
               ),
             ),

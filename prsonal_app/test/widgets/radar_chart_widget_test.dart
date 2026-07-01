@@ -2,6 +2,7 @@ import 'package:fl_chart/fl_chart.dart' as fl;
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:prsonal_app/models/exercise.dart';
+import 'package:prsonal_app/theme/app_motion.dart';
 import 'package:prsonal_app/widgets/radar_chart_widget.dart' as app;
 
 Widget _wrap(Widget child) => MaterialApp(
@@ -45,6 +46,23 @@ void main() {
         );
         expect(tester.takeException(), isNull);
         expect(find.byType(fl.RadarChart), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      'AC-003: Widget scales in from 0 to 1 over AppDurations.normal on load',
+      (tester) async {
+        await tester.pumpWidget(
+          _wrap(const app.MuscleRadarChart(data: {Muscle.chest: 3})),
+        );
+        final scaleFinder = find.byKey(const ValueKey('radarChartScale'));
+        await tester.pump(Duration.zero);
+        final scaleAt0 = tester.widget<Transform>(scaleFinder).transform;
+        expect(scaleAt0.storage[0], 0.0);
+
+        await tester.pump(AppDurations.normal);
+        final scaleAtEnd = tester.widget<Transform>(scaleFinder).transform;
+        expect(scaleAtEnd.storage[0], 1.0);
       },
     );
   });

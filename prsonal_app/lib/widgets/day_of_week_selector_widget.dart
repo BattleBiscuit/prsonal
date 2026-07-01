@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:prsonal_app/theme/app_colors.dart';
+import 'package:prsonal_app/theme/app_spacing.dart';
 
 class DayOfWeekSelector extends StatelessWidget {
   const DayOfWeekSelector({super.key, this.selected, required this.onChanged});
@@ -26,8 +27,8 @@ class DayOfWeekSelector extends StatelessWidget {
             }
           },
           child: Container(
-            width: 40,
-            height: 40,
+            width: touchTargetMin,
+            height: touchTargetMin,
             decoration: BoxDecoration(
               color: isSelected ? colors.accent : colors.surface2,
               shape: BoxShape.circle,

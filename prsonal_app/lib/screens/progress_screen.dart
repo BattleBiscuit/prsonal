@@ -148,7 +148,7 @@ class ProgressScreen extends ConsumerWidget {
                 ),
                 IconButton(
                   onPressed: () => context.goNamed('all-prs'),
-                  icon: const Icon(Icons.chevron_right),
+                  icon: const Icon(Icons.chevron_right_outlined),
                   iconSize: 20,
                   tooltip: 'View all PRs',
                   color: colors.text2,
@@ -192,7 +192,7 @@ class ProgressScreen extends ConsumerWidget {
                 ),
                 IconButton(
                   onPressed: () => context.goNamed('history'),
-                  icon: const Icon(Icons.chevron_right),
+                  icon: const Icon(Icons.chevron_right_outlined),
                   iconSize: 20,
                   tooltip: 'View all history',
                   color: colors.text2,

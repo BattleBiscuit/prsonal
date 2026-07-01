@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/app_providers.dart';
 import '../services/library_service.dart';
 import '../theme/app_colors.dart';
+import '../widgets/app_fab_widget.dart';
 import '../widgets/app_modal_widget.dart';
 import '../widgets/library_exercise_card_widget.dart';
 import '../widgets/library_exercise_form_widget.dart';
@@ -159,10 +160,10 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => _showForm(),
+      floatingActionButton: AppFab(
+        icon: Icons.add,
         tooltip: 'New exercise',
-        child: const Icon(Icons.add),
+        onPressed: () => _showForm(),
       ),
     );
   }

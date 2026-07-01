@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../widgets/brand_title.dart';
+import '../widgets/app_button_widget.dart';
 import '../widgets/app_modal_widget.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/app_providers.dart';
@@ -213,12 +214,10 @@ class _PlanEditScreenState extends ConsumerState<PlanEditScreen> {
           ],
           const SizedBox(height: 16),
           if (widget.planId != null)
-            TextButton(
+            AppButton(
+              label: 'Delete plan',
+              variant: AppButtonVariant.danger,
               onPressed: _deletePlan,
-              child: Text(
-                'Delete plan',
-                style: TextStyle(color: colors.danger),
-              ),
             ),
         ],
       ),
@@ -261,12 +260,15 @@ class _EntryRow extends StatelessWidget {
                   ),
                 ),
               ),
-              Semantics(
-                label: 'Remove entry',
-                button: true,
-                child: GestureDetector(
-                  onTap: onRemove,
-                  child: Icon(Icons.close, color: colors.text3, size: 18),
+              Tooltip(
+                message: 'Remove entry',
+                child: Semantics(
+                  label: 'Remove entry',
+                  button: true,
+                  child: GestureDetector(
+                    onTap: onRemove,
+                    child: Icon(Icons.close, color: colors.text3, size: 18),
+                  ),
                 ),
               ),
             ],

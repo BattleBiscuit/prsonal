@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../providers/session_pick_providers.dart';
 import '../services/session_service.dart';
 import '../theme/app_colors.dart';
+import '../widgets/app_fab_widget.dart';
 import '../widgets/plan_entry_row_widget.dart';
 
 class SessionPickScreen extends ConsumerWidget {
@@ -93,10 +94,10 @@ class SessionPickScreen extends ConsumerWidget {
                 ],
               ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => _showAddSheet(context),
+      floatingActionButton: AppFab(
+        icon: Icons.add,
         tooltip: 'Add',
-        child: const Icon(Icons.add),
+        onPressed: () => _showAddSheet(context),
       ),
     );
   }
@@ -138,24 +139,35 @@ class _PlanBlock extends ConsumerWidget {
                 Text(
                   '${plan.streak}',
                   style: TextStyle(
-                    color: colors.accent,
+                    color: colors.warning,
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
                 Icon(
                   Icons.local_fire_department_outlined,
-                  color: colors.accent,
+                  color: colors.warning,
                   size: 18,
                 ),
               ],
               const SizedBox(width: 8),
-              GestureDetector(
-                onTap: () => context.goNamed(
-                  'plan-edit',
-                  pathParameters: {'id': plan.id},
+              Tooltip(
+                message: 'Edit plan',
+                child: Semantics(
+                  label: 'Edit ${plan.name}',
+                  button: true,
+                  child: GestureDetector(
+                    onTap: () => context.goNamed(
+                      'plan-edit',
+                      pathParameters: {'id': plan.id},
+                    ),
+                    child: Icon(
+                      Icons.edit_outlined,
+                      color: colors.text3,
+                      size: 18,
+                    ),
+                  ),
                 ),
-                child: Icon(Icons.edit_outlined, color: colors.text3, size: 18),
               ),
             ],
           ),

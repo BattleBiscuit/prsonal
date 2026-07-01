@@ -48,5 +48,33 @@ void main() {
       // No callback to assert; reaching here without error satisfies the inert contract.
       expect(find.byType(AppFab), findsOneWidget);
     });
+
+    testWidgets(
+      'AC-005: Widget renders the bare-icon circular form (no visible text) when label is omitted',
+      (tester) async {
+        await tester.pumpWidget(
+          _wrap(
+            AppFab(icon: Icons.add, tooltip: 'Add', onPressed: () {}),
+          ),
+        );
+        expect(find.byIcon(Icons.add), findsOneWidget);
+        expect(find.byType(Text), findsNothing);
+      },
+    );
+
+    testWidgets(
+      'AC-006: Widget exposes a Tooltip with the given tooltip text, or the label when tooltip is omitted',
+      (tester) async {
+        await tester.pumpWidget(
+          _wrap(AppFab(icon: Icons.add, tooltip: 'Add', onPressed: () {})),
+        );
+        expect(find.byTooltip('Add'), findsOneWidget);
+
+        await tester.pumpWidget(
+          _wrap(AppFab(label: 'New', icon: Icons.add, onPressed: () {})),
+        );
+        expect(find.byTooltip('New'), findsOneWidget);
+      },
+    );
   });
 }

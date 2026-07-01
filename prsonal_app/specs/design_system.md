@@ -106,7 +106,8 @@ lives in contrast, utility, and mathematical stability — not hue. Four tenets 
 | Modal scrim | `black @ 0.70` |
 | Workout banner bg / active | `accent @ 0.08` / `0.14` |
 | Workout banner border | `accent @ 0.20` |
-| Active set row bg | **solid `accent`** (Tier 3 polarity inversion) |
+| Active set row bg / rail | `accent @ 0.06` fill + a 2px `accent` left rail (Tier 3 live row) |
+| Live-row field / checkbox contour | `accent @ 0.30`, 2px (thicker dim-grey edge — never a white outline) |
 | Interactive press wash | `accent @ 0.06` |
 | Accent badge bg | `accent @ 0.15` |
 | Success / danger / warning badge bg | respective colour @ 0.20 |
@@ -164,6 +165,22 @@ letter-spacing ~0.08em.
 
 `TextTheme` mapping (approx): `displaySmall`→3xl, `headlineSmall`→2xl, `titleLarge`→xl,
 `titleMedium`→lg, `bodyLarge`→base, `bodyMedium`/`bodySmall`→sm, `labelSmall`→xs.
+
+## Iconography (decided)
+Icons are monochrome line instruments, consistent with the flat, hard-edged system.
+
+- **One style: outlined.** Every icon uses the Material **`*_outlined`** variant (e.g.
+  `Icons.fitness_center_outlined`). Filled/rounded/sharp variants are not used. Glyphs that are
+  inherently single-stroke and have no outlined variant — `search`, `close`, `check`, `add`,
+  `drag_handle`, `percent`, `straighten`, `trending_up` — are already line-style and are kept.
+- **No emoji, ever.** No emoji glyphs in UI strings, notification copy, labels, or as icons.
+  Achievement/status markers use a vector icon, never an emoji — the PR marker is
+  `Icons.star_outline` (not a trophy emoji), and the rest-timer notification carries no emoji.
+  This also rules out `Icons.emoji_events` despite it rendering as a vector.
+- **Colour by tier, not decoration.** Default affordance/metadata icons are `text3`; secondary
+  `text2`; active/affirmative and live markers `accent`. Semantic icons follow *Color economy* —
+  `success` (completed check), `danger` (delete/close-session), `warning` (PR star, streak).
+- **Sizes.** Inline row affordances 18–20; primary/nav icons 22–24; banner/eyebrow marks 16.
 
 ## Motion
 | Token | Value |
@@ -287,14 +304,16 @@ Readouts: set tables, history values, metric tiles, logs, the version line.
 ### Tier 3 — State-proposing ("live / active focus")
 The single element commanding immediate attention right now (the current active set mid-workout,
 a live readout). One per context.
-- **Polarity inversion (primary)**: flip the system brightness rule — a solid **chalk `#EDEDED`**
-  block containing deep dark `#0F0F0F` (`onAccent`) content. This is the loudest treatment in the
-  system and is reserved for genuine live execution.
-- **Chalk outline (alternative)**: where a solid block is too heavy, a thick **2px `accent`**
-  outline frames the element instead.
-- **Live "you are here" rail (lighter marker)**: secondary now-markers that are not the single
-  live-execution element — the active nav tab, today's plan row — keep a **2px `accent` left-rail**
-  rather than full inversion. The rail says "you are here"; inversion says "act here now".
+- **Live "you are here" row (primary)**: the active element — the current set mid-workout, the
+  active nav tab, today's plan row — is marked by a **faint `accent @ 0.06` tint with a 2px
+  `accent` left rail** and light (`text1`) content. It reads as the live focus without glaring.
+  Interactive controls inside it (inputs, the complete checkbox) carry a **thicker 2px `accent @
+  0.30` contour** — a firm dim-grey edge for high-glare gyms, never a bright white outline.
+- **Chalk outline (heavier alternative)**: where a row needs to shout louder than the rail, a
+  thick **2px solid `accent`** outline frames it instead.
+- A full solid-chalk polarity-inverted block (`#EDEDED` bg + `onAccent` content) was trialled and
+  **retired as too glaring** in the workout view — the tint + rail carries the same "live" meaning
+  with far better comfort.
 - **Heartbeat**: the live dot (`.live-dot`) runs the breathing pulse to declare a live routine
   (see *Motion & life*).
 - **Focus**: a 2px `accent` ring on the focused control (keyboard/switch-access parity).

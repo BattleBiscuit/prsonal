@@ -37,13 +37,13 @@ state.
 | State | Appearance |
 |-------|------------|
 | upcoming | set number + ghost planned label; tappable to select; muted |
-| active | **Tier 3 polarity inversion**: solid `accent` chalk block with `onAccent` (`#0F0F0F`) content — dark set number, dark-text inputs with dark contours, dark unchecked box. The single loudest element in the session. |
-| completed | logged values in success; optional PR trophy; ▲/▼/= delta; checked box; 0.65 opacity |
-| skipped | "Skip" badge, 0.35 opacity, non-interactive |
+| active | **Tier 3 live row**: a faint `accent @ 0.06` tint with a **2px `accent` left rail** and light (`text1`) content — light set number, light-text inputs and unchecked box, each with a **thicker 2px `accent @ 0.30`** contour (never a white outline). The live focus, without the glare of a solid block. |
+| completed | logged values at full strength in `text1`; `success` checked box; optional `warning` PR **star**; no blanket dimming |
+| skipped | struck-through planned label in `text3` + a readable "Skip" badge (`surface3`/`text2`); non-interactive |
 
-The active row is the design system's canonical Tier 3 "state-proposing / act here now" moment: it
-inverts the dark-on-light system rule to a chalk-on-dark block so the live set snaps out from the
-historical (Tier 2) logs around it.
+The active row is the design system's Tier 3 "state-proposing / act here now" moment, rendered as
+the **live "you are here" row**: a faint accent tint plus a 2px accent left rail lifts the live set
+out of the historical (Tier 2) logs around it without the glare of a full chalk-on-dark inversion.
 
 ## Accessibility
 - PR indicator semantic label: "Personal record"
@@ -57,4 +57,4 @@ historical (Tier 2) logs around it.
 - AC-005: A skipped set renders a skipped treatment
 - AC-006: Tapping the active set's checkbox invokes onToggleComplete
 - AC-007: The active set's inputs display the provided primaryValue and secondaryValue and preserve typed input across rebuilds
-- AC-008: The active set renders as a Tier 3 polarity-inverted block — a solid accent (chalk) background with onAccent (dark) content
+- AC-008: The active set renders as a Tier 3 live row — a faint accent tint background with a 2px accent left rail and light (text1) content

@@ -84,7 +84,7 @@ class AppPageShell extends StatelessWidget {
                   child: Row(
                     children: [
                       Icon(
-                        Icons.fitness_center,
+                        Icons.fitness_center_outlined,
                         color: colors.accent,
                         size: 16,
                       ),

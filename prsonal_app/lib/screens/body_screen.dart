@@ -19,9 +19,9 @@ class _BodyScreenState extends ConsumerState<BodyScreen> {
     BodyMetricType.weight: Icons.monitor_weight_outlined,
     BodyMetricType.bodyfat: Icons.percent,
     BodyMetricType.waist: Icons.straighten,
-    BodyMetricType.chest: Icons.accessibility_new,
-    BodyMetricType.arms: Icons.fitness_center,
-    BodyMetricType.legs: Icons.directions_run,
+    BodyMetricType.chest: Icons.accessibility_new_outlined,
+    BodyMetricType.arms: Icons.fitness_center_outlined,
+    BodyMetricType.legs: Icons.directions_run_outlined,
   };
 
   void _showLogSheet(BodyMetricType type) {

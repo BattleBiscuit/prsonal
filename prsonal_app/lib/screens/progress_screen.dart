@@ -65,7 +65,7 @@ class ProgressScreen extends ConsumerWidget {
                         child: StatCard(
                           value: '${summary.workoutCount}',
                           label: 'Workouts',
-                          icon: Icons.fitness_center,
+                          icon: Icons.fitness_center_outlined,
                         ),
                       ),
                       const SizedBox(width: 8),
@@ -92,7 +92,7 @@ class ProgressScreen extends ConsumerWidget {
                               ? '${summary.adherencePercent!.toStringAsFixed(0)}%'
                               : '—',
                           label: 'Plan adherence',
-                          icon: Icons.calendar_today,
+                          icon: Icons.calendar_today_outlined,
                         ),
                       ),
                       const SizedBox(width: 8),
@@ -100,7 +100,7 @@ class ProgressScreen extends ConsumerWidget {
                         child: StatCard(
                           value: '${summary.bestStreak}',
                           label: 'Best streak',
-                          icon: Icons.local_fire_department,
+                          icon: Icons.local_fire_department_outlined,
                           tone: StatTone.warning,
                         ),
                       ),

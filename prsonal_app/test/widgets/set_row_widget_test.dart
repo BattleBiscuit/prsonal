@@ -150,7 +150,7 @@ void main() {
     );
 
     testWidgets(
-      'AC-008: The active set renders as a Tier 3 polarity-inverted block — a solid accent (chalk) background with onAccent (dark) content',
+      'AC-008: The active set renders as a Tier 3 live row — a faint accent tint background with a 2px accent left rail and light (text1) content',
       (tester) async {
         await tester.pumpWidget(
           _wrap(
@@ -164,17 +164,26 @@ void main() {
           ),
         );
 
-        // The active row's outer container is filled with the solid accent
-        // (chalk) colour — the polarity inversion, not the old accent@0.04 wash.
-        final inverted = tester
+        // The active row is a faint accent tint (accent @ 0.06) with a 2px
+        // accent left rail — the "you are here" live row, not a solid chalk
+        // block.
+        final liveRow = tester
             .widgetList<Container>(find.byType(Container))
-            .where((c) {
-              final decoration = c.decoration;
-              return c.color == AppColors.dark.accent ||
-                  (decoration is BoxDecoration &&
-                      decoration.color == AppColors.dark.accent);
+            .map((c) => c.decoration)
+            .whereType<BoxDecoration>()
+            .where((d) {
+              final border = d.border;
+              return d.color ==
+                      AppColors.dark.accent.withValues(alpha: 0.06) &&
+                  border is Border &&
+                  border.left.color == AppColors.dark.accent &&
+                  border.left.width == 2;
             });
-        expect(inverted, isNotEmpty);
+        expect(liveRow, isNotEmpty);
+
+        // Content is light (text1), not dark onAccent.
+        final setNumber = tester.widget<Text>(find.text('1'));
+        expect(setNumber.style?.color, AppColors.dark.text1);
       },
     );
   });

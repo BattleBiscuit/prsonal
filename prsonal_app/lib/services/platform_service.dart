@@ -90,7 +90,7 @@ class RealPlatformService implements PlatformService {
           await _notifications.show(
             _restNotificationId,
             'Rest complete',
-            'Rest complete — time to hit the next set \u{1F4AA}',
+            'Rest complete — time to hit the next set',
             details,
           );
         } catch (_) {}

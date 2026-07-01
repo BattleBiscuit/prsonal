@@ -53,7 +53,7 @@ class PlanEntryRow extends StatelessWidget {
               container: true,
               child: ExcludeSemantics(
                 child: Icon(
-                  Icons.check_circle,
+                  Icons.check_circle_outline,
                   color: colors.success,
                   size: 20,
                 ),

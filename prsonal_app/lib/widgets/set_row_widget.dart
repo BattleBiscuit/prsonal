@@ -130,12 +130,17 @@ class _SetRowState extends State<SetRow> {
   }
 
   Widget _buildActive(BuildContext context, AppColors colors) {
-    // Tier 3 — polarity inversion. The live set is the single loudest element
-    // in the session: a solid chalk (accent) block with deep-dark (onAccent)
-    // content, flipping the dark-on-light system rule so it snaps out from the
-    // Tier 2 logs around it. (Design system: Visual tiering architecture.)
+    // Tier 3 — live "you are here" row. Rather than a solid chalk block, the
+    // active set is a faint accent tint with a 2px accent left rail and light
+    // (text1) content, so it reads as the live focus without glaring. The input
+    // and checkbox borders are a thicker dim-grey contour (accent @ 30%) — never
+    // a bright white outline. (Design system: Visual tiering architecture.)
+    final fieldBorder = colors.accent.withValues(alpha: 0.30);
     return Container(
-      color: colors.accent,
+      decoration: BoxDecoration(
+        color: colors.accent.withValues(alpha: 0.06),
+        border: Border(left: BorderSide(color: colors.accent, width: 2)),
+      ),
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
       child: Row(
         children: [
@@ -144,7 +149,7 @@ class _SetRowState extends State<SetRow> {
             child: Text(
               '${widget.index + 1}',
               style: TextStyle(
-                color: colors.onAccent,
+                color: colors.text1,
                 fontSize: 14,
                 fontWeight: FontWeight.w700,
               ),
@@ -153,20 +158,22 @@ class _SetRowState extends State<SetRow> {
           ),
           const SizedBox(width: 8),
           Expanded(
-            child: _buildInvertedField(
+            child: _buildField(
               colors,
               controller: _primaryController,
               hint: 'Reps',
               onChanged: widget.onPrimaryChanged,
+              border: fieldBorder,
             ),
           ),
           const SizedBox(width: 8),
           Expanded(
-            child: _buildInvertedField(
+            child: _buildField(
               colors,
               controller: _secondaryController,
               hint: 'kg',
               onChanged: widget.onSecondaryChanged,
+              border: fieldBorder,
             ),
           ),
           const SizedBox(width: 8),
@@ -179,10 +186,12 @@ class _SetRowState extends State<SetRow> {
                 width: 48,
                 height: 48,
                 child: Center(
-                  child: Icon(
-                    Icons.check_box_outline_blank,
-                    color: colors.onAccent,
-                    size: 24,
+                  child: Container(
+                    width: 22,
+                    height: 22,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: fieldBorder, width: 2),
+                    ),
                   ),
                 ),
               ),
@@ -193,123 +202,133 @@ class _SetRowState extends State<SetRow> {
     );
   }
 
-  // Input styled for the inverted (chalk) surface: dark text on chalk, with a
-  // discoverable dark contour even when un-focused (high-glare safeguard) that
-  // resolves to a solid dark border on focus.
-  Widget _buildInvertedField(
+  // Live-row input: light (text1) text on the dark tint, with a thicker
+  // dim-grey contour (accent @ 30%) that stays the same on focus — a firmer
+  // edge for high-glare gyms, never a bright white outline.
+  Widget _buildField(
     AppColors colors, {
     required TextEditingController controller,
     required String hint,
     required ValueChanged<String>? onChanged,
+    required Color border,
   }) {
     return TextField(
       controller: controller,
       keyboardType: const TextInputType.numberWithOptions(decimal: true),
       onChanged: onChanged,
-      cursorColor: colors.onAccent,
-      style: TextStyle(color: colors.onAccent, fontSize: 14),
+      cursorColor: colors.text1,
+      style: TextStyle(color: colors.text1, fontSize: 14),
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle: TextStyle(color: colors.onAccent.withValues(alpha: 0.45)),
+        hintStyle: TextStyle(color: colors.text1.withValues(alpha: 0.45)),
         isDense: true,
         contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.zero,
-          borderSide: BorderSide(
-            color: colors.onAccent.withValues(alpha: 0.30),
-          ),
+          borderSide: BorderSide(color: border, width: 2),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.zero,
-          borderSide: BorderSide(color: colors.onAccent, width: 2),
+          borderSide: BorderSide(color: border, width: 2),
         ),
       ),
     );
   }
 
   Widget _buildCompleted(BuildContext context, AppColors colors) {
-    return Opacity(
-      opacity: 0.65,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-        child: Row(
-          children: [
-            SizedBox(
-              width: 32,
-              child: Text(
-                '${widget.index + 1}',
-                style: TextStyle(
-                  color: colors.success,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
+    // Read-only log. The logged values are the data you review, so they stay at
+    // full strength in primary text1 (no blanket dimming). Colour marks the
+    // event, not the readout: success on the checked box, and a warning PR star.
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+      child: Row(
+        children: [
+          SizedBox(
+            width: 32,
+            child: Text(
+              '${widget.index + 1}',
+              style: TextStyle(
+                color: colors.text3,
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              widget.actualLabel ?? widget.plannedLabel,
+              style: TextStyle(color: colors.text1, fontSize: 14),
+            ),
+          ),
+          if (widget.isPR)
+            Semantics(
+              label: 'Personal record',
+              container: true,
+              child: ExcludeSemantics(
+                child: Icon(
+                  Icons.star_outline,
+                  color: colors.warning,
+                  size: 18,
                 ),
-                textAlign: TextAlign.center,
               ),
             ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                widget.actualLabel ?? widget.plannedLabel,
-                style: TextStyle(color: colors.success, fontSize: 14),
-              ),
-            ),
-            if (widget.isPR)
-              Semantics(
-                label: 'Personal record',
-                container: true,
-                child: ExcludeSemantics(
-                  child: Icon(
-                    Icons.emoji_events,
-                    color: colors.warning,
-                    size: 18,
-                  ),
-                ),
-              ),
-            const SizedBox(width: 8),
-            Icon(Icons.check_box, color: colors.success, size: 22),
-          ],
-        ),
+          const SizedBox(width: 8),
+          Icon(Icons.check_box_outlined, color: colors.success, size: 22),
+        ],
       ),
     );
   }
 
   Widget _buildSkipped(BuildContext context, AppColors colors) {
-    return Opacity(
-      opacity: 0.35,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-        child: Row(
-          children: [
-            SizedBox(
-              width: 32,
-              child: Text(
-                '${widget.index + 1}',
-                style: TextStyle(
-                  color: colors.text3,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                ),
-                textAlign: TextAlign.center,
+    // Least-relevant state. Struck-through planned label in tertiary text plus a
+    // readable "Skip" badge — clearly "not done" without dropping to an
+    // unreadable blanket fade.
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+      child: Row(
+        children: [
+          SizedBox(
+            width: 32,
+            child: Text(
+              '${widget.index + 1}',
+              style: TextStyle(
+                color: colors.text3,
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              widget.plannedLabel,
+              style: TextStyle(
+                color: colors.text3,
+                fontSize: 14,
+                decoration: TextDecoration.lineThrough,
+                decorationColor: colors.text3,
               ),
             ),
-            const SizedBox(width: 12),
-            Container(
-              padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 8),
-              decoration: BoxDecoration(
-                color: colors.surface3,
-                borderRadius: BorderRadius.circular(radiusFull),
-              ),
-              child: Text(
-                'Skip',
-                style: TextStyle(
-                  color: colors.text2,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
-                ),
+          ),
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 8),
+            decoration: BoxDecoration(
+              color: colors.surface3,
+              borderRadius: BorderRadius.circular(radiusFull),
+            ),
+            child: Text(
+              'Skip',
+              style: TextStyle(
+                color: colors.text2,
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

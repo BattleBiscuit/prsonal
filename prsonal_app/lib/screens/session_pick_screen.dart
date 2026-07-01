@@ -140,7 +140,7 @@ class _PlanBlock extends ConsumerWidget {
                   ),
                 ),
                 Icon(
-                  Icons.local_fire_department,
+                  Icons.local_fire_department_outlined,
                   color: colors.accent,
                   size: 18,
                 ),

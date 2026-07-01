@@ -23,7 +23,7 @@ router redirects here straight to `session-active`, so no resume banner is shown
 │ ┌ Unplanned ──────────────────────── ┐ │
 │ │ ·     Mobility            ·   ▶  │ │
 │ └───────────────────────────────────┘ │
-│                              ( + Add ) │  FAB → add sheet
+│                                ( + ) │  icon-only FAB → add sheet
 └───────────────────────────────────────┘
 ```
 
@@ -42,7 +42,7 @@ router redirects here straight to `session-active`, so no resume banner is shown
 | Element | Type | Label | Behaviour |
 |---------|------|-------|-----------|
 | planHeader | Row | Plan name (uppercase) | streak flame (when > 0) + edit pencil → `plan-edit` |
-| addFab | AppFab | "Add" | Opens the add sheet |
+| addFab | FAB | icon-only `add` (tooltip "Add") | Opens the add sheet |
 | addSheetNewPlan | row | "New plan" | Navigates to `plan-create` |
 | addSheetNewRoutine | row | "New routine" | Navigates to `routine-create` |
 | emptyState | Text | "Nothing here yet" | Shown when no plans and no routines |

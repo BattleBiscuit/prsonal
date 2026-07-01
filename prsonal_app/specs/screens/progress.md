@@ -18,9 +18,9 @@ recent PRs, and a recent-history preview.
 │ [ 12 WORKOUTS ] [ +8% VOL TREND ]     │
 │ [ 87% ADHERENCE ] [ 🔥3 STREAK ]      │
 │ ◀ ChartSlider: Muscle balance / Volume ▶│
-│ RECENT PRS              View all PRs → │
-│ 🏆 Bench Press · Jun 23 · 90kg        │
-│ WORKOUT HISTORY      View all history→ │
+│ RECENT PRS                          › │
+│ Bench Press · Jun 23 · 90kg           │
+│ WORKOUT HISTORY                     › │
 │ Push Day A · Jun 23 · 4,230 kg        │
 └───────────────────────────────────────┘
 ```

@@ -244,6 +244,7 @@ final ThemeData appTheme = ThemeData(
   floatingActionButtonTheme: const FloatingActionButtonThemeData(
     backgroundColor: _accent,
     foregroundColor: _onAccent,
+    shape: CircleBorder(),
   ),
 
   // Buttons by intent: filled/elevated = affirmative (chalk); text/outlined =

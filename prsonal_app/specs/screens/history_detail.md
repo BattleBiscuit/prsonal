@@ -5,15 +5,16 @@ status: approved
 ---
 
 ## Description
-The full breakdown of a single completed workout (route `/history/:id`). Shows a summary header, a
-PR banner listing any personal records, and a per-exercise set table of planned vs actual values.
-An Edit toggle makes the actuals editable; Save persists the changes.
+The full breakdown of a single completed workout (route `/progress/history/:id`). Shows a summary
+header, a PR banner listing any personal records, and a per-exercise set table of planned vs actual
+values. An Edit toggle (`edit_outlined`) makes the actuals editable; Save (`check`) persists the
+changes.
 
 ## Layout
 
 ```
 ┌───────────────────────────────────────┐
-│ ← PRsonal · Workout Detail     Edit   │
+│ ← PRsonal · Workout Detail       ✎    │
 ├───────────────────────────────────────┤
 │ WorkoutSummaryHeader                  │
 │ 🏆 PRs this session: [Bench Press]    │
@@ -35,7 +36,7 @@ An Edit toggle makes the actuals editable; Save persists the changes.
 - `historyDetailProvider(id)` / `historyServiceProvider` — the SessionDetail and edits
 
 ## Navigation
-- Entered from: History list · Progress history preview
+- Entered from: History list (`/progress/history`) · Progress history preview
 - Back: returns to the previous screen
 
 ## Acceptance Criteria

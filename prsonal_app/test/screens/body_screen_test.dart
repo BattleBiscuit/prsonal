@@ -85,7 +85,7 @@ void main() {
       await tester.tap(find.byType(BodyMetricCard).first);
       await tester.pumpAndSettle();
       await tester.enterText(find.byType(TextField).first, '83');
-      await tester.tap(find.text('Log'));
+      await tester.tap(find.byTooltip('Log'));
       await tester.pumpAndSettle();
       verify(() => service.log(any(), 83, at: any(named: 'at'))).called(1);
     });

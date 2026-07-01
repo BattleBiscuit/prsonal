@@ -115,7 +115,7 @@ void main() {
 
     testWidgets('AC-005: "View all PRs" navigates to all-prs', (tester) async {
       await _pump(tester);
-      await tester.tap(find.text('View all PRs'));
+      await tester.tap(find.byTooltip('View all PRs'));
       await tester.pumpAndSettle();
       expect(find.text('ALL PRS'), findsOneWidget);
     });
@@ -135,9 +135,9 @@ void main() {
       tester,
     ) async {
       await _pump(tester);
-      await tester.ensureVisible(find.text('View all history'));
+      await tester.ensureVisible(find.byTooltip('View all history'));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('View all history'));
+      await tester.tap(find.byTooltip('View all history'));
       await tester.pumpAndSettle();
       expect(find.text('HISTORY'), findsOneWidget);
     });

@@ -56,14 +56,17 @@ class _BodyScreenState extends ConsumerState<BodyScreen> {
               ),
             ),
             const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () async {
-                final value = double.tryParse(ctrl.text);
-                if (value == null) return;
-                Navigator.of(ctx).pop();
-                await ref.read(bodyServiceProvider).log(type, value);
-              },
-              child: const Text('Log'),
+            Tooltip(
+              message: 'Log',
+              child: ElevatedButton(
+                onPressed: () async {
+                  final value = double.tryParse(ctrl.text);
+                  if (value == null) return;
+                  Navigator.of(ctx).pop();
+                  await ref.read(bodyServiceProvider).log(type, value);
+                },
+                child: const Icon(Icons.add),
+              ),
             ),
             const SizedBox(height: 16),
           ],

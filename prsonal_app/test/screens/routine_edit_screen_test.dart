@@ -83,7 +83,7 @@ void main() {
       tester,
     ) async {
       await _pump(tester);
-      await tester.tap(find.text('Add'));
+      await tester.tap(find.byTooltip('Add exercise'));
       await tester.pumpAndSettle();
       expect(find.byType(ExerciseForm), findsOneWidget);
     });
@@ -108,7 +108,7 @@ void main() {
       (tester) async {
         final service = await _pump(tester);
         await tester.enterText(find.byType(TextField).first, 'New Routine');
-        await tester.tap(find.text('Save'));
+        await tester.tap(find.byTooltip('Save'));
         await tester.pumpAndSettle();
         verify(
           () => service.createRoutine(
@@ -123,7 +123,7 @@ void main() {
       'AC-006: Saving with an empty name shows a validation error and does not persist',
       (tester) async {
         final service = await _pump(tester);
-        await tester.tap(find.text('Save'));
+        await tester.tap(find.byTooltip('Save'));
         await tester.pumpAndSettle();
         expect(find.text('Name is required'), findsOneWidget);
         verifyNever(

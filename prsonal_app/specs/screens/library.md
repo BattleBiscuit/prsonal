@@ -18,7 +18,7 @@ as a [[library_exercise_card]], with a FAB to create and tap-to-edit / delete vi
 ├───────────────────────────────────────┤
 │ Bench Press  [strength] Chest    🗑   │
 │ Squat        [strength] Legs 🏆140 🗑 │
-│                       ( + New exercise)│
+│                                  ( + ) │
 └───────────────────────────────────────┘
 ```
 

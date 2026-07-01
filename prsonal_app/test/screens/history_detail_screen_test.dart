@@ -100,7 +100,7 @@ void main() {
       tester,
     ) async {
       await _pump(tester);
-      await tester.tap(find.text('Edit'));
+      await tester.tap(find.byTooltip('Edit'));
       await tester.pumpAndSettle();
       expect(find.byType(TextField), findsWidgets);
     });
@@ -109,10 +109,10 @@ void main() {
       'AC-005: Saving edits persists the changes and exits edit mode',
       (tester) async {
         final service = await _pump(tester);
-        await tester.tap(find.text('Edit'));
+        await tester.tap(find.byTooltip('Edit'));
         await tester.pumpAndSettle();
         await tester.enterText(find.byType(TextField).first, '10');
-        await tester.tap(find.text('Save changes'));
+        await tester.tap(find.byTooltip('Save changes'));
         await tester.pumpAndSettle();
         verify(
           () => service.updateSetActuals(
@@ -123,7 +123,7 @@ void main() {
             skipped: any(named: 'skipped'),
           ),
         ).called(greaterThan(0));
-        expect(find.text('Edit'), findsOneWidget);
+        expect(find.byTooltip('Edit'), findsOneWidget);
       },
     );
 

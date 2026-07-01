@@ -256,7 +256,7 @@ void main() {
       tester,
     ) async {
       await _pump(tester);
-      await tester.tap(find.text('Add exercise'));
+      await tester.tap(find.byTooltip('Add exercise'));
       await tester.pumpAndSettle();
       expect(find.textContaining('Add Exercise'), findsOneWidget);
     });

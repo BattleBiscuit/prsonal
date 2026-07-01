@@ -64,7 +64,7 @@ void main() {
       'AC-003: Tapping the FAB opens the exercise form to create a new exercise',
       (tester) async {
         await _pump(tester, [_ex('e1', 'Bench Press')]);
-        await tester.tap(find.text('New exercise'));
+        await tester.tap(find.byTooltip('New exercise'));
         await tester.pumpAndSettle();
         expect(find.byType(LibraryExerciseForm), findsOneWidget);
       },

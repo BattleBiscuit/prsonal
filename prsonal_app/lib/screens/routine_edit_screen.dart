@@ -210,7 +210,14 @@ class _RoutineEditScreenState extends ConsumerState<RoutineEditScreen> {
           widget.routineId == null ? 'New Routine' : 'Edit Routine',
         ),
         backgroundColor: colors.bg,
-        actions: [FilledButton(onPressed: _save, child: const Text('Save'))],
+        actions: [
+          IconButton(
+            onPressed: _save,
+            icon: const Icon(Icons.check),
+            tooltip: 'Save',
+            color: colors.accent,
+          ),
+        ],
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),
@@ -244,9 +251,12 @@ class _RoutineEditScreenState extends ConsumerState<RoutineEditScreen> {
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              FilledButton(
+              IconButton(
                 onPressed: () => _showExerciseForm(options: options),
-                child: const Text('Add'),
+                icon: const Icon(Icons.add),
+                iconSize: 20,
+                tooltip: 'Add exercise',
+                color: colors.accent,
               ),
             ],
           ),

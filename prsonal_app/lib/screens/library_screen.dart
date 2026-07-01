@@ -159,10 +159,10 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton.extended(
+      floatingActionButton: FloatingActionButton(
         onPressed: () => _showForm(),
-        label: const Text('New exercise'),
-        icon: const Icon(Icons.add),
+        tooltip: 'New exercise',
+        child: const Icon(Icons.add),
       ),
     );
   }

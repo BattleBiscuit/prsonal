@@ -87,7 +87,7 @@ void main() {
       'AC-002: Tapping "Add" opens a routine picker and selecting a routine adds an entry',
       (tester) async {
         await _pump(tester);
-        await tester.tap(find.text('Add'));
+        await tester.tap(find.byTooltip('Add entry'));
         await tester.pumpAndSettle();
         await tester.tap(find.text('Push Day A'));
         await tester.pumpAndSettle();
@@ -118,7 +118,7 @@ void main() {
       (tester) async {
         final service = await _pump(tester);
         await tester.enterText(find.byType(TextField).first, 'New Plan');
-        await tester.tap(find.text('Save'));
+        await tester.tap(find.byTooltip('Save'));
         await tester.pumpAndSettle();
         verify(() => service.createPlan('New Plan')).called(1);
       },
@@ -128,7 +128,7 @@ void main() {
       'AC-006: Saving with an empty name shows a validation error and does not persist',
       (tester) async {
         final service = await _pump(tester);
-        await tester.tap(find.text('Save'));
+        await tester.tap(find.byTooltip('Save'));
         await tester.pumpAndSettle();
         expect(find.text('Plan name is required'), findsOneWidget);
         verifyNever(() => service.createPlan(any()));

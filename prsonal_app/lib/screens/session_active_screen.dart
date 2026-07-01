@@ -219,9 +219,15 @@ class _SessionActiveScreenState extends ConsumerState<SessionActiveScreen> {
                 itemCount: state.exercises.length + 1,
                 itemBuilder: (context, i) {
                   if (i == state.exercises.length) {
-                    return FilledButton(
-                      onPressed: () => _showAddExercise(state),
-                      child: const Text('Add exercise'),
+                    return Align(
+                      alignment: Alignment.centerLeft,
+                      child: IconButton(
+                        onPressed: () => _showAddExercise(state),
+                        icon: const Icon(Icons.add),
+                        iconSize: 20,
+                        tooltip: 'Add exercise',
+                        color: colors.accent,
+                      ),
                     );
                   }
                   final ex = state.exercises[i];

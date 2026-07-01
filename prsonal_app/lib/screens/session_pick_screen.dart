@@ -93,10 +93,10 @@ class SessionPickScreen extends ConsumerWidget {
                 ],
               ),
       ),
-      floatingActionButton: FloatingActionButton.extended(
+      floatingActionButton: FloatingActionButton(
         onPressed: () => _showAddSheet(context),
-        label: const Text('Add'),
-        icon: const Icon(Icons.add),
+        tooltip: 'Add',
+        child: const Icon(Icons.add),
       ),
     );
   }

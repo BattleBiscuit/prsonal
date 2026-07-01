@@ -132,7 +132,7 @@ void main() {
       'AC-005: Tapping the Add FAB opens a sheet offering "New plan" and "New routine"',
       (tester) async {
         await _pump(tester);
-        await tester.tap(find.text('Add'));
+        await tester.tap(find.byTooltip('Add'));
         await tester.pumpAndSettle();
         expect(find.text('New plan'), findsOneWidget);
         expect(find.text('New routine'), findsOneWidget);
@@ -143,7 +143,7 @@ void main() {
       'AC-006: Selecting "New routine" navigates to routine-create and "New plan" navigates to plan-create',
       (tester) async {
         await _pump(tester);
-        await tester.tap(find.text('Add'));
+        await tester.tap(find.byTooltip('Add'));
         await tester.pumpAndSettle();
         await tester.tap(find.text('New routine'));
         await tester.pumpAndSettle();

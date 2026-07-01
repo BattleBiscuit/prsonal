@@ -23,7 +23,7 @@ abandoning.
 │  1  10×80kg                  🏆 ▲  ✓   │  completed set
 │  2  [ 8 ] × [ 82.5 ] kg  BW       ☐   │  active set (editable)
 │  3  8×82.5kg                       ☐   │  upcoming set
-│  [ + Add exercise ]                    │
+│  [ + ]                                 │
 ├───────────────────────────────────────┤
 │ Target: 8 reps · 82.5 kg              │
 │ [           ✓  Done           ]       │  action button (or "Rest 45s")
@@ -46,7 +46,7 @@ abandoning.
 | Element | Type | Label | Behaviour |
 |---------|------|-------|-----------|
 | exerciseName | Text | Exercise name (uppercase) | Accent when current; ⓘ opens notes modal |
-| addExerciseButton | dashed button | "Add exercise" | Opens ExerciseForm to append an exercise |
+| addExerciseButton | icon button | `add` (accent, tooltip "Add exercise") | Opens ExerciseForm to append an exercise |
 | finishModal | AppModal | "Finish workout?" | "Save to history" finishes → `history`; "Keep going" closes |
 | abandonModal | AppModal | "Abandon workout?" | "Abandon" → `session-pick`; "Continue" closes |
 

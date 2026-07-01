@@ -135,9 +135,15 @@ class _ExerciseFormState extends State<ExerciseForm> {
                 setState(() => set.isBodyweight = !set.isBodyweight),
           );
         }),
-        TextButton(
-          onPressed: _addSet,
-          child: Text('Add set', style: TextStyle(color: colors.accent)),
+        Align(
+          alignment: Alignment.centerLeft,
+          child: IconButton(
+            onPressed: _addSet,
+            icon: const Icon(Icons.add),
+            iconSize: 20,
+            tooltip: 'Add set',
+            color: colors.accent,
+          ),
         ),
         const SizedBox(height: 16),
         Row(

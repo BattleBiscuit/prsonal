@@ -181,6 +181,16 @@ Icons are monochrome line instruments, consistent with the flat, hard-edged syst
   `text2`; active/affirmative and live markers `accent`. Semantic icons follow *Color economy* —
   `success` (completed check), `danger` (delete/close-session), `warning` (PR star, streak).
 - **Sizes.** Inline row affordances 18–20; primary/nav icons 22–24; banner/eyebrow marks 16.
+- **Icon-only affordances (decided).** Interactive elements are icon-only wherever a canonical
+  glyph represents the action — text labels are dropped in favour of the icon. The canonical map:
+  save → `check` (accent), add / create / log → `add` (accent), edit → `edit_outlined` (text2),
+  navigate / view-all → `chevron_right` (text2), delete → `delete_outline` (danger), close /
+  cancel-as-standalone → `close`. Action FABs are the bare icon (a circular `accent` pill), not an
+  extended text FAB. Every icon-only control carries a `tooltip` (its former label) for
+  accessibility and semantics. **Exception — paired decision buttons keep their text:** the two
+  buttons of a confirm/cancel choice in a modal, sheet, or form footer (e.g. *Save to history* /
+  *Abandon* / *Cancel* / *Save* in the finish, quit, and editor forms) stay worded, because the
+  label states the consequence and two bare icons would be ambiguous.
 
 ## Motion
 | Token | Value |

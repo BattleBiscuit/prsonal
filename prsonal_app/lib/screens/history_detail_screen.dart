@@ -126,11 +126,18 @@ class _HistoryDetailScreenState extends ConsumerState<HistoryDetailScreen> {
         backgroundColor: colors.bg,
         actions: [
           if (!_editing)
-            TextButton(onPressed: _enterEditMode, child: const Text('Edit'))
+            IconButton(
+              onPressed: _enterEditMode,
+              icon: const Icon(Icons.edit_outlined),
+              tooltip: 'Edit',
+              color: colors.text2,
+            )
           else
-            FilledButton(
+            IconButton(
               onPressed: _saveEdits,
-              child: const Text('Save changes'),
+              icon: const Icon(Icons.check),
+              tooltip: 'Save changes',
+              color: colors.accent,
             ),
         ],
       ),

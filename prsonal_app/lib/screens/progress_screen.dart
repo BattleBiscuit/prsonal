@@ -146,9 +146,12 @@ class ProgressScreen extends ConsumerWidget {
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                TextButton(
+                IconButton(
                   onPressed: () => context.goNamed('all-prs'),
-                  child: const Text('View all PRs'),
+                  icon: const Icon(Icons.chevron_right),
+                  iconSize: 20,
+                  tooltip: 'View all PRs',
+                  color: colors.text2,
                 ),
               ],
             ),
@@ -187,9 +190,12 @@ class ProgressScreen extends ConsumerWidget {
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                TextButton(
+                IconButton(
                   onPressed: () => context.goNamed('history'),
-                  child: const Text('View all history'),
+                  icon: const Icon(Icons.chevron_right),
+                  iconSize: 20,
+                  tooltip: 'View all history',
+                  color: colors.text2,
                 ),
               ],
             ),

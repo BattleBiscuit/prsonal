@@ -37,7 +37,7 @@ void main() {
           ),
         );
         expect(find.byType(ExerciseSearchInput), findsOneWidget);
-        expect(find.text('Add set'), findsOneWidget);
+        expect(find.byTooltip('Add set'), findsOneWidget);
       },
     );
 
@@ -53,7 +53,7 @@ void main() {
         ),
       );
       final before = find.bySemanticsLabel('Remove set').evaluate().length;
-      await tester.tap(find.text('Add set'));
+      await tester.tap(find.byTooltip('Add set'));
       await tester.pumpAndSettle();
       final after = find.bySemanticsLabel('Remove set').evaluate().length;
       expect(after, before + 1);
@@ -72,7 +72,7 @@ void main() {
             ),
           ),
         );
-        await tester.tap(find.text('Add set'));
+        await tester.tap(find.byTooltip('Add set'));
         await tester.pumpAndSettle();
         expect(find.bySemanticsLabel('Remove set').evaluate().length, 2);
         await tester.tap(find.bySemanticsLabel('Remove set').first);

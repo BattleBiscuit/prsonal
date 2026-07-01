@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import '../widgets/app_button_widget.dart';
 import '../widgets/brand_title.dart';
 import '../widgets/app_modal_widget.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -179,6 +180,22 @@ class _RoutineEditScreenState extends ConsumerState<RoutineEditScreen> {
     if (mounted) await Navigator.of(context).maybePop();
   }
 
+  Future<void> _delete() async {
+    final routineId = widget.routineId;
+    if (routineId == null) return;
+    final confirmed = await showConfirmSheet(
+      context,
+      title: 'Delete routine?',
+      message: 'This will remove the routine and its exercises.',
+      confirmLabel: 'Delete',
+      cancelLabel: 'Cancel',
+    );
+    if (!confirmed) return;
+    final service = ref.read(routinesServiceProvider);
+    await service.deleteRoutine(routineId);
+    if (mounted) await Navigator.of(context).maybePop();
+  }
+
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).extension<AppColors>() ?? AppColors.dark;
@@ -295,6 +312,15 @@ class _RoutineEditScreenState extends ConsumerState<RoutineEditScreen> {
                   ),
               ],
             ),
+          if (widget.routineId != null) ...[
+            const SizedBox(height: 24),
+            AppButton(
+              label: 'Delete routine',
+              variant: AppButtonVariant.danger,
+              full: true,
+              onPressed: _delete,
+            ),
+          ],
         ],
       ),
     );

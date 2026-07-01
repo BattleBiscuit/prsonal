@@ -51,3 +51,5 @@ discard confirmation. Edit mode adds a "Delete routine" action.
 - AC-005: Tapping Save persists the routine and navigates back
 - AC-006: Saving with an empty name shows a validation error and does not persist
 - AC-007: Attempting to leave with unsaved changes prompts a discard confirmation
+- AC-008: The "Delete routine" action is shown in edit mode only — hidden in create mode
+- AC-009: Tapping "Delete routine" shows a delete confirmation; confirming deletes the routine and navigates back to Workout home without persisting other pending edits

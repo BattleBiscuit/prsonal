@@ -146,5 +146,34 @@ void main() {
         expect(find.text('Discard changes?'), findsOneWidget);
       },
     );
+
+    testWidgets(
+      'AC-008: The "Delete routine" action is shown in edit mode only — hidden in create mode',
+      (tester) async {
+        await _pump(tester);
+        expect(find.text('Delete routine'), findsNothing);
+        await _pump(tester, routineId: 'r1', draft: _draft());
+        expect(find.text('Delete routine'), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      'AC-009: Tapping "Delete routine" shows a delete confirmation; confirming deletes the routine and navigates back to Workout home',
+      (tester) async {
+        final service = await _pump(tester, routineId: 'r1', draft: _draft());
+        when(
+          () => service.deleteRoutine(any()),
+        ).thenAnswer((_) async {});
+        await tester.tap(find.text('Delete routine'));
+        await tester.pumpAndSettle();
+        expect(find.text('Delete routine?'), findsOneWidget);
+        verifyNever(() => service.deleteRoutine(any()));
+
+        await tester.tap(find.text('Delete'));
+        await tester.pumpAndSettle();
+
+        verify(() => service.deleteRoutine('r1')).called(1);
+      },
+    );
   });
 }

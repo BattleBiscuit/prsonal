@@ -10,3 +10,13 @@ class NotFoundException implements Exception {
     return 'NotFoundException';
   }
 }
+
+/// Thrown when a backup document cannot be parsed or applied.
+class BackupException implements Exception {
+  const BackupException(this.message);
+
+  final String message;
+
+  @override
+  String toString() => 'BackupException: $message';
+}

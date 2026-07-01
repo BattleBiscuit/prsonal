@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import '../widgets/brand_title.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../providers/session_pick_providers.dart';
 import '../services/session_service.dart';
 import '../theme/app_colors.dart';
-import '../widgets/app_fab_widget.dart';
+import '../widgets/app_page_shell_widget.dart';
 import '../widgets/fade_rise_in_widget.dart';
 import '../widgets/plan_entry_row_widget.dart';
 import 'package:prsonal_app/theme/app_spacing.dart';
@@ -47,110 +46,72 @@ class SessionPickScreen extends ConsumerWidget {
     final colors = Theme.of(context).extension<AppColors>() ?? AppColors.dark;
     final plans = ref.watch(activePlansViewProvider);
     final unplanned = ref.watch(unplannedRoutinesProvider);
+    final engine = ref.watch(sessionEngineProvider);
     final bool isEmpty = plans.isEmpty && unplanned.isEmpty;
 
-    return Scaffold(
-      backgroundColor: colors.bg,
-      appBar: AppBar(title: const BrandTitle('Workout')),
-      body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            if (ref.watch(sessionEngineProvider) != null)
-              GestureDetector(
-                onTap: () => context.goNamed('session-active'),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: colors.accent.withValues(alpha: 0.08),
-                    border: Border.all(
-                      color: colors.accent.withValues(alpha: 0.20),
-                      width: 1,
-                    ),
-                  ),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: space4,
-                    vertical: 10,
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.fitness_center_outlined,
-                        color: colors.accent,
-                        size: 16,
-                      ),
-                      const SizedBox(width: space2),
-                      Text(
-                        'Workout in progress',
-                        style: TextStyle(
-                          color: colors.accent,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      const Spacer(),
-                      Icon(Icons.arrow_forward, color: colors.accent, size: 16),
-                    ],
-                  ),
-                ),
-              ),
-            Expanded(
-              child: isEmpty
-                  ? Center(
-                      child: Text(
-                        'Nothing here yet',
-                        style: TextStyle(color: colors.text2, fontSize: 16),
-                      ),
-                    )
-                  : ListView(
-                      padding: const EdgeInsets.all(space4),
-                      children: [
-                        for (final plan in plans) ...[
-                          FadeRiseIn(child: _PlanBlock(plan: plan)),
-                          const SizedBox(height: space4),
-                        ],
-                        if (unplanned.isNotEmpty) ...[
-                          Text(
-                            'Unplanned',
-                            style: TextStyle(
-                              color: colors.text1,
-                              fontSize: 18,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          const SizedBox(height: space2),
-                          for (int i = 0; i < unplanned.length; i++) ...[
-                            if (i > 0) const Divider(),
-                            FadeRiseIn(
-                              child: PlanEntryRow(
-                                dayLabel: '',
-                                routineName: unplanned[i].name,
-                                done: false,
-                                onOpen: () => context.goNamed(
-                                  'routine-edit',
-                                  pathParameters: {'id': unplanned[i].id},
-                                ),
-                                onStart: () {
-                                  context.goNamed('session-active');
-                                  ref
-                                      .read(sessionEngineProvider.notifier)
-                                      .startSession(routineId: unplanned[i].id)
-                                      .catchError((_) {});
-                                },
-                              ),
-                            ),
-                          ],
-                        ],
-                      ],
-                    ),
-            ),
-          ],
+    return AppPageShell(
+      showWorkoutBanner: engine != null,
+      workoutRoutineName: engine?.session.routineName,
+      onResumeWorkout: () => context.goNamed('session-active'),
+      header: Tooltip(
+        message: 'Add',
+        child: Semantics(
+          label: 'Add routine or plan',
+          button: true,
+          child: GestureDetector(
+            onTap: () => _showAddSheet(context),
+            child: Icon(Icons.add, color: colors.accent, size: 28),
+          ),
         ),
       ),
-      floatingActionButton: AppFab(
-        icon: Icons.add,
-        tooltip: 'Add',
-        onPressed: () => _showAddSheet(context),
-      ),
+      child: isEmpty
+          ? Center(
+              child: Text(
+                'Nothing here yet',
+                style: TextStyle(color: colors.text2, fontSize: 16),
+              ),
+            )
+          : ListView(
+              padding: const EdgeInsets.all(space4),
+              children: [
+                for (final plan in plans) ...[
+                  FadeRiseIn(child: _PlanBlock(plan: plan)),
+                  const SizedBox(height: space4),
+                ],
+                if (unplanned.isNotEmpty) ...[
+                  Text(
+                    'Unplanned',
+                    style: TextStyle(
+                      color: colors.text1,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: space2),
+                  for (int i = 0; i < unplanned.length; i++) ...[
+                    if (i > 0) const Divider(),
+                    FadeRiseIn(
+                      child: PlanEntryRow(
+                        dayLabel: '',
+                        routineName: unplanned[i].name,
+                        done: false,
+                        onOpen: () => context.goNamed(
+                          'routine-edit',
+                          pathParameters: {'id': unplanned[i].id},
+                        ),
+                        onStart: () {
+                          context.goNamed('session-active');
+                          ref
+                              .read(sessionEngineProvider.notifier)
+                              .startSession(routineId: unplanned[i].id)
+                              .catchError((_) {});
+                        },
+                      ),
+                    ),
+                  ],
+                ],
+              ],
+            ),
     );
   }
 }

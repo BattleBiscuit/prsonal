@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
@@ -30,6 +31,34 @@ final appDatabaseProvider = Provider<AppDatabase>((ref) {
 ///
 /// Override this in tests to inject a fixed clock.
 final nowProvider = Provider<DateTime Function()>((ref) => DateTime.now);
+
+// ---------------------------------------------------------------------------
+// Cross-aggregate change signal
+// ---------------------------------------------------------------------------
+
+/// Emits a fresh sentinel whenever any table feeding a cross-screen aggregate
+/// (plans, plan entries, routines, completed sessions) changes.
+///
+/// Providers that recompute one-shot, multi-query aggregates (e.g. plan
+/// streaks, progress summaries) watch this single signal instead of each
+/// wiring up its own set of per-table watch streams.
+final dataChangedProvider = StreamProvider<Object>((ref) {
+  final db = ref.watch(appDatabaseProvider);
+  final controller = StreamController<Object>();
+  final subscriptions = [
+    db.watchAllPlans().listen((_) => controller.add(Object())),
+    db.watchAllPlanEntries().listen((_) => controller.add(Object())),
+    db.watchAllRoutines().listen((_) => controller.add(Object())),
+    db.watchCompletedSessions().listen((_) => controller.add(Object())),
+  ];
+  ref.onDispose(() {
+    for (final s in subscriptions) {
+      s.cancel();
+    }
+    controller.close();
+  });
+  return controller.stream;
+});
 
 // ---------------------------------------------------------------------------
 // Routines

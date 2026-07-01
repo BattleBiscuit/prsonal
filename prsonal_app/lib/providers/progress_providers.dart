@@ -38,6 +38,7 @@ final progressRangeProvider = StateProvider<int>((ref) => 28);
 
 /// Aggregated summary for the progress screen.
 final progressSummaryProvider = FutureProvider<ProgressSummary>((ref) async {
+  ref.watch(dataChangedProvider);
   final range = ref.watch(progressRangeProvider);
   final service = ref.watch(progressServiceProvider);
   final now = ref.read(nowProvider)();
@@ -74,6 +75,7 @@ final progressSummaryProvider = FutureProvider<ProgressSummary>((ref) async {
 
 /// Recent PRs in the selected range.
 final recentPrsProvider = FutureProvider<List<PRItem>>((ref) async {
+  ref.watch(dataChangedProvider);
   final range = ref.watch(progressRangeProvider);
   final service = ref.watch(progressServiceProvider);
   final now = ref.read(nowProvider)();
@@ -84,12 +86,14 @@ final recentPrsProvider = FutureProvider<List<PRItem>>((ref) async {
 final historyPreviewProvider = FutureProvider<List<SessionSummary>>((
   ref,
 ) async {
+  ref.watch(dataChangedProvider);
   final service = ref.watch(historyServiceProvider);
   return service.loadPage(page: 1, pageSize: 5);
 });
 
 /// All PRs across all time.
 final allPrsProvider = FutureProvider<List<PRItem>>((ref) async {
+  ref.watch(dataChangedProvider);
   final service = ref.watch(progressServiceProvider);
   return service.allPRs();
 });

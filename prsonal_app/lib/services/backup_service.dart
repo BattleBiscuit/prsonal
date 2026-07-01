@@ -8,6 +8,9 @@ import '../models/plan.dart';
 import '../models/routine_exercise.dart';
 import '../models/workout_session.dart';
 import '../providers/app_providers.dart';
+import 'service_exceptions.dart';
+
+export 'service_exceptions.dart' show BackupException;
 
 // ---------------------------------------------------------------------------
 // BackupSection enum
@@ -278,7 +281,7 @@ class BackupService {
     } on FormatException {
       rethrow;
     } catch (e) {
-      throw FormatException('Invalid backup JSON: $e');
+      throw BackupException('Invalid backup JSON: $e');
     }
 
     if (sections.contains(BackupSection.library)) {

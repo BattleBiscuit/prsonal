@@ -26,8 +26,8 @@ final routerProvider = Provider<GoRouter>((ref) {
 
       // Guard: navigating to session-active with no active session
       if (loc == '/session/active' && !sessionActive) return '/';
-      // Guard: navigating to session-pick while a session is active
-      if (loc == '/' && sessionActive) return '/session/active';
+      // Guard: any shell route while a session is active → return to active session
+      if (loc != '/session/active' && sessionActive) return '/session/active';
       return null;
     },
     routes: [

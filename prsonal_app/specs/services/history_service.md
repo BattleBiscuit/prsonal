@@ -20,6 +20,7 @@ View models: `SessionSummary { id, routineName, startedAt, durationLabel, volume
 |--------|--------|--------|--------------|
 | count | — | `Future<int>` | none — number of completed sessions |
 | loadPage | `{int page, int pageSize}` | `Future<List<SessionSummary>>` | none — newest first, paged |
+| watchPage | `int limit` | `Stream<List<SessionSummary>>` | none — newest first, capped at `limit`; re-emits on any session/set change |
 | getDetail | `String id` | `Future<SessionDetail>` | none — sets grouped by exercise in position order |
 | deleteSession | `String id` | `Future<void>` | deletes the session and its sets |
 | updateSetActuals | `String setId, {int? reps, double? weight, bool? isBodyweight, bool? skipped}` | `Future<void>` | persists edits and recomputes effectiveWeight + estimated1RM |
@@ -35,3 +36,4 @@ View models: `SessionSummary { id, routineName, startedAt, durationLabel, volume
 - AC-005: deleteSession removes the session and all of its sets
 - AC-006: updateSetActuals persists edited reps and weight and recomputes effectiveWeight and estimated1RM
 - AC-007: a completed session with zero logged volume is reported as abandoned
+- AC-008: watchPage emits the newest-first completed sessions capped at `limit`, and re-emits whenever the underlying session/set data changes

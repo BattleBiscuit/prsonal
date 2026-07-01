@@ -169,6 +169,29 @@ void main() {
         expect(detail.abandoned, isTrue);
       },
     );
+
+    test(
+      'AC-008: watchPage emits the newest-first completed sessions capped at '
+      'limit, and re-emits whenever the underlying session/set data changes',
+      () async {
+        await seedSession(startedAt: DateTime(2026, 6, 20));
+        await seedSession(startedAt: DateTime(2026, 6, 23));
+
+        final emissions = <List<SessionSummary>>[];
+        final sub = service.watchPage(1).listen(emissions.add);
+        addTearDown(sub.cancel);
+
+        await pumpEventQueue();
+        expect(emissions.single.length, 1);
+        expect(emissions.single.first.startedAt, DateTime(2026, 6, 23));
+
+        await seedSession(startedAt: DateTime(2026, 6, 25));
+        await pumpEventQueue();
+
+        expect(emissions.length, 2);
+        expect(emissions.last.single.startedAt, DateTime(2026, 6, 25));
+      },
+    );
   });
 }
 

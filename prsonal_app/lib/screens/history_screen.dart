@@ -4,6 +4,7 @@ import '../widgets/app_modal_widget.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import '../providers/history_providers.dart';
 import '../services/history_service.dart';
 import '../theme/app_colors.dart';
 import '../widgets/app_skeleton_widget.dart';
@@ -19,17 +20,12 @@ class HistoryScreen extends ConsumerStatefulWidget {
 }
 
 class _HistoryScreenState extends ConsumerState<HistoryScreen> {
-  static const _pageSize = 20;
-  final List<SessionSummary> _sessions = [];
-  int _currentPage = 0;
-  bool _loading = false;
-  bool _hasMore = true;
+  // Purely ephemeral — the scroll position itself, not app data.
   final ScrollController _scrollCtrl = ScrollController();
 
   @override
   void initState() {
     super.initState();
-    _loadPage();
     _scrollCtrl.addListener(_onScroll);
   }
 
@@ -40,26 +36,15 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
   }
 
   void _onScroll() {
-    if (_scrollCtrl.position.pixels >=
-            _scrollCtrl.position.maxScrollExtent - 200 &&
-        !_loading &&
-        _hasMore) {
-      _loadPage();
+    final pageAsync = ref.read(historyPageProvider);
+    final sessions = pageAsync.valueOrNull ?? const <SessionSummary>[];
+    final hasMore = sessions.length >= ref.read(historyPageSizeProvider);
+    if (!pageAsync.isLoading &&
+        hasMore &&
+        _scrollCtrl.position.pixels >=
+            _scrollCtrl.position.maxScrollExtent - 200) {
+      ref.read(historyPageSizeProvider.notifier).loadMore();
     }
-  }
-
-  Future<void> _loadPage() async {
-    if (_loading) return;
-    setState(() => _loading = true);
-    final service = ref.read(historyServiceProvider);
-    final nextPage = _currentPage + 1;
-    final page = await service.loadPage(page: nextPage, pageSize: _pageSize);
-    setState(() {
-      _currentPage = nextPage;
-      _sessions.addAll(page);
-      _loading = false;
-      if (page.length < _pageSize) _hasMore = false;
-    });
   }
 
   Future<void> _deleteSession(String id) async {
@@ -69,15 +54,16 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
       confirmLabel: 'Delete',
     );
     if (!ok) return;
+    // No manual list patch — historyPageProvider is Drift-stream-backed and
+    // re-emits on its own once the session is gone.
     await ref.read(historyServiceProvider).deleteSession(id);
-    if (mounted) setState(() => _sessions.removeWhere((s) => s.id == id));
   }
 
   /// Group sessions by 'MMMM yyyy' label.
-  Map<String, List<SessionSummary>> _grouped() {
+  Map<String, List<SessionSummary>> _grouped(List<SessionSummary> sessions) {
     final fmt = DateFormat('MMMM yyyy');
     final map = <String, List<SessionSummary>>{};
-    for (final s in _sessions) {
+    for (final s in sessions) {
       final key = fmt.format(s.startedAt);
       map.putIfAbsent(key, () => []).add(s);
     }
@@ -87,8 +73,12 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).extension<AppColors>() ?? AppColors.dark;
+    final pageAsync = ref.watch(historyPageProvider);
+    final sessions = pageAsync.valueOrNull ?? const <SessionSummary>[];
+    final initialLoading = pageAsync.isLoading && sessions.isEmpty;
+    final loadingMore = pageAsync.isLoading && sessions.isNotEmpty;
 
-    if (!_loading && _sessions.isEmpty && !_hasMore) {
+    if (!initialLoading && sessions.isEmpty) {
       return Scaffold(
         backgroundColor: colors.bg,
         appBar: AppBar(
@@ -104,7 +94,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
       );
     }
 
-    final grouped = _grouped();
+    final grouped = _grouped(sessions);
     final groupKeys = grouped.keys.toList();
 
     return Scaffold(
@@ -113,12 +103,12 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
         title: const BrandTitle('History'),
         backgroundColor: colors.bg,
       ),
-      body: _sessions.isEmpty && _loading
+      body: initialLoading
           ? const _HistorySkeleton()
           : ListView.builder(
               controller: _scrollCtrl,
               padding: const EdgeInsets.symmetric(vertical: 8),
-              itemCount: groupKeys.length + (_loading ? 1 : 0),
+              itemCount: groupKeys.length + (loadingMore ? 1 : 0),
               itemBuilder: (context, i) {
                 if (i == groupKeys.length) {
                   return const Center(
@@ -129,7 +119,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                   );
                 }
                 final key = groupKeys[i];
-                final sessions = grouped[key]!;
+                final sessionsInGroup = grouped[key]!;
                 final dateFmt = DateFormat('d MMM');
                 return FadeRiseIn(
                   child: Column(
@@ -146,20 +136,22 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                           ),
                         ),
                       ),
-                      for (var j = 0; j < sessions.length; j++) ...[
+                      for (var j = 0; j < sessionsInGroup.length; j++) ...[
                         if (j > 0) const Divider(),
                         HistoryCard(
-                          routineName: sessions[j].routineName,
-                          dateLabel: dateFmt.format(sessions[j].startedAt),
-                          metaLabel: sessions[j].abandoned
-                              ? sessions[j].durationLabel
-                              : '${sessions[j].durationLabel} · ${sessions[j].volume.toStringAsFixed(0)}kg',
-                          abandoned: sessions[j].abandoned,
+                          routineName: sessionsInGroup[j].routineName,
+                          dateLabel: dateFmt.format(
+                            sessionsInGroup[j].startedAt,
+                          ),
+                          metaLabel: sessionsInGroup[j].abandoned
+                              ? sessionsInGroup[j].durationLabel
+                              : '${sessionsInGroup[j].durationLabel} · ${sessionsInGroup[j].volume.toStringAsFixed(0)}kg',
+                          abandoned: sessionsInGroup[j].abandoned,
                           onTap: () => context.goNamed(
                             'history-detail',
-                            pathParameters: {'id': sessions[j].id},
+                            pathParameters: {'id': sessionsInGroup[j].id},
                           ),
-                          onDelete: () => _deleteSession(sessions[j].id),
+                          onDelete: () => _deleteSession(sessionsInGroup[j].id),
                         ),
                       ],
                     ],

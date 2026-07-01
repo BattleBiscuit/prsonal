@@ -12,7 +12,6 @@ import '../widgets/pr_row_widget.dart';
 import '../widgets/radar_chart_widget.dart';
 import '../widgets/stat_card_widget.dart';
 import '../widgets/volume_chart_widget.dart';
-import 'package:prsonal_app/theme/app_spacing.dart';
 
 class ProgressScreen extends ConsumerWidget {
   const ProgressScreen({super.key});

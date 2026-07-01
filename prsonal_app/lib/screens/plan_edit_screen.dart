@@ -4,22 +4,11 @@ import '../widgets/app_button_widget.dart';
 import '../widgets/app_modal_widget.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/app_providers.dart';
+import '../providers/plan_edit_providers.dart';
 import '../services/plans_service.dart';
 import '../theme/app_colors.dart';
 import '../widgets/day_of_week_selector_widget.dart';
 import 'package:prsonal_app/theme/app_spacing.dart';
-
-class _EntryDraft {
-  _EntryDraft({
-    required this.routineId,
-    required this.routineName,
-    this.dayOfWeek,
-  });
-
-  final String routineId;
-  final String routineName;
-  int? dayOfWeek;
-}
 
 class PlanEditScreen extends ConsumerStatefulWidget {
   const PlanEditScreen({super.key, this.planId});
@@ -34,7 +23,9 @@ class _PlanEditScreenState extends ConsumerState<PlanEditScreen> {
   final _nameCtrl = TextEditingController();
   bool _nameError = false;
   bool _initialized = false;
-  List<_EntryDraft> _entries = [];
+
+  PlanEditorNotifier get _editor =>
+      ref.read(planEditorProvider(widget.planId).notifier);
 
   @override
   void dispose() {
@@ -56,15 +47,13 @@ class _PlanEditScreenState extends ConsumerState<PlanEditScreen> {
             trailing: const Icon(Icons.chevron_right_outlined),
             onTap: () {
               Navigator.of(ctx).pop();
-              setState(() {
-                _entries.add(
-                  _EntryDraft(
-                    routineId: r.id,
-                    routineName: r.name,
-                    dayOfWeek: null,
-                  ),
-                );
-              });
+              _editor.addEntry(
+                PlanEntryDraftRow(
+                  routineId: r.id,
+                  routineName: r.name,
+                  dayOfWeek: null,
+                ),
+              );
             },
           );
         }).toList(),
@@ -81,11 +70,12 @@ class _PlanEditScreenState extends ConsumerState<PlanEditScreen> {
     setState(() => _nameError = false);
     final service = ref.read(plansServiceProvider);
     final planId = widget.planId;
+    final entries = ref.read(planEditorProvider(widget.planId));
     if (planId == null) {
       final newId = await service.createPlan(name);
       await service.replaceEntries(
         newId,
-        _entries
+        entries
             .map(
               (e) => PlanEntryInput(
                 routineId: e.routineId,
@@ -98,7 +88,7 @@ class _PlanEditScreenState extends ConsumerState<PlanEditScreen> {
       await service.updatePlan(planId, name: name);
       await service.replaceEntries(
         planId,
-        _entries
+        entries
             .map(
               (e) => PlanEntryInput(
                 routineId: e.routineId,
@@ -125,6 +115,7 @@ class _PlanEditScreenState extends ConsumerState<PlanEditScreen> {
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).extension<AppColors>() ?? AppColors.dark;
+    final entries = ref.watch(planEditorProvider(widget.planId));
 
     // Pre-watch routines so they're available when the picker sheet opens.
     _cachedRoutines = ref.watch(routinesListProvider).valueOrNull ?? [];
@@ -138,17 +129,17 @@ class _PlanEditScreenState extends ConsumerState<PlanEditScreen> {
           if (!_initialized) {
             _initialized = true;
             _nameCtrl.text = draft.name;
-            setState(() {
-              _entries = draft.entries
+            _editor.loadInitial(
+              draft.entries
                   .map(
-                    (e) => _EntryDraft(
+                    (e) => PlanEntryDraftRow(
                       routineId: e.routineId,
                       routineName: e.routineName,
                       dayOfWeek: e.dayOfWeek,
                     ),
                   )
-                  .toList();
-            });
+                  .toList(),
+            );
           }
         });
       }
@@ -205,12 +196,11 @@ class _PlanEditScreenState extends ConsumerState<PlanEditScreen> {
             ],
           ),
           const SizedBox(height: space2),
-          for (var i = 0; i < _entries.length; i++) ...[
+          for (var i = 0; i < entries.length; i++) ...[
             _EntryRow(
-              entry: _entries[i],
-              onRemove: () => setState(() => _entries.removeAt(i)),
-              onDayChanged: (day) =>
-                  setState(() => _entries[i].dayOfWeek = day),
+              entry: entries[i],
+              onRemove: () => _editor.removeAt(i),
+              onDayChanged: (day) => _editor.setDayOfWeek(i, day),
             ),
             const SizedBox(height: space2),
           ],
@@ -234,7 +224,7 @@ class _EntryRow extends StatelessWidget {
     required this.onDayChanged,
   });
 
-  final _EntryDraft entry;
+  final PlanEntryDraftRow entry;
   final VoidCallback onRemove;
   final ValueChanged<int?> onDayChanged;
 

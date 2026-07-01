@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/exercise.dart';
 import '../models/routine_exercise.dart';
 import '../providers/app_providers.dart';
+import '../providers/routine_edit_providers.dart';
 import '../services/routines_service.dart';
 import '../theme/app_colors.dart';
 import '../widgets/exercise_form_widget.dart';
@@ -27,11 +28,10 @@ class _RoutineEditScreenState extends ConsumerState<RoutineEditScreen> {
   final _nameCtrl = TextEditingController();
   final _notesCtrl = TextEditingController();
   bool _nameError = false;
-  bool _dirty = false;
   bool _initialized = false;
 
-  // Mutable exercise list (mirrors the draft)
-  List<RoutineExerciseDraft> _exercises = [];
+  RoutineEditorNotifier get _editor =>
+      ref.read(routineEditorProvider(widget.routineId).notifier);
 
   @override
   void dispose() {
@@ -40,13 +40,10 @@ class _RoutineEditScreenState extends ConsumerState<RoutineEditScreen> {
     super.dispose();
   }
 
-  void _markDirty() {
-    if (!_dirty) setState(() => _dirty = true);
-  }
-
   /// Called by the test: if dirty show a discard dialog, otherwise pop.
   Future<void> maybePop() async {
-    if (!_dirty) {
+    final dirty = ref.read(routineEditorProvider(widget.routineId)).dirty;
+    if (!dirty) {
       if (mounted) unawaited(Navigator.of(context).maybePop());
       return;
     }
@@ -97,49 +94,43 @@ class _RoutineEditScreenState extends ConsumerState<RoutineEditScreen> {
             exercises: options,
             onSubmit: (data) {
               Navigator.of(ctx).pop();
-              setState(() {
-                _dirty = true;
-                if (existing != null) {
-                  final idx = _exercises.indexOf(existing);
-                  if (idx >= 0) {
-                    _exercises[idx] = RoutineExerciseDraft(
-                      id: existing.id,
-                      exerciseId: data.exerciseId ?? existing.exerciseId,
-                      exerciseName: data.exerciseName ?? existing.exerciseName,
-                      position: existing.position,
-                      sets: data.sets
-                          .map(
-                            (s) => SetTarget.strength(
-                              reps: s.reps,
-                              weight: s.weight,
-                              isBodyweight: s.isBodyweight,
-                            ),
-                          )
-                          .toList(),
-                      notes: existing.notes,
-                    );
-                  }
-                } else {
-                  _exercises.add(
-                    RoutineExerciseDraft(
-                      id: UniqueKey().toString(),
-                      exerciseId: data.exerciseId ?? '',
-                      exerciseName: data.exerciseName ?? '',
-                      position: _exercises.length,
-                      sets: data.sets
-                          .map(
-                            (s) => SetTarget.strength(
-                              reps: s.reps,
-                              weight: s.weight,
-                              isBodyweight: s.isBodyweight,
-                            ),
-                          )
-                          .toList(),
-                      notes: null,
+              final sets = data.sets
+                  .map(
+                    (s) => SetTarget.strength(
+                      reps: s.reps,
+                      weight: s.weight,
+                      isBodyweight: s.isBodyweight,
                     ),
-                  );
-                }
-              });
+                  )
+                  .toList();
+              if (existing != null) {
+                _editor.replaceExercise(
+                  existing,
+                  RoutineExerciseDraft(
+                    id: existing.id,
+                    exerciseId: data.exerciseId ?? existing.exerciseId,
+                    exerciseName: data.exerciseName ?? existing.exerciseName,
+                    position: existing.position,
+                    sets: sets,
+                    notes: existing.notes,
+                  ),
+                );
+              } else {
+                final exerciseCount = ref
+                    .read(routineEditorProvider(widget.routineId))
+                    .exercises
+                    .length;
+                _editor.addExercise(
+                  RoutineExerciseDraft(
+                    id: UniqueKey().toString(),
+                    exerciseId: data.exerciseId ?? '',
+                    exerciseName: data.exerciseName ?? '',
+                    position: exerciseCount,
+                    sets: sets,
+                    notes: null,
+                  ),
+                );
+              }
             },
             onCancel: () => Navigator.of(ctx).pop(),
           ),
@@ -163,7 +154,10 @@ class _RoutineEditScreenState extends ConsumerState<RoutineEditScreen> {
         notes: _notesCtrl.text.trim().isEmpty ? null : _notesCtrl.text.trim(),
       );
       // Add exercises
-      for (final ex in _exercises) {
+      final exercises = ref
+          .read(routineEditorProvider(widget.routineId))
+          .exercises;
+      for (final ex in exercises) {
         await service.addExercise(
           newId,
           exerciseId: ex.exerciseId,
@@ -203,6 +197,10 @@ class _RoutineEditScreenState extends ConsumerState<RoutineEditScreen> {
     final optionsAsync = ref.watch(libraryOptionsProvider);
     final options = optionsAsync.valueOrNull ?? const [];
 
+    final exercises = ref.watch(
+      routineEditorProvider(widget.routineId).select((s) => s.exercises),
+    );
+
     // Load draft in edit mode
     if (widget.routineId != null) {
       final draftAsync = ref.watch(routineDraftProvider(widget.routineId));
@@ -213,7 +211,7 @@ class _RoutineEditScreenState extends ConsumerState<RoutineEditScreen> {
             _initialized = true;
             _nameCtrl.text = draft.name;
             _notesCtrl.text = draft.notes ?? '';
-            setState(() => _exercises = List.from(draft.exercises));
+            _editor.loadInitial(List.from(draft.exercises));
           }
         });
       }
@@ -247,7 +245,7 @@ class _RoutineEditScreenState extends ConsumerState<RoutineEditScreen> {
               errorText: _nameError ? 'Name is required' : null,
             ),
             onChanged: (_) {
-              _markDirty();
+              _editor.markDirty();
               if (_nameError) setState(() => _nameError = false);
             },
           ),
@@ -255,7 +253,7 @@ class _RoutineEditScreenState extends ConsumerState<RoutineEditScreen> {
           TextField(
             controller: _notesCtrl,
             decoration: const InputDecoration(labelText: 'Notes (optional)'),
-            onChanged: (_) => _markDirty(),
+            onChanged: (_) => _editor.markDirty(),
           ),
           const SizedBox(height: space5),
           Row(
@@ -279,7 +277,7 @@ class _RoutineEditScreenState extends ConsumerState<RoutineEditScreen> {
             ],
           ),
           const SizedBox(height: space2),
-          if (_exercises.isEmpty)
+          if (exercises.isEmpty)
             Text(
               'No exercises yet',
               style: TextStyle(color: colors.text2, fontSize: 14),
@@ -288,15 +286,9 @@ class _RoutineEditScreenState extends ConsumerState<RoutineEditScreen> {
             ReorderableListView(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
-              onReorderItem: (oldIndex, newIndex) {
-                setState(() {
-                  _dirty = true;
-                  final item = _exercises.removeAt(oldIndex);
-                  _exercises.insert(newIndex, item);
-                });
-              },
+              onReorderItem: _editor.reorder,
               children: [
-                for (final ex in _exercises)
+                for (final ex in exercises)
                   ListTile(
                     key: ValueKey(ex.id),
                     title: Text(

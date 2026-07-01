@@ -93,25 +93,34 @@ class HistoryService {
   }) async {
     final offset = (page - 1) * pageSize;
     final rows = await _db.completedSessions(limit: pageSize, offset: offset);
-    final result = <SessionSummary>[];
-    for (final row in rows) {
-      final sets = await _db.workoutSetsForSession(row.id);
-      final volume = _computeVolume(sets);
-      result.add(
-        SessionSummary(
-          id: row.id,
-          routineName: row.routineName,
-          startedAt: row.startedAt,
-          durationLabel: formatSessionDuration(row.startedAt, row.completedAt),
-          volume: volume,
-          abandoned: sessionIsAbandoned(
-            status: row.status,
-            totalVolume: volume,
-          ),
-        ),
-      );
-    }
-    return result;
+    return Future.wait(rows.map(_toSummary));
+  }
+
+  // -------------------------------------------------------------------------
+  // watchPage — reactive newest-first list, capped at `limit` rows.
+  //
+  // Backed by the same Drift watch query used app-wide (never a
+  // hand-maintained in-memory list) — re-emits whenever a session or its sets
+  // change, so callers stay in sync without manual invalidation.
+  // -------------------------------------------------------------------------
+
+  Stream<List<SessionSummary>> watchPage(int limit) {
+    return _db.watchCompletedSessions().asyncMap((rows) {
+      return Future.wait(rows.take(limit).map(_toSummary));
+    });
+  }
+
+  Future<SessionSummary> _toSummary(WorkoutSession row) async {
+    final sets = await _db.workoutSetsForSession(row.id);
+    final volume = _computeVolume(sets);
+    return SessionSummary(
+      id: row.id,
+      routineName: row.routineName,
+      startedAt: row.startedAt,
+      durationLabel: formatSessionDuration(row.startedAt, row.completedAt),
+      volume: volume,
+      abandoned: sessionIsAbandoned(status: row.status, totalVolume: volume),
+    );
   }
 
   // -------------------------------------------------------------------------

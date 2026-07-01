@@ -31,8 +31,11 @@ discard confirmation. Edit mode adds a "Delete routine" action.
 | Widget | Spec |
 |--------|------|
 | AppPageShell · AppInput · AppTextarea · AppFab · AppModal | shared |
-| ExerciseListItem | `widgets/exercise_list_item.md` |
 | ExerciseForm | `widgets/exercise_form.md` |
+
+The exercise list itself is a plain `ListTile` per row (no dedicated
+`ExerciseListItem` component — retired along with `RoutineCard` when the
+routines list was folded into the flat Workout-tab redesign).
 
 ## State dependencies
 - `routineDraftProvider(id?)` — the routine + its exercises for edit; null for create

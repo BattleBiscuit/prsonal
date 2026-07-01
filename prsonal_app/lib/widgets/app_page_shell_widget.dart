@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:prsonal_app/theme/app_colors.dart';
 import 'package:prsonal_app/widgets/brand_mark.dart';
+import 'package:prsonal_app/theme/app_spacing.dart';
 
 class AppPageShell extends StatelessWidget {
   const AppPageShell({
@@ -30,7 +31,10 @@ class AppPageShell extends StatelessWidget {
           children: [
             // Top bar with PRsonal brand wordmark
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              padding: const EdgeInsets.symmetric(
+                horizontal: space4,
+                vertical: 12,
+              ),
               child: Row(
                 children: [
                   Semantics(
@@ -40,7 +44,7 @@ class AppPageShell extends StatelessWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           BrandMark(size: 22, color: colors.text1),
-                          const SizedBox(width: 8),
+                          const SizedBox(width: space2),
                           Text.rich(
                             TextSpan(
                               children: [
@@ -65,7 +69,7 @@ class AppPageShell extends StatelessWidget {
                     ),
                   ),
                   if (header != null) ...[
-                    const SizedBox(width: 12),
+                    const SizedBox(width: space3),
                     Expanded(child: header!),
                   ],
                 ],
@@ -84,7 +88,7 @@ class AppPageShell extends StatelessWidget {
                     ),
                   ),
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
+                    horizontal: space4,
                     vertical: 10,
                   ),
                   child: Row(
@@ -94,7 +98,7 @@ class AppPageShell extends StatelessWidget {
                         color: colors.accent,
                         size: 16,
                       ),
-                      const SizedBox(width: 8),
+                      const SizedBox(width: space2),
                       Text(
                         'Workout in progress',
                         style: TextStyle(
@@ -104,7 +108,7 @@ class AppPageShell extends StatelessWidget {
                         ),
                       ),
                       if (workoutRoutineName != null) ...[
-                        const SizedBox(width: 8),
+                        const SizedBox(width: space2),
                         Text(
                           workoutRoutineName!,
                           style: TextStyle(color: colors.text2, fontSize: 14),

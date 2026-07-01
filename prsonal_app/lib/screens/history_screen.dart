@@ -9,6 +9,7 @@ import '../theme/app_colors.dart';
 import '../widgets/app_skeleton_widget.dart';
 import '../widgets/fade_rise_in_widget.dart';
 import '../widgets/history_card_widget.dart';
+import 'package:prsonal_app/theme/app_spacing.dart';
 
 class HistoryScreen extends ConsumerStatefulWidget {
   const HistoryScreen({super.key});
@@ -122,7 +123,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                 if (i == groupKeys.length) {
                   return const Center(
                     child: Padding(
-                      padding: EdgeInsets.all(16),
+                      padding: EdgeInsets.all(space4),
                       child: CircularProgressIndicator(),
                     ),
                   );
@@ -178,7 +179,7 @@ class _HistorySkeleton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: space4, vertical: 12),
       children: List.generate(
         6,
         (_) => const Padding(

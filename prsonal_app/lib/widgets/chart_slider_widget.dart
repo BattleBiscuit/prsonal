@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:prsonal_app/theme/app_colors.dart';
+import 'package:prsonal_app/theme/app_spacing.dart';
 
 class ChartSlider extends StatefulWidget {
   const ChartSlider({super.key, required this.pages, required this.titles});
@@ -34,7 +35,7 @@ class _ChartSliderState extends State<ChartSlider> {
             fontWeight: FontWeight.w600,
           ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: space2),
         Expanded(
           child: PageView(
             controller: _ctrl,
@@ -42,7 +43,7 @@ class _ChartSliderState extends State<ChartSlider> {
             children: widget.pages,
           ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: space2),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: List.generate(
@@ -59,7 +60,7 @@ class _ChartSliderState extends State<ChartSlider> {
                 key: const Key('chart-slider-dot'),
                 width: 8,
                 height: 8,
-                margin: const EdgeInsets.symmetric(horizontal: 3),
+                margin: const EdgeInsets.symmetric(horizontal: 4),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: _page == i ? colors.accent : colors.text3,

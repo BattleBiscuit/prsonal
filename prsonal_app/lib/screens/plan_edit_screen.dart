@@ -7,6 +7,7 @@ import '../providers/app_providers.dart';
 import '../services/plans_service.dart';
 import '../theme/app_colors.dart';
 import '../widgets/day_of_week_selector_widget.dart';
+import 'package:prsonal_app/theme/app_spacing.dart';
 
 class _EntryDraft {
   _EntryDraft({
@@ -170,7 +171,7 @@ class _PlanEditScreenState extends ConsumerState<PlanEditScreen> {
         ],
       ),
       body: ListView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(space4),
         children: [
           TextField(
             controller: _nameCtrl,
@@ -182,7 +183,7 @@ class _PlanEditScreenState extends ConsumerState<PlanEditScreen> {
               if (_nameError) setState(() => _nameError = false);
             },
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: space5),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -203,7 +204,7 @@ class _PlanEditScreenState extends ConsumerState<PlanEditScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: space2),
           for (var i = 0; i < _entries.length; i++) ...[
             _EntryRow(
               entry: _entries[i],
@@ -211,9 +212,9 @@ class _PlanEditScreenState extends ConsumerState<PlanEditScreen> {
               onDayChanged: (day) =>
                   setState(() => _entries[i].dayOfWeek = day),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: space2),
           ],
-          const SizedBox(height: 16),
+          const SizedBox(height: space4),
           if (widget.planId != null)
             AppButton(
               label: 'Delete plan',
@@ -241,7 +242,7 @@ class _EntryRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = Theme.of(context).extension<AppColors>() ?? AppColors.dark;
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(space3),
       decoration: BoxDecoration(
         color: colors.surface1,
         borderRadius: BorderRadius.zero,
@@ -274,7 +275,7 @@ class _EntryRow extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: space2),
           DayOfWeekSelector(selected: entry.dayOfWeek, onChanged: onDayChanged),
         ],
       ),

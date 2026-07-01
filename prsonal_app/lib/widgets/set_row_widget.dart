@@ -104,7 +104,7 @@ class _SetRowState extends State<SetRow> {
     return GestureDetector(
       onTap: widget.onSelect,
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+        padding: const EdgeInsets.symmetric(vertical: space2, horizontal: 4),
         child: Row(
           children: [
             SizedBox(
@@ -121,7 +121,7 @@ class _SetRowState extends State<SetRow> {
                 textAlign: TextAlign.center,
               ),
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: space3),
             Text(
               widget.plannedLabel,
               style: TextStyle(color: colors.text2, fontSize: 14),
@@ -144,7 +144,7 @@ class _SetRowState extends State<SetRow> {
         color: colors.accent.withValues(alpha: 0.06),
         border: Border(left: BorderSide(color: colors.accent, width: 2)),
       ),
-      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+      padding: const EdgeInsets.symmetric(vertical: space2, horizontal: 12),
       child: Row(
         children: [
           SizedBox(
@@ -161,7 +161,7 @@ class _SetRowState extends State<SetRow> {
               textAlign: TextAlign.center,
             ),
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: space2),
           Expanded(
             child: _buildField(
               colors,
@@ -171,9 +171,9 @@ class _SetRowState extends State<SetRow> {
               border: fieldBorder,
             ),
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: space2),
           _buildBodyweightToggle(colors),
-          const SizedBox(width: 8),
+          const SizedBox(width: space2),
           Expanded(
             child: _buildField(
               colors,
@@ -184,19 +184,19 @@ class _SetRowState extends State<SetRow> {
               signed: widget.isBodyweight,
             ),
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: space2),
           Semantics(
             label: 'Complete set',
             button: true,
             child: GestureDetector(
               onTap: widget.onToggleComplete,
               child: SizedBox(
-                width: 48,
-                height: 48,
+                width: touchTargetMin,
+                height: touchTargetMin,
                 child: Center(
                   child: Container(
-                    width: 22,
-                    height: 22,
+                    width: 24,
+                    height: 24,
                     decoration: BoxDecoration(
                       border: Border.all(color: fieldBorder, width: 2),
                     ),
@@ -225,7 +225,10 @@ class _SetRowState extends State<SetRow> {
         child: GestureDetector(
           onTap: widget.onToggleBodyweight,
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+            padding: const EdgeInsets.symmetric(
+              horizontal: space2,
+              vertical: 8,
+            ),
             decoration: BoxDecoration(
               color: on ? colors.accent : colors.surface3,
               borderRadius: BorderRadius.circular(radiusFull),
@@ -269,7 +272,10 @@ class _SetRowState extends State<SetRow> {
         hintText: hint,
         hintStyle: TextStyle(color: colors.text1.withValues(alpha: 0.45)),
         isDense: true,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: space2,
+          vertical: 8,
+        ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.zero,
           borderSide: BorderSide(color: border, width: 2),
@@ -291,7 +297,7 @@ class _SetRowState extends State<SetRow> {
       onTap: widget.onSelect,
       behavior: HitTestBehavior.opaque,
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+        padding: const EdgeInsets.symmetric(vertical: space2, horizontal: 4),
         child: Row(
           children: [
             SizedBox(
@@ -308,7 +314,7 @@ class _SetRowState extends State<SetRow> {
                 textAlign: TextAlign.center,
               ),
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: space3),
             Expanded(
               child: Text(
                 widget.actualLabel ?? widget.plannedLabel,
@@ -327,8 +333,8 @@ class _SetRowState extends State<SetRow> {
                   ),
                 ),
               ),
-            const SizedBox(width: 8),
-            Icon(Icons.check_box_outlined, color: colors.success, size: 22),
+            const SizedBox(width: space2),
+            Icon(Icons.check_box_outlined, color: colors.success, size: 24),
           ],
         ),
       ),
@@ -340,7 +346,7 @@ class _SetRowState extends State<SetRow> {
     // readable "Skip" badge — clearly "not done" without dropping to an
     // unreadable blanket fade.
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+      padding: const EdgeInsets.symmetric(vertical: space2, horizontal: 4),
       child: Row(
         children: [
           SizedBox(
@@ -357,7 +363,7 @@ class _SetRowState extends State<SetRow> {
               textAlign: TextAlign.center,
             ),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: space3),
           Expanded(
             child: Text(
               widget.plannedLabel,

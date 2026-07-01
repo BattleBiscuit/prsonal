@@ -6,6 +6,7 @@ import '../models/body_metric.dart';
 import '../services/body_service.dart';
 import '../theme/app_colors.dart';
 import '../widgets/body_metric_card_widget.dart';
+import 'package:prsonal_app/theme/app_spacing.dart';
 
 class BodyScreen extends ConsumerStatefulWidget {
   const BodyScreen({super.key});
@@ -44,7 +45,7 @@ class _BodyScreenState extends ConsumerState<BodyScreen> {
               'Log ${type.label}',
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: space4),
             TextField(
               controller: ctrl,
               autofocus: true,
@@ -55,7 +56,7 @@ class _BodyScreenState extends ConsumerState<BodyScreen> {
                 labelText: '${type.label} (${type.unit})',
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: space4),
             Tooltip(
               message: 'Log',
               child: ElevatedButton(
@@ -68,7 +69,7 @@ class _BodyScreenState extends ConsumerState<BodyScreen> {
                 child: const Icon(Icons.add),
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: space4),
           ],
         ),
       ),
@@ -96,7 +97,7 @@ class _BodyScreenState extends ConsumerState<BodyScreen> {
             builder: (context, historySnap) {
               final weightHistory = historySnap.data ?? const [];
               return SingleChildScrollView(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(space4),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -129,13 +130,13 @@ class _BodyScreenState extends ConsumerState<BodyScreen> {
                                 },
                               ),
                             ),
-                            if (col == 0) const SizedBox(width: 12),
+                            if (col == 0) const SizedBox(width: space3),
                           ],
                         ],
                       ),
-                      const SizedBox(height: 12),
+                      const SizedBox(height: space3),
                     ],
-                    const SizedBox(height: 8),
+                    const SizedBox(height: space2),
                     if (weightHistory.isNotEmpty) ...[
                       Text(
                         'BODYWEIGHT HISTORY',
@@ -146,7 +147,7 @@ class _BodyScreenState extends ConsumerState<BodyScreen> {
                           letterSpacing: 1.2,
                         ),
                       ),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: space2),
                       ...weightHistory.map(
                         (m) => Padding(
                           padding: const EdgeInsets.symmetric(vertical: 4),
@@ -169,7 +170,7 @@ class _BodyScreenState extends ConsumerState<BodyScreen> {
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
-                              const SizedBox(width: 12),
+                              const SizedBox(width: space3),
                               Tooltip(
                                 message: 'Delete entry',
                                 child: Semantics(

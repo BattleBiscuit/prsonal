@@ -98,7 +98,7 @@ class _LibraryExerciseFormState extends State<LibraryExerciseForm> {
             style: TextStyle(color: colors.text1),
             onChanged: (_) => setState(() {}),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: space4),
           Row(
             children: [
               _TypeChip(
@@ -107,7 +107,7 @@ class _LibraryExerciseFormState extends State<LibraryExerciseForm> {
                 onTap: () => setState(() => _type = ExerciseType.strength),
                 colors: colors,
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: space2),
               _TypeChip(
                 label: 'Cardio',
                 selected: _type == ExerciseType.cardio,
@@ -116,7 +116,7 @@ class _LibraryExerciseFormState extends State<LibraryExerciseForm> {
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: space4),
           Text(
             'Primary muscles',
             style: TextStyle(
@@ -125,10 +125,10 @@ class _LibraryExerciseFormState extends State<LibraryExerciseForm> {
               fontWeight: FontWeight.w600,
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: space2),
           Wrap(
-            spacing: 6,
-            runSpacing: 6,
+            spacing: 8,
+            runSpacing: 8,
             children: Muscle.values
                 .map(
                   (m) => _MuscleChip(
@@ -146,7 +146,7 @@ class _LibraryExerciseFormState extends State<LibraryExerciseForm> {
                 )
                 .toList(),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: space4),
           Text(
             'Secondary muscles',
             style: TextStyle(
@@ -155,10 +155,10 @@ class _LibraryExerciseFormState extends State<LibraryExerciseForm> {
               fontWeight: FontWeight.w600,
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: space2),
           Wrap(
-            spacing: 6,
-            runSpacing: 6,
+            spacing: 8,
+            runSpacing: 8,
             children: Muscle.values
                 .map(
                   (m) => _MuscleChip(
@@ -176,7 +176,7 @@ class _LibraryExerciseFormState extends State<LibraryExerciseForm> {
                 )
                 .toList(),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: space6),
           Row(
             children: [
               Expanded(
@@ -185,7 +185,7 @@ class _LibraryExerciseFormState extends State<LibraryExerciseForm> {
                   child: const Text('Cancel'),
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: space3),
               Expanded(
                 child: ElevatedButton(
                   onPressed: _submit,
@@ -217,7 +217,7 @@ class _TypeChip extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        padding: const EdgeInsets.symmetric(horizontal: space3, vertical: 8),
         decoration: BoxDecoration(
           color: selected ? colors.accent : colors.surface2,
           borderRadius: BorderRadius.circular(radiusFull),
@@ -252,10 +252,10 @@ class _MuscleChip extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+        padding: const EdgeInsets.symmetric(horizontal: space3, vertical: 4),
         decoration: BoxDecoration(
           color: selected
-              ? colors.accentDim.withValues(alpha: 0.2)
+              ? colors.accent.withValues(alpha: 0.08)
               : colors.surface2,
           borderRadius: BorderRadius.circular(radiusFull),
           border: Border.all(color: selected ? colors.accent : colors.border),

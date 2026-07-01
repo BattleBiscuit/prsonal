@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:prsonal_app/models/exercise.dart';
 import 'package:prsonal_app/theme/app_colors.dart';
 import 'package:prsonal_app/theme/app_typography.dart';
+import 'package:prsonal_app/theme/app_spacing.dart';
 
 @immutable
 class SetTableRow {
@@ -103,7 +104,10 @@ class _SetRow extends StatelessWidget {
               excludeSemantics: true,
               child: Container(
                 margin: const EdgeInsets.only(right: 6),
-                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: space1,
+                  vertical: 2,
+                ),
                 decoration: BoxDecoration(
                   color: colors.accent.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.zero,

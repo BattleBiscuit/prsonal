@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:prsonal_app/theme/app_colors.dart';
+import 'package:prsonal_app/theme/app_spacing.dart';
 
 class AppInput extends StatelessWidget {
   const AppInput({
@@ -42,7 +43,7 @@ class AppInput extends StatelessWidget {
               fontWeight: FontWeight.w500,
             ),
           ),
-          const SizedBox(height: 6),
+          const SizedBox(height: space2),
         ],
         TextField(
           controller: controller,

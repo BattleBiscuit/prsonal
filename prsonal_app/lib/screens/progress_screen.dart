@@ -12,6 +12,7 @@ import '../widgets/pr_row_widget.dart';
 import '../widgets/radar_chart_widget.dart';
 import '../widgets/stat_card_widget.dart';
 import '../widgets/volume_chart_widget.dart';
+import 'package:prsonal_app/theme/app_spacing.dart';
 
 class ProgressScreen extends ConsumerWidget {
   const ProgressScreen({super.key});
@@ -31,7 +32,7 @@ class ProgressScreen extends ConsumerWidget {
         backgroundColor: colors.bg,
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: space4, vertical: 8),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -51,11 +52,11 @@ class ProgressScreen extends ConsumerWidget {
                     onTap: () =>
                         ref.read(progressRangeProvider.notifier).state = r,
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: space2),
                 ],
               ],
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: space2),
             // Metric cards — compact 2×2 grid
             summaryAsync.when(
               data: (summary) => Column(
@@ -69,7 +70,7 @@ class ProgressScreen extends ConsumerWidget {
                           icon: Icons.fitness_center_outlined,
                         ),
                       ),
-                      const SizedBox(width: 8),
+                      const SizedBox(width: space2),
                       Expanded(
                         child: StatCard(
                           value: summary.volumeTrendPercent != null
@@ -84,7 +85,7 @@ class ProgressScreen extends ConsumerWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: space2),
                   Row(
                     children: [
                       Expanded(
@@ -96,7 +97,7 @@ class ProgressScreen extends ConsumerWidget {
                           icon: Icons.calendar_today_outlined,
                         ),
                       ),
-                      const SizedBox(width: 8),
+                      const SizedBox(width: space2),
                       Expanded(
                         child: StatCard(
                           value: '${summary.bestStreak}',
@@ -114,14 +115,14 @@ class ProgressScreen extends ConsumerWidget {
                 child: Row(
                   children: [
                     Expanded(child: AppSkeleton(height: 80)),
-                    SizedBox(width: 8),
+                    SizedBox(width: space2),
                     Expanded(child: AppSkeleton(height: 80)),
                   ],
                 ),
               ),
               error: (e, _) => Text('Error: $e'),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: space2),
             // Chart slider — muscle balance + volume
             summaryAsync.when(
               data: (summary) => SizedBox(
@@ -143,7 +144,7 @@ class ProgressScreen extends ConsumerWidget {
               ),
               error: (e, _) => Text('Error: $e'),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: space2),
             // Recent PRs
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -165,7 +166,7 @@ class ProgressScreen extends ConsumerWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: space1),
             prsAsync.when(
               data: (prs) {
                 final dateFmt = DateFormat('d MMM yyyy');
@@ -187,7 +188,7 @@ class ProgressScreen extends ConsumerWidget {
               loading: () => const SizedBox.shrink(),
               error: (e, _) => Text('Error: $e'),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: space2),
             // History preview
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -209,7 +210,7 @@ class ProgressScreen extends ConsumerWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: space1),
             historyAsync.when(
               data: (sessions) => Column(
                 children: [
@@ -264,7 +265,7 @@ class _RangeButton extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        padding: const EdgeInsets.symmetric(horizontal: space3, vertical: 8),
         decoration: BoxDecoration(
           color: selected ? colors.accent : colors.surface2,
           borderRadius: BorderRadius.circular(radiusFull),

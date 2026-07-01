@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:prsonal_app/theme/app_colors.dart';
+import 'package:prsonal_app/theme/app_spacing.dart';
 
 class HistoryCard extends StatelessWidget {
   const HistoryCard({
@@ -25,7 +26,7 @@ class HistoryCard extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        padding: const EdgeInsets.symmetric(horizontal: space4, vertical: 14),
         child: Row(
           children: [
             Expanded(
@@ -43,14 +44,14 @@ class HistoryCard extends StatelessWidget {
                         ),
                       ),
                       if (abandoned) ...[
-                        const SizedBox(width: 8),
+                        const SizedBox(width: space2),
                         Container(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 6,
                             vertical: 2,
                           ),
                           decoration: BoxDecoration(
-                            color: colors.danger.withValues(alpha: 0.15),
+                            color: colors.danger.withValues(alpha: 0.20),
                             borderRadius: BorderRadius.zero,
                           ),
                           child: Text(
@@ -65,7 +66,7 @@ class HistoryCard extends StatelessWidget {
                       ],
                     ],
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: space1),
                   Text(
                     dateLabel,
                     style: TextStyle(color: colors.text2, fontSize: 13),

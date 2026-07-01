@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:prsonal_app/theme/app_colors.dart';
+import 'package:prsonal_app/theme/app_spacing.dart';
 
 enum AppButtonVariant { ghost, danger, accent }
 
@@ -27,7 +28,7 @@ class AppButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = Theme.of(context).extension<AppColors>() ?? AppColors.dark;
 
-    final double minHeight = size == AppButtonSize.md ? 48.0 : 36.0;
+    final double minHeight = size == AppButtonSize.md ? touchTargetMin : 36.0;
     final EdgeInsets padding = size == AppButtonSize.md
         ? const EdgeInsets.symmetric(horizontal: 20.0)
         : const EdgeInsets.symmetric(horizontal: 12.0);
@@ -58,7 +59,7 @@ class AppButton extends StatelessWidget {
       mainAxisSize: full ? MainAxisSize.max : MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        if (icon != null) ...[icon!, const SizedBox(width: 8)],
+        if (icon != null) ...[icon!, const SizedBox(width: space2)],
         Text(
           label,
           style: TextStyle(

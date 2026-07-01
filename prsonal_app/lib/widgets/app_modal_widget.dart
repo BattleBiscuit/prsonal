@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:prsonal_app/theme/app_colors.dart';
 import 'package:prsonal_app/widgets/app_button_widget.dart';
+import 'package:prsonal_app/theme/app_spacing.dart';
 
 class AppModal extends StatelessWidget {
   const AppModal({
@@ -26,7 +27,7 @@ class AppModal extends StatelessWidget {
         borderRadius: BorderRadius.zero,
         border: Border.all(color: colors.border),
       ),
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(space5),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -57,11 +58,11 @@ class AppModal extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: space3),
           ],
           child,
           if (actions != null && actions!.isNotEmpty) ...[
-            const SizedBox(height: 16),
+            const SizedBox(height: space4),
             ...actions!,
           ],
         ],
@@ -128,7 +129,7 @@ Future<bool> showConfirmSheet(
         full: true,
         onPressed: () => Navigator.of(ctx).pop(true),
       ),
-      const SizedBox(height: 8),
+      const SizedBox(height: space2),
       AppButton(
         label: cancelLabel,
         variant: AppButtonVariant.ghost,

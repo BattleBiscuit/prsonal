@@ -12,6 +12,7 @@ import '../services/routines_service.dart';
 import '../theme/app_colors.dart';
 import '../widgets/exercise_form_widget.dart';
 import '../widgets/exercise_search_input_widget.dart';
+import 'package:prsonal_app/theme/app_spacing.dart';
 
 class RoutineEditScreen extends ConsumerStatefulWidget {
   const RoutineEditScreen({super.key, this.routineId});
@@ -237,7 +238,7 @@ class _RoutineEditScreenState extends ConsumerState<RoutineEditScreen> {
         ],
       ),
       body: ListView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(space4),
         children: [
           TextField(
             controller: _nameCtrl,
@@ -250,13 +251,13 @@ class _RoutineEditScreenState extends ConsumerState<RoutineEditScreen> {
               if (_nameError) setState(() => _nameError = false);
             },
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: space3),
           TextField(
             controller: _notesCtrl,
             decoration: const InputDecoration(labelText: 'Notes (optional)'),
             onChanged: (_) => _markDirty(),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: space5),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -277,7 +278,7 @@ class _RoutineEditScreenState extends ConsumerState<RoutineEditScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: space2),
           if (_exercises.isEmpty)
             Text(
               'No exercises yet',
@@ -310,8 +311,8 @@ class _RoutineEditScreenState extends ConsumerState<RoutineEditScreen> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Icon(Icons.edit_outlined, color: colors.text2),
-                        const SizedBox(width: 8),
-                        Icon(Icons.drag_handle, color: colors.text3),
+                        const SizedBox(width: space2),
+                        Icon(Icons.drag_handle, color: colors.text3, size: 20),
                       ],
                     ),
                     onTap: () =>
@@ -320,7 +321,7 @@ class _RoutineEditScreenState extends ConsumerState<RoutineEditScreen> {
               ],
             ),
           if (widget.routineId != null) ...[
-            const SizedBox(height: 24),
+            const SizedBox(height: space6),
             AppButton(
               label: 'Delete routine',
               variant: AppButtonVariant.danger,

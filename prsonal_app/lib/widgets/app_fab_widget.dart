@@ -35,7 +35,7 @@ class AppFab extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(icon, color: colors.onAccent, size: 20),
-                const SizedBox(width: 8),
+                const SizedBox(width: space2),
                 Text(
                   label!,
                   style: TextStyle(

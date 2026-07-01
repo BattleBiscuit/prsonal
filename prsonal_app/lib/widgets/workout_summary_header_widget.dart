@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:prsonal_app/theme/app_colors.dart';
+import 'package:prsonal_app/theme/app_spacing.dart';
 
 class WorkoutSummaryHeader extends StatelessWidget {
   const WorkoutSummaryHeader({
@@ -27,7 +28,7 @@ class WorkoutSummaryHeader extends StatelessWidget {
           dateTimeLabel,
           style: TextStyle(color: colors.text2, fontSize: 13),
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: space1),
         Text(
           routineName,
           style: TextStyle(
@@ -36,7 +37,7 @@ class WorkoutSummaryHeader extends StatelessWidget {
             fontWeight: FontWeight.w700,
           ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: space4),
         Row(
           children: [
             Expanded(
@@ -90,7 +91,7 @@ class _StatTile extends StatelessWidget {
             fontWeight: FontWeight.w600,
           ),
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: space1),
         Text(
           value,
           style: TextStyle(

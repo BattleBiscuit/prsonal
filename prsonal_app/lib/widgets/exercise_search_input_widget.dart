@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:prsonal_app/models/exercise.dart';
 import 'package:prsonal_app/theme/app_colors.dart';
+import 'package:prsonal_app/theme/app_spacing.dart';
 
 @immutable
 class ExerciseOption {
@@ -37,7 +38,7 @@ class ExerciseSearchInput extends StatelessWidget {
     return GestureDetector(
       onTap: () => _openSheet(context),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+        padding: const EdgeInsets.symmetric(horizontal: space3, vertical: 14),
         decoration: BoxDecoration(
           color: colors.surface2,
           borderRadius: BorderRadius.zero,
@@ -117,7 +118,7 @@ class _ExerciseSearchSheetState extends State<_ExerciseSearchSheet> {
       builder: (context, scrollController) => Column(
         children: [
           Padding(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(space3),
             child: TextField(
               autofocus: true,
               decoration: InputDecoration(

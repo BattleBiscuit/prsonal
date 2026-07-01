@@ -7,6 +7,7 @@ import '../theme/app_colors.dart';
 import '../widgets/app_skeleton_widget.dart';
 import '../widgets/fade_rise_in_widget.dart';
 import '../widgets/pr_row_widget.dart';
+import 'package:prsonal_app/theme/app_spacing.dart';
 
 class AllPrsScreen extends ConsumerWidget {
   const AllPrsScreen({super.key});
@@ -65,7 +66,7 @@ class _AllPrsSkeleton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: space4, vertical: 12),
       children: List.generate(
         6,
         (_) => const Padding(

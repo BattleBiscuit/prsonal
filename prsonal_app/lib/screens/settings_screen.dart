@@ -5,6 +5,7 @@ import '../providers/app_providers.dart';
 import '../services/backup_service.dart';
 import '../theme/app_colors.dart';
 import '../widgets/settings_row_widget.dart';
+import 'package:prsonal_app/theme/app_spacing.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -30,6 +31,7 @@ class SettingsScreen extends ConsumerWidget {
             trailing: Icon(Icons.upload_outlined, color: colors.text3),
             onTap: () => _runExport(context, ref),
           ),
+          const Divider(),
           SettingsRow(
             title: 'Import backup',
             subtitle: 'Restore from a backup file',
@@ -38,7 +40,7 @@ class SettingsScreen extends ConsumerWidget {
           ),
           const Divider(),
           Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(space4),
             child: Text(
               version,
               style: TextStyle(color: colors.text3, fontSize: 13),
@@ -123,7 +125,7 @@ class _SectionSheetState extends State<_SectionSheet> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(space4),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -132,7 +134,7 @@ class _SectionSheetState extends State<_SectionSheet> {
             widget.title,
             style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: space4),
           ...BackupSection.values.map(
             (section) => CheckboxListTile(
               title: Text(section.name),
@@ -146,14 +148,14 @@ class _SectionSheetState extends State<_SectionSheet> {
               }),
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: space4),
           ElevatedButton(
             onPressed: _selected.isEmpty
                 ? null
                 : () => Navigator.of(context).pop(_selected),
             child: Text(widget.confirmLabel),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: space4),
         ],
       ),
     );

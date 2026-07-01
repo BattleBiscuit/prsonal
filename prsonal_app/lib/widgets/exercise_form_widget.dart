@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:prsonal_app/models/exercise.dart';
 import 'package:prsonal_app/theme/app_colors.dart';
 import 'package:prsonal_app/widgets/exercise_search_input_widget.dart';
+import 'package:prsonal_app/theme/app_spacing.dart';
 
 class SetFormData {
   SetFormData({this.reps = 0, this.weight = 0, this.isBodyweight = false});
@@ -122,7 +123,7 @@ class _ExerciseFormState extends State<ExerciseForm> {
               style: TextStyle(color: colors.danger, fontSize: 12),
             ),
           ),
-        const SizedBox(height: 12),
+        const SizedBox(height: space3),
         ..._sets.asMap().entries.map((entry) {
           final i = entry.key;
           final set = entry.value;
@@ -145,7 +146,7 @@ class _ExerciseFormState extends State<ExerciseForm> {
             color: colors.accent,
           ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: space4),
         Row(
           children: [
             Expanded(
@@ -154,7 +155,7 @@ class _ExerciseFormState extends State<ExerciseForm> {
                 child: const Text('Cancel'),
               ),
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: space3),
             Expanded(
               child: ElevatedButton(
                 onPressed: _submit,
@@ -193,7 +194,10 @@ class _SetRow extends StatelessWidget {
           GestureDetector(
             onTap: onToggleBw,
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              padding: const EdgeInsets.symmetric(
+                horizontal: space2,
+                vertical: 4,
+              ),
               decoration: BoxDecoration(
                 color: set.isBodyweight ? colors.accent : colors.surface2,
                 borderRadius: BorderRadius.zero,
@@ -208,7 +212,7 @@ class _SetRow extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: space3),
           Expanded(
             child: TextField(
               keyboardType: TextInputType.number,
@@ -217,14 +221,14 @@ class _SetRow extends StatelessWidget {
                 hintStyle: TextStyle(color: colors.text3),
                 isDense: true,
                 contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 8,
-                  vertical: 8,
+                  horizontal: space2,
+                  vertical: space2,
                 ),
               ),
               style: TextStyle(color: colors.text1),
             ),
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: space2),
           Expanded(
             child: TextField(
               keyboardType: TextInputType.number,
@@ -233,8 +237,8 @@ class _SetRow extends StatelessWidget {
                 hintStyle: TextStyle(color: colors.text3),
                 isDense: true,
                 contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 8,
-                  vertical: 8,
+                  horizontal: space2,
+                  vertical: space2,
                 ),
               ),
               style: TextStyle(color: colors.text1),

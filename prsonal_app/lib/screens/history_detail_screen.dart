@@ -7,6 +7,7 @@ import '../theme/app_colors.dart';
 import '../widgets/app_skeleton_widget.dart';
 import '../widgets/history_set_table_widget.dart';
 import '../widgets/workout_summary_header_widget.dart';
+import 'package:prsonal_app/theme/app_spacing.dart';
 
 class HistoryDetailScreen extends ConsumerStatefulWidget {
   const HistoryDetailScreen({super.key, required this.sessionId});
@@ -143,7 +144,7 @@ class _HistoryDetailScreenState extends ConsumerState<HistoryDetailScreen> {
         ],
       ),
       body: ListView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(space4),
         children: [
           WorkoutSummaryHeader(
             routineName: detail.routineName,
@@ -152,10 +153,10 @@ class _HistoryDetailScreenState extends ConsumerState<HistoryDetailScreen> {
             volumeLabel: volumeLabel,
             statusLabel: statusLabel,
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: space4),
           if (detail.prNames.isNotEmpty) ...[
             Container(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.all(space3),
               decoration: BoxDecoration(
                 color: colors.accent.withValues(alpha: 0.06),
                 borderRadius: BorderRadius.zero,
@@ -174,10 +175,10 @@ class _HistoryDetailScreenState extends ConsumerState<HistoryDetailScreen> {
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: space1),
                   ...detail.prNames.map(
                     (name) => Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 2),
+                      padding: const EdgeInsets.symmetric(vertical: 4),
                       child: Text(
                         name,
                         style: TextStyle(color: colors.text1, fontSize: 14),
@@ -187,7 +188,7 @@ class _HistoryDetailScreenState extends ConsumerState<HistoryDetailScreen> {
                 ],
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: space4),
           ],
           for (final ex in detail.exercises) ...[
             _editing
@@ -197,7 +198,7 @@ class _HistoryDetailScreenState extends ConsumerState<HistoryDetailScreen> {
                     rows: ex.sets,
                     editing: false,
                   ),
-            const SizedBox(height: 16),
+            const SizedBox(height: space4),
           ],
         ],
       ),
@@ -234,7 +235,7 @@ class _HistoryDetailScreenState extends ConsumerState<HistoryDetailScreen> {
       child: Row(
         children: [
           SizedBox(
-            width: 28,
+            width: 32,
             child: Text(
               '${s.setIndex + 1}',
               style: TextStyle(color: colors.text3, fontSize: 13),
@@ -250,7 +251,7 @@ class _HistoryDetailScreenState extends ConsumerState<HistoryDetailScreen> {
               ),
             ),
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: space2),
           Expanded(
             child: TextField(
               controller: weightC,
@@ -272,16 +273,16 @@ class _HistoryDetailSkeleton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: EdgeInsets.symmetric(horizontal: space4, vertical: 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           AppSkeleton(height: 72),
-          SizedBox(height: 16),
+          SizedBox(height: space4),
           AppSkeleton(height: 48),
-          SizedBox(height: 8),
+          SizedBox(height: space2),
           AppSkeleton(height: 48),
-          SizedBox(height: 8),
+          SizedBox(height: space2),
           AppSkeleton(height: 48),
         ],
       ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:prsonal_app/theme/app_colors.dart';
 import 'package:prsonal_app/theme/app_typography.dart';
 import 'package:prsonal_app/widgets/live_dot_widget.dart';
+import 'package:prsonal_app/theme/app_spacing.dart';
 
 class SessionHeader extends StatelessWidget {
   const SessionHeader({
@@ -44,13 +45,13 @@ class SessionHeader extends StatelessWidget {
             child: GestureDetector(
               onTap: onQuit,
               child: Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(space2),
                 child: Icon(Icons.close, color: colors.danger, size: 22),
               ),
             ),
           ),
         ),
-        const SizedBox(width: 8),
+        const SizedBox(width: space2),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -82,7 +83,7 @@ class SessionHeader extends StatelessWidget {
             ],
           ),
         ),
-        const SizedBox(width: 8),
+        const SizedBox(width: space2),
         Tooltip(
           message: 'Finish workout',
           child: Semantics(
@@ -91,7 +92,7 @@ class SessionHeader extends StatelessWidget {
             child: GestureDetector(
               onTap: onFinish,
               child: Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(space2),
                 child: Icon(Icons.check, color: colors.accent, size: 22),
               ),
             ),

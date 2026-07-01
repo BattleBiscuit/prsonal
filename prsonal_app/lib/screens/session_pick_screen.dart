@@ -8,6 +8,7 @@ import '../theme/app_colors.dart';
 import '../widgets/app_fab_widget.dart';
 import '../widgets/fade_rise_in_widget.dart';
 import '../widgets/plan_entry_row_widget.dart';
+import 'package:prsonal_app/theme/app_spacing.dart';
 
 class SessionPickScreen extends ConsumerWidget {
   const SessionPickScreen({super.key});
@@ -52,52 +53,98 @@ class SessionPickScreen extends ConsumerWidget {
       backgroundColor: colors.bg,
       appBar: AppBar(title: const BrandTitle('Workout')),
       body: SafeArea(
-        child: isEmpty
-            ? Center(
-                child: Text(
-                  'Nothing here yet',
-                  style: TextStyle(color: colors.text2, fontSize: 16),
-                ),
-              )
-            : ListView(
-                padding: const EdgeInsets.all(16),
-                children: [
-                  for (final plan in plans) ...[
-                    FadeRiseIn(child: _PlanBlock(plan: plan)),
-                    const SizedBox(height: 16),
-                  ],
-                  if (unplanned.isNotEmpty) ...[
-                    Text(
-                      'Unplanned',
-                      style: TextStyle(
-                        color: colors.text1,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                      ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            if (ref.watch(sessionEngineProvider) != null)
+              GestureDetector(
+                onTap: () => context.goNamed('session-active'),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: colors.accent.withValues(alpha: 0.08),
+                    border: Border.all(
+                      color: colors.accent.withValues(alpha: 0.20),
+                      width: 1,
                     ),
-                    const SizedBox(height: 8),
-                    for (final r in unplanned)
-                      FadeRiseIn(
-                        child: PlanEntryRow(
-                          dayLabel: '',
-                          routineName: r.name,
-                          done: false,
-                          onOpen: () => context.goNamed(
-                            'routine-edit',
-                            pathParameters: {'id': r.id},
-                          ),
-                          onStart: () {
-                            context.goNamed('session-active');
-                            ref
-                                .read(sessionEngineProvider.notifier)
-                                .startSession(routineId: r.id)
-                                .catchError((_) {});
-                          },
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: space4,
+                    vertical: 10,
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.fitness_center_outlined,
+                        color: colors.accent,
+                        size: 16,
+                      ),
+                      const SizedBox(width: space2),
+                      Text(
+                        'Workout in progress',
+                        style: TextStyle(
+                          color: colors.accent,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
-                  ],
-                ],
+                      const Spacer(),
+                      Icon(Icons.arrow_forward, color: colors.accent, size: 16),
+                    ],
+                  ),
+                ),
               ),
+            Expanded(
+              child: isEmpty
+                  ? Center(
+                      child: Text(
+                        'Nothing here yet',
+                        style: TextStyle(color: colors.text2, fontSize: 16),
+                      ),
+                    )
+                  : ListView(
+                      padding: const EdgeInsets.all(space4),
+                      children: [
+                        for (final plan in plans) ...[
+                          FadeRiseIn(child: _PlanBlock(plan: plan)),
+                          const SizedBox(height: space4),
+                        ],
+                        if (unplanned.isNotEmpty) ...[
+                          Text(
+                            'Unplanned',
+                            style: TextStyle(
+                              color: colors.text1,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(height: space2),
+                          for (int i = 0; i < unplanned.length; i++) ...[
+                            if (i > 0) const Divider(),
+                            FadeRiseIn(
+                              child: PlanEntryRow(
+                                dayLabel: '',
+                                routineName: unplanned[i].name,
+                                done: false,
+                                onOpen: () => context.goNamed(
+                                  'routine-edit',
+                                  pathParameters: {'id': unplanned[i].id},
+                                ),
+                                onStart: () {
+                                  context.goNamed('session-active');
+                                  ref
+                                      .read(sessionEngineProvider.notifier)
+                                      .startSession(routineId: unplanned[i].id)
+                                      .catchError((_) {});
+                                },
+                              ),
+                            ),
+                          ],
+                        ],
+                      ],
+                    ),
+            ),
+          ],
+        ),
       ),
       floatingActionButton: AppFab(
         icon: Icons.add,
@@ -118,7 +165,7 @@ class _PlanBlock extends ConsumerWidget {
     final colors = Theme.of(context).extension<AppColors>() ?? AppColors.dark;
 
     return Padding(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(space4),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -135,7 +182,7 @@ class _PlanBlock extends ConsumerWidget {
                 ),
               ),
               if (plan.streak > 0) ...[
-                const SizedBox(width: 8),
+                const SizedBox(width: space2),
                 Text(
                   '${plan.streak}',
                   style: TextStyle(
@@ -150,7 +197,7 @@ class _PlanBlock extends ConsumerWidget {
                   size: 18,
                 ),
               ],
-              const SizedBox(width: 8),
+              const SizedBox(width: space2),
               Tooltip(
                 message: 'Edit plan',
                 child: Semantics(
@@ -171,15 +218,16 @@ class _PlanBlock extends ConsumerWidget {
               ),
             ],
           ),
-          const SizedBox(height: 8),
-          for (final entry in plan.entries)
+          const SizedBox(height: space2),
+          for (int i = 0; i < plan.entries.length; i++) ...[
+            if (i > 0) const Divider(),
             PlanEntryRow(
-              dayLabel: entry.dayLabel ?? '',
-              routineName: entry.routineName,
-              done: entry.doneThisWeek,
+              dayLabel: plan.entries[i].dayLabel ?? '',
+              routineName: plan.entries[i].routineName,
+              done: plan.entries[i].doneThisWeek,
               onOpen: () => context.goNamed(
                 'routine-edit',
-                pathParameters: {'id': entry.routineId},
+                pathParameters: {'id': plan.entries[i].routineId},
               ),
               onStart: () {
                 // Navigate first so the active-session screen starts building
@@ -188,13 +236,14 @@ class _PlanBlock extends ConsumerWidget {
                 ref
                     .read(sessionEngineProvider.notifier)
                     .startSession(
-                      routineId: entry.routineId,
+                      routineId: plan.entries[i].routineId,
                       planId: plan.id,
-                      planEntryId: entry.entryId,
+                      planEntryId: plan.entries[i].entryId,
                     )
                     .catchError((_) {});
               },
             ),
+          ],
         ],
       ),
     );

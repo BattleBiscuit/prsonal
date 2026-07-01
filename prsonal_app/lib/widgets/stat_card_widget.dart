@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:prsonal_app/theme/app_colors.dart';
 import 'package:prsonal_app/theme/app_typography.dart';
+import 'package:prsonal_app/theme/app_spacing.dart';
 
 enum StatTone { neutral, success, danger, warning }
 
@@ -32,7 +33,7 @@ class StatCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (icon != null) Icon(icon, color: toneColor, size: 16),
-          if (icon != null) const SizedBox(height: 4),
+          if (icon != null) const SizedBox(height: space1),
           Text(
             value,
             style: monoNumerals(
@@ -43,7 +44,7 @@ class StatCard extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: 2),
+          const SizedBox(height: space1),
           Text(
             label,
             style: TextStyle(

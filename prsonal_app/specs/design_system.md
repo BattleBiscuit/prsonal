@@ -314,8 +314,8 @@ Readouts: set tables, history values, metric tiles, logs, the version line.
 ### Tier 3 — State-proposing ("live / active focus")
 The single element commanding immediate attention right now (the current active set mid-workout,
 a live readout). One per context.
-- **Live "you are here" row (primary)**: the active element — the current set mid-workout, the
-  active nav tab, today's plan row — is marked by a **faint `accent @ 0.06` tint with a 2px
+- **Live "you are here" row (primary)**: the active element — the current set mid-workout or the
+  active nav tab — is marked by a **faint `accent @ 0.06` tint with a 2px
   `accent` left rail** and light (`text1`) content. It reads as the live focus without glaring.
   Interactive controls inside it (inputs, the complete checkbox) carry a **thicker 2px `accent @
   0.30` contour** — a firm dim-grey edge for high-glare gyms, never a bright white outline.

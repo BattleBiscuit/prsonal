@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:prsonal_app/theme/app_colors.dart';
+import 'package:prsonal_app/theme/app_spacing.dart';
 
 // Token shortcuts (kept local so the ColorScheme/component themes read cleanly).
 const _bg = Color(0xFF0F0F0F);
@@ -132,11 +133,7 @@ final ThemeData appTheme = ThemeData(
 
   // List rows are flat (no card chrome); a 1px hairline in the border token
   // (#2E2E2E) separates them. A bare `Divider()` picks this up everywhere.
-  dividerTheme: const DividerThemeData(
-    color: _surface3,
-    thickness: 1,
-    space: 1,
-  ),
+  dividerTheme: const DividerThemeData(color: _border, thickness: 1, space: 1),
 
   appBarTheme: const AppBarTheme(
     backgroundColor: _bg,
@@ -172,7 +169,10 @@ final ThemeData appTheme = ThemeData(
     filled: true,
     fillColor: _surface2,
     hintStyle: const TextStyle(color: _text3),
-    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+    contentPadding: const EdgeInsets.symmetric(
+      horizontal: space4,
+      vertical: 14,
+    ),
     border: OutlineInputBorder(
       borderRadius: BorderRadius.zero,
       borderSide: const BorderSide(color: _border, width: 1),

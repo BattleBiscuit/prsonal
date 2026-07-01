@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:prsonal_app/theme/app_colors.dart';
+import 'package:prsonal_app/theme/app_spacing.dart';
 
 class PlanEntryRow extends StatelessWidget {
   const PlanEntryRow({
@@ -26,7 +27,7 @@ class PlanEntryRow extends StatelessWidget {
     final colors = Theme.of(context).extension<AppColors>() ?? AppColors.dark;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+      padding: const EdgeInsets.symmetric(vertical: space2, horizontal: 4),
       child: Row(
         children: [
           SizedBox(
@@ -40,7 +41,7 @@ class PlanEntryRow extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: space3),
           Expanded(
             child: Semantics(
               label: 'Edit $routineName',
@@ -85,7 +86,7 @@ class PlanEntryRow extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: space2),
           ],
           Semantics(
             label: 'Start $routineName',
@@ -100,8 +101,8 @@ class PlanEntryRow extends StatelessWidget {
                   opacity: startDisabled ? 0.4 : 1.0,
                   child: Container(
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 14,
-                      vertical: 8,
+                      horizontal: space4,
+                      vertical: space2,
                     ),
                     decoration: BoxDecoration(
                       color: done ? colors.surface2 : colors.accent,
@@ -115,7 +116,7 @@ class PlanEntryRow extends StatelessWidget {
                           color: done ? colors.text2 : colors.onAccent,
                           size: 18,
                         ),
-                        const SizedBox(width: 4),
+                        const SizedBox(width: space1),
                         Text(
                           'Start',
                           style: TextStyle(

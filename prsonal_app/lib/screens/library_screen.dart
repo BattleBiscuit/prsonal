@@ -10,6 +10,7 @@ import '../widgets/app_skeleton_widget.dart';
 import '../widgets/fade_rise_in_widget.dart';
 import '../widgets/library_exercise_card_widget.dart';
 import '../widgets/library_exercise_form_widget.dart';
+import 'package:prsonal_app/theme/app_spacing.dart';
 
 class LibraryScreen extends ConsumerStatefulWidget {
   const LibraryScreen({super.key});
@@ -97,7 +98,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
       body: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(space4),
             child: TextField(
               decoration: InputDecoration(
                 hintText: 'Search',
@@ -181,7 +182,7 @@ class _LibrarySkeleton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: space4, vertical: 12),
       children: List.generate(
         6,
         (_) => const Padding(

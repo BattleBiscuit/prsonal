@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:prsonal_app/models/exercise.dart';
 import 'package:prsonal_app/theme/app_colors.dart';
+import 'package:prsonal_app/theme/app_spacing.dart';
 
 class LibraryExerciseCard extends StatelessWidget {
   const LibraryExerciseCard({
@@ -26,7 +27,7 @@ class LibraryExerciseCard extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        padding: const EdgeInsets.symmetric(horizontal: space4, vertical: 14),
         child: Row(
           children: [
             Expanded(
@@ -41,7 +42,7 @@ class LibraryExerciseCard extends StatelessWidget {
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: space1),
                   Row(
                     children: [
                       Container(
@@ -62,7 +63,7 @@ class LibraryExerciseCard extends StatelessWidget {
                           ),
                         ),
                       ),
-                      const SizedBox(width: 8),
+                      const SizedBox(width: space2),
                       Text(
                         musclesLabel,
                         style: TextStyle(color: colors.text2, fontSize: 12),
@@ -70,7 +71,7 @@ class LibraryExerciseCard extends StatelessWidget {
                     ],
                   ),
                   if (prLabel != null) ...[
-                    const SizedBox(height: 4),
+                    const SizedBox(height: space1),
                     Text(
                       prLabel!,
                       style: TextStyle(

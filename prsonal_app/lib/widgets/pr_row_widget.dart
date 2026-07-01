@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:prsonal_app/theme/app_colors.dart';
 import 'package:prsonal_app/theme/app_typography.dart';
+import 'package:prsonal_app/theme/app_spacing.dart';
 
 /// PR row — ported from gym-app's PR list rows. When [celebrate] is set (a
 /// PR that was *just* set), it plays the one-shot "PR moment" motion from
@@ -84,7 +85,7 @@ class _PrRowState extends State<PrRow> with SingleTickerProviderStateMixin {
     );
 
     Widget content = Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: space4, vertical: 12),
       child: Row(
         children: [
           Expanded(
@@ -132,6 +133,10 @@ class _PrRowState extends State<PrRow> with SingleTickerProviderStateMixin {
               ),
             ],
           ),
+          if (widget.onTap != null) ...[
+            const SizedBox(width: space2),
+            Icon(Icons.chevron_right_outlined, color: colors.text2),
+          ],
         ],
       ),
     );

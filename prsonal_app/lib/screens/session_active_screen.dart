@@ -12,6 +12,7 @@ import '../widgets/session_header_widget.dart';
 import '../widgets/session_progress_bar_widget.dart';
 import '../widgets/set_row_widget.dart';
 import '../providers/app_providers.dart';
+import 'package:prsonal_app/theme/app_spacing.dart';
 
 class SessionActiveScreen extends ConsumerStatefulWidget {
   const SessionActiveScreen({super.key});
@@ -121,7 +122,7 @@ class _SessionActiveScreenState extends ConsumerState<SessionActiveScreen> {
               'Add Exercise',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: space4),
             ExerciseForm(
               exercises: options,
               onSubmit: (data) async {
@@ -174,7 +175,10 @@ class _SessionActiveScreenState extends ConsumerState<SessionActiveScreen> {
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              padding: const EdgeInsets.symmetric(
+                horizontal: space4,
+                vertical: 8,
+              ),
               child: SessionHeader(
                 routineName: state.session.routineName,
                 elapsed: state.elapsed,
@@ -185,7 +189,7 @@ class _SessionActiveScreenState extends ConsumerState<SessionActiveScreen> {
             SessionProgressBar(progress: state.progress),
             Expanded(
               child: ListView.builder(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(space4),
                 itemCount: state.exercises.length + 1,
                 itemBuilder: (context, i) {
                   if (i == state.exercises.length) {
@@ -281,10 +285,13 @@ class _SessionActiveScreenState extends ConsumerState<SessionActiveScreen> {
             ),
             // Bottom action button
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              padding: const EdgeInsets.symmetric(
+                horizontal: space4,
+                vertical: 12,
+              ),
               child: SizedBox(
                 width: double.infinity,
-                height: 52,
+                height: touchTargetMin,
                 child: ElevatedButton(
                   onPressed: () async {
                     if (isResting) {
@@ -323,18 +330,18 @@ class _SessionActiveSkeleton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: EdgeInsets.symmetric(horizontal: space4, vertical: 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           AppSkeleton(height: 48),
-          SizedBox(height: 16),
+          SizedBox(height: space4),
           AppSkeleton(height: 6),
-          SizedBox(height: 16),
+          SizedBox(height: space4),
           AppSkeleton(height: 64),
-          SizedBox(height: 8),
+          SizedBox(height: space2),
           AppSkeleton(height: 64),
-          SizedBox(height: 8),
+          SizedBox(height: space2),
           AppSkeleton(height: 64),
         ],
       ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:prsonal_app/theme/app_colors.dart';
+import 'package:prsonal_app/theme/app_spacing.dart';
 
 class SettingsRow extends StatelessWidget {
   const SettingsRow({
@@ -21,7 +22,7 @@ class SettingsRow extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        padding: const EdgeInsets.symmetric(horizontal: space4, vertical: 16),
         child: Row(
           children: [
             Expanded(
@@ -37,7 +38,7 @@ class SettingsRow extends StatelessWidget {
                     ),
                   ),
                   if (subtitle != null) ...[
-                    const SizedBox(height: 2),
+                    const SizedBox(height: space1),
                     Text(
                       subtitle!,
                       style: TextStyle(color: colors.text2, fontSize: 13),

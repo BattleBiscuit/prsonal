@@ -35,4 +35,23 @@ void main() {
       expect(outlinedFg, isNot(accent));
     });
   });
+
+  group('Input contours (design_system.md "High-glare input contours")', () {
+    const border = Color(0xFF2E2E2E); // AppColors.dark.border
+
+    test('Unfocused inputs render the border-token baseline, not none', () {
+      final enabledBorder =
+          appTheme.inputDecorationTheme.enabledBorder as OutlineInputBorder;
+      expect(enabledBorder.borderSide.style, BorderStyle.solid);
+      expect(enabledBorder.borderSide.color, border);
+      expect(enabledBorder.borderSide.width, 1);
+    });
+
+    test('Focus raises the border to the 2px accent ring', () {
+      final focusedBorder =
+          appTheme.inputDecorationTheme.focusedBorder as OutlineInputBorder;
+      expect(focusedBorder.borderSide.color, accent);
+      expect(focusedBorder.borderSide.width, 2);
+    });
+  });
 }

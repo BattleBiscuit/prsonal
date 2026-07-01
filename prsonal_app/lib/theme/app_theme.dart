@@ -13,6 +13,7 @@ const _text1 = Color(0xFFF5F5F5);
 const _text2 = Color(0xFF9E9E9E);
 const _text3 = Color(0xFF616161);
 const _danger = Color(0xFFF44336);
+const _border = Color(0xFF2E2E2E);
 
 // --- Button styles -------------------------------------------------------
 // Colour is driven by intent (see design_system.md "Buttons"): the signature
@@ -165,7 +166,8 @@ final ThemeData appTheme = ThemeData(
     ),
   ),
 
-  // Inputs: surface-2 fill, no resting border, 2px accent focus, danger error.
+  // Inputs: surface-2 fill, border-token resting contour, 2px accent focus,
+  // danger error.
   inputDecorationTheme: InputDecorationTheme(
     filled: true,
     fillColor: _surface2,
@@ -173,11 +175,11 @@ final ThemeData appTheme = ThemeData(
     contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
     border: OutlineInputBorder(
       borderRadius: BorderRadius.zero,
-      borderSide: BorderSide.none,
+      borderSide: const BorderSide(color: _border, width: 1),
     ),
     enabledBorder: OutlineInputBorder(
       borderRadius: BorderRadius.zero,
-      borderSide: BorderSide.none,
+      borderSide: const BorderSide(color: _border, width: 1),
     ),
     focusedBorder: OutlineInputBorder(
       borderRadius: BorderRadius.zero,

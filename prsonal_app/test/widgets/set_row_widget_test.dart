@@ -232,5 +232,99 @@ void main() {
         expect(find.text('±kg'), findsOneWidget);
       },
     );
+
+    group(
+      'Mono tabular numerals (design_system.md tenet #3 "Data stability")',
+      () {
+        Matcher isMono() => isA<TextStyle>()
+            .having((s) => s.fontFamily, 'fontFamily', 'monospace')
+            .having(
+              (s) => s.fontFeatures,
+              'fontFeatures',
+              contains(const FontFeature.tabularFigures()),
+            );
+
+        testWidgets('Upcoming set index renders mono', (tester) async {
+          await tester.pumpWidget(
+            _wrap(
+              const SetRow(
+                index: 2,
+                kind: ExerciseType.strength,
+                status: ActiveSetStatus.upcoming,
+                plannedLabel: '8×82.5kg',
+              ),
+            ),
+          );
+          expect(tester.widget<Text>(find.text('3')).style, isMono());
+        });
+
+        testWidgets('Active set index renders mono', (tester) async {
+          await tester.pumpWidget(
+            _wrap(
+              SetRow(
+                index: 0,
+                kind: ExerciseType.strength,
+                status: ActiveSetStatus.active,
+                plannedLabel: '8×82.5kg',
+                onToggleComplete: () {},
+              ),
+            ),
+          );
+          expect(tester.widget<Text>(find.text('1')).style, isMono());
+        });
+
+        testWidgets('Completed set index renders mono', (tester) async {
+          await tester.pumpWidget(
+            _wrap(
+              const SetRow(
+                index: 0,
+                kind: ExerciseType.strength,
+                status: ActiveSetStatus.completed,
+                plannedLabel: '8×80kg',
+                actualLabel: '8×82.5kg',
+              ),
+            ),
+          );
+          expect(tester.widget<Text>(find.text('1')).style, isMono());
+        });
+
+        testWidgets('Skipped set index renders mono', (tester) async {
+          await tester.pumpWidget(
+            _wrap(
+              const SetRow(
+                index: 0,
+                kind: ExerciseType.strength,
+                status: ActiveSetStatus.skipped,
+                plannedLabel: '8×80kg',
+              ),
+            ),
+          );
+          expect(tester.widget<Text>(find.text('1')).style, isMono());
+        });
+
+        testWidgets(
+          'Active set live weight/reps input fields render mono',
+          (tester) async {
+            await tester.pumpWidget(
+              _wrap(
+                SetRow(
+                  index: 0,
+                  kind: ExerciseType.strength,
+                  status: ActiveSetStatus.active,
+                  plannedLabel: '8×82.5kg',
+                  onToggleComplete: () {},
+                ),
+              ),
+            );
+            final fields = tester.widgetList<TextField>(
+              find.byType(TextField),
+            );
+            for (final field in fields) {
+              expect(field.style, isMono());
+            }
+          },
+        );
+      },
+    );
   });
 }

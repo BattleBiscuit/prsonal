@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:prsonal_app/theme/app_colors.dart';
 import 'package:prsonal_app/widgets/session_header_widget.dart';
 
 Widget _wrap(Widget child) => MaterialApp(home: Scaffold(body: child));
@@ -34,6 +35,27 @@ void main() {
           ),
         );
         expect(find.text('12:31'), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      'Elapsed time renders in text-3 mono tabular numerals (design_system.md '
+      'tenet #3 "Data stability"; specs/widgets/session_header.md:27)',
+      (tester) async {
+        await tester.pumpWidget(
+          _wrap(
+            SessionHeader(
+              routineName: 'Push Day A',
+              elapsed: const Duration(minutes: 12, seconds: 31),
+              onQuit: () {},
+              onFinish: () {},
+            ),
+          ),
+        );
+        final elapsed = tester.widget<Text>(find.text('12:31'));
+        expect(elapsed.style!.fontFamily, 'monospace');
+        expect(elapsed.style!.fontFeatures, contains(FontFeature.tabularFigures()));
+        expect(elapsed.style!.color, AppColors.dark.text3);
       },
     );
 

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:prsonal_app/theme/app_colors.dart';
+import 'package:prsonal_app/theme/app_typography.dart';
+import 'package:prsonal_app/widgets/live_dot_widget.dart';
 
 class SessionHeader extends StatelessWidget {
   const SessionHeader({
@@ -64,9 +66,18 @@ class SessionHeader extends StatelessWidget {
                 textAlign: TextAlign.center,
                 overflow: TextOverflow.ellipsis,
               ),
-              Text(
-                _formatElapsed(elapsed),
-                style: TextStyle(color: colors.text2, fontSize: 13),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const LiveDot(),
+                  const SizedBox(width: 6),
+                  Text(
+                    _formatElapsed(elapsed),
+                    style: monoNumerals(
+                      TextStyle(color: colors.text3, fontSize: 13),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),

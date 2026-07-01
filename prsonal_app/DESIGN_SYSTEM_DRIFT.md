@@ -12,13 +12,15 @@ impact or narrow scope · **Low** = grid/token-hygiene nits.
 
 ## Critical
 
-1. **Unfocused input border missing** — `lib/theme/app_theme.dart:178-181`. `enabledBorder` is
+1. **[DONE] Unfocused input border missing** — `lib/theme/app_theme.dart:178-181`. `enabledBorder` is
    `BorderSide.none`. Spec ("High-glare input contours", a *hard rule*): "an un-focused field
    always renders its `border` baseline... Focus then raises it to the 2px `accent` ring."
    Currently unfocused inputs show no contour at all, only the `surface2` fill. Fix:
-   `BorderSide(color: _border, width: 1)`.
+   `BorderSide(color: _border, width: 1)`. **Fixed** — added a local `_border` token
+   (`#2E2E2E`, matching `AppColors.dark.border`) to `app_theme.dart` and applied it to both
+   `border` and `enabledBorder`; covered by a new test in `test/theme/app_theme_test.dart`.
 
-2. **Mono/tabular numerals unimplemented app-wide** — grep for `monospace`/`FontFeature`/
+2. **[DONE] Mono/tabular numerals unimplemented app-wide** — grep for `monospace`/`FontFeature`/
    `tabularFigures` across `lib/` returns zero hits. Spec tenet #3 ("Data stability"): "Every
    metric, counter, stopwatch, and tracking number uses mono tabular numerals." Affected:
    - `lib/widgets/session_header_widget.dart:64-67` — elapsed timer. Double violation: the
@@ -33,66 +35,165 @@ impact or narrow scope · **Low** = grid/token-hygiene nits.
    - `lib/widgets/volume_chart_widget.dart:56-63` — axis labels; spec explicitly says "mono
      tabular axis."
 
-3. **Motion & life is almost entirely unimplemented** — `lib/theme/app_motion.dart` defines
+   **Fixed** — added a shared `monoNumerals(TextStyle)` helper (`lib/theme/app_typography.dart`,
+   `fontFamily: 'monospace'` + `FontFeature.tabularFigures()`) and applied it at every cited call
+   site, plus the `history_set_table_widget.dart` editable-actual-value `TextField` (same category,
+   not separately line-cited in the original audit). `session_header_widget.dart`'s elapsed text
+   also moved from `text2` to `text3` to match `specs/widgets/session_header.md:27`. Covered by new
+   tests in each corresponding `test/widgets/*_widget_test.dart`.
+
+3. **[DONE] Motion & life is almost entirely unimplemented** — `lib/theme/app_motion.dart` defines
    `AppDurations.fast/normal/slow` (120/200/400ms) matching spec exactly, but `grep -rln
    "AppDurations" lib/` finds no other reference anywhere — the token file is dead code.
    - **Live dot breathing pulse** (the spec's "signature" motion) — missing entirely. No
      `AnimationController` exists anywhere in `lib/`. `session_header_widget.dart` has no dot
      indicator at all.
+     **Fixed** — new `LiveDot` widget (`lib/widgets/live_dot_widget.dart`, spec
+     `specs/widgets/live_dot.md`): a 1.6s opacity/scale breathing loop, wired into
+     `session_header_widget.dart` next to the elapsed time. Respects
+     `MediaQuery.disableAnimations` (stops the ticker itself, not just the visual effect — needed
+     so `pumpAndSettle` in widget tests terminates; see the `session_active_screen_test.dart` note
+     below).
    - **Progress bar fill (400ms ease)** — `lib/widgets/session_progress_bar_widget.dart:14-24` is
      a `StatelessWidget` using `FractionallySizedBox` directly; the bar snaps instantly instead of
      easing.
+     **Fixed** — wrapped the fill in a `TweenAnimationBuilder` using `AppDurations.slow` (400ms,
+     `Curves.easeOut`); added AC-003 to `specs/widgets/session_progress_bar.md` and a test.
    - **On-load fade+rise (+8px, 200ms)** — missing entirely; zero `AnimatedOpacity`/
      `FadeTransition`/`SlideTransition`/`TweenAnimationBuilder` matches in `lib/`. All lists are
      plain `ListView`/`ListView.builder`.
+     **Fixed** — new `FadeRiseIn` widget (`lib/widgets/fade_rise_in_widget.dart`, spec
+     `specs/widgets/fade_rise_in.md`): fades + rises 8dp over `AppDurations.normal` once on mount,
+     skipped entirely under reduced motion. Wrapped around each list item/section in
+     `library_screen.dart`, `history_screen.dart` (per month-group), `all_prs_screen.dart`, and
+     `session_pick_screen.dart` (plan blocks + unplanned rows). Deliberately **not** applied to
+     `session_active_screen.dart`'s in-session set list — that list rebuilds on every keystroke
+     (live weight/reps editing) and is a live-editing surface, not "on load" content; fading it on
+     every rebuild would fight the user's typing rather than read as a load animation.
    - **PR number-roll + accent flash** — `lib/widgets/pr_row_widget.dart` is a static
      `StatelessWidget`; no roll/flash of any kind.
+     **Fixed the widget capability** — `PrRow` gained a `celebrate` parameter (spec
+     `specs/widgets/pr_row.md` AC-003/004) that plays a one-shot accent background flash + a
+     scale/fade "roll" pop on the weight value, once, on mount. **Not wired to a live trigger** —
+     the app has no existing "this PR was just set in this session" signal for `all_prs_screen.dart`
+     / `progress_screen.dart` to pass through as `celebrate: true`; wiring that up is a
+     service/provider-level follow-up, not a widget-level one.
    - **Skeleton loader** (surface1, opacity pulse 1→0.4→1 over 1.5s) — missing entirely; no
      shimmer/skeleton package in `pubspec.yaml`, no matches in `lib/`.
+     **Fixed** — new `AppSkeleton` widget (`lib/widgets/app_skeleton_widget.dart`, spec
+     `specs/widgets/app_skeleton.md`): `surface1` rectangle, opacity pulse 1→0.4→1 over 1.5s,
+     ticker stopped under reduced motion. Replaced the bare `CircularProgressIndicator` loading
+     states in `library_screen.dart`, `history_screen.dart`, `all_prs_screen.dart`,
+     `progress_screen.dart` (both spots), `session_active_screen.dart`, and
+     `history_detail_screen.dart` with a small composed skeleton sketch of the incoming layout.
+     (This also resolves Medium finding #24 below, which restates the same gap.)
 
-4. **Boxed-card pattern survives on the main landing screen** —
+   **Testability note**: `LiveDot`/`AppSkeleton` loop forever by design (matching the spec's
+   "alive but still" intent), which hangs `tester.pumpAndSettle()` if the animation's *ticker*
+   keeps running — not just its visual output — under `disableAnimations`. Both widgets now stop
+   the ticker itself under reduced motion. `session_active_screen_test.dart`'s shared `_pump`
+   helper sets `MediaQuery(disableAnimations: true)` around the routed screen for exactly this
+   reason (the session header's `LiveDot` is present in every one of its `pumpAndSettle` calls).
+
+4. **[DONE] Boxed-card pattern survives on the main landing screen** —
    `lib/screens/session_pick_screen.dart:114-119` (`_PlanBlock`) wraps each plan's routine list in
    `Container(color: surface1, border: Border.all(border), radius: zero)`. Spec: "List row: flat.
    No fill, no border, no radius... [boxed look] is retired here." This is the exact
    fill+border "elevated card" treatment the spec explicitly retired, applied to the app's primary
    Workout screen — the single clearest surviving instance of the old gym-app look.
 
-5. **Volume chart has no "emphasized endpoint"** — `lib/widgets/volume_chart_widget.dart:37` sets
+   **Fixed** — replaced the `Container`'s `BoxDecoration` (fill + border) with a plain `Padding`;
+   the plan name, streak, edit icon, and entry rows now sit directly on `bg`, relying on
+   typography/spacing/the existing hairline for hierarchy instead of card chrome. Added AC-011 to
+   `specs/screens/session_pick.md` and a test asserting no bordered `Container` wraps the plan
+   block; updated the spec's layout diagram to drop the box-drawing border around the plan/
+   "Unplanned" blocks.
+
+5. **[DONE] Volume chart has no "emphasized endpoint"** — `lib/widgets/volume_chart_widget.dart:37` sets
    `color: colors.accent` uniformly on every bar. Spec: "bars `accent@0.50`, **latest bar full
    accent** as the emphasized endpoint." The core visual language of this chart — highlighting the
    latest workout — is entirely absent; also no faint `surface3` baseline (`FlGridData`/
    `FlBorderData` both `show: false`, lines 45-46) and no staggered grow-on-load animation.
 
-6. **Tier‑1 interactive rows left "bare"** (no trailing chevron/action icon) — spec: "every
+   **Fixed** — bars now render `accent@0.50` except the last (latest) bar at full `accent`;
+   `FlBorderData` shows a `surface3` bottom baseline; converted the widget to a `StatefulWidget`
+   that grows each bar from 0 to its target height over `AppDurations.normal`, staggered 40ms per
+   bar index via `Interval`, skipped entirely under `MediaQuery.disableAnimations`. Also corrected
+   `specs/widgets/volume_chart.md`, which had drifted from `design_system.md` itself (it
+   documented rounded, accent-bordered bars — the pre-redesign gym-app look); added AC-003/004/005
+   and tests in `test/widgets/volume_chart_widget_test.dart`.
+
+6. **[DONE] Tier‑1 interactive rows left "bare"** (no trailing chevron/action icon) — spec: "every
    interactive row/target carries an explicit trailing glyph... No interactive row is left bare."
    - `lib/widgets/body_metric_card_widget.dart:23-64` (via `body_screen.dart:120`) — whole card is
      `InkWell`, zero trailing glyph.
+     **Fixed** — added a trailing `edit_outlined` (text2) icon; AC-005 in
+     `specs/widgets/body_metric_card.md`.
    - `lib/widgets/history_card_widget.dart:25` — only trailing icon is `delete_outline`, mapped to
      a *different* action; the row's own navigate affordance is bare.
+     **Fixed** — added a trailing `chevron_right_outlined` (text2) after the delete icon; AC-006
+     in `specs/widgets/history_card.md`.
    - `lib/widgets/library_exercise_card_widget.dart:26` — same pattern.
+     **Fixed** — same treatment; AC-007 in `specs/widgets/library_exercise_card.md`.
    - `lib/widgets/plan_entry_row_widget.dart:51-63` — bare `GestureDetector`, no icon at all.
+     **Fixed** — added a trailing `edit_outlined` (text2) next to the routine name; AC-006 in
+     `specs/widgets/plan_entry_row.md`.
    - `lib/screens/plan_edit_screen.dart:52-66` — routine-picker `ListTile`, no trailing icon.
+     **Fixed** — added `trailing: Icon(chevron_right_outlined)`; AC-008 in
+     `specs/screens/plan_edit.md`.
    - `lib/screens/session_pick_screen.dart:20-33` — "New routine"/"New plan" `ListTile`s, no icon.
+     **Fixed** — same treatment; AC-012 in `specs/screens/session_pick.md`.
    - `lib/screens/progress_screen.dart:208-222` — recent-session `ListTile`, no `trailing`.
+     **Fixed** — added `trailing: Icon(chevron_right_outlined, color: text2)`; AC-008 in
+     `specs/screens/progress.md`.
    - `lib/screens/routine_edit_screen.dart:298-312` — `trailing: Icon(drag_handle)` communicates
      "reorder," not "tap to edit" (the actual `onTap`), so the real affordance is still unmarked.
+     **Fixed** — `trailing` is now a `Row` with both a `edit_outlined` (text2) icon for the row's
+     own `onTap` and the original `drag_handle` (text3) for reordering; AC-010 in
+     `specs/screens/routine_edit.md`.
 
-7. **Forbidden button variant still exists** — `lib/widgets/app_button_widget.dart:13,40-44`.
+   All new chevrons use the outlined variant (`chevron_right_outlined`) rather than the bare
+   `chevron_right` the design-system's own canonical affordance map names — consistent with the
+   "one style: outlined" hard rule rather than repeating the pre-existing High finding #13
+   inconsistency.
+
+7. **[DONE] Forbidden button variant still exists** — `lib/widgets/app_button_widget.dart:13,40-44`.
    `AppButtonVariant.primary` (the default) renders a filled `surface2` grey box. Spec names this
    exact pattern and bans it: "grey filled boxes (**the legacy `primary` variant**) read as a false
    affirmative and are avoided." No current call site uses it, but it's a live footgun — any future
    `AppButton(...)` without an explicit `variant:` silently renders the banned look.
 
-8. **PR banner uses the wrong surface treatment** —
+   **Fixed** — removed `AppButtonVariant.primary` and its rendering branch entirely (grepped: zero
+   call sites depended on it, so there was no "legacy" to stay compatible with) and made `variant`
+   a **required** constructor parameter — there is no default left that could silently render the
+   banned look. All four existing call sites already passed an explicit `variant`, so no call-site
+   changes were needed. Updated `specs/widgets/app_button.md` and added a regression test
+   asserting `primary` is absent from `AppButtonVariant.values`.
+
+8. **[DONE] PR banner uses the wrong surface treatment** —
    `lib/screens/history_detail_screen.dart:157-161` styles the PR banner as plain `surface1` +
    `Border.all(border)`. Spec ("Depth & elevation" / "PR moment"): `accent@0.06` bg, `accent@0.20`
    hairline. This is a plain elevated card where the spec calls for the accent-tinted "live/
    important" treatment.
 
-9. **Workout-in-progress banner wrong alpha + missing border** —
+   **Fixed** — background is now `colors.accent.withValues(alpha: 0.06)` and the border
+   `colors.accent.withValues(alpha: 0.20)`; expanded AC-003 in `specs/screens/history_detail.md`
+   and its test to assert the exact treatment.
+
+9. **[DONE] Workout-in-progress banner wrong alpha + missing border** —
    `lib/widgets/app_page_shell_widget.dart:78-83`. Spec: "`accent@0.08` bg, `accent@0.20` 1px
    hairline." Code uses `accent@0.15` for the bg (matches neither documented value) and sets no
    border at all.
+
+   **Fixed** — banner now uses `decoration: BoxDecoration(color: accent@0.08, border:
+   Border.all(accent@0.20))` instead of the bare `color:` shorthand (which can't carry a border).
+   Added AC-007 to `specs/widgets/app_page_shell.md` and a test.
+
+   **Also found while fixing (not previously flagged anywhere in this report)**: the widget's own
+   approved spec additionally calls for a "pulsing accent dot" and a trailing "→" in the banner,
+   and a semantic label "Resume workout, {routineName}" on the tap target — none of which are
+   implemented. Left unfixed here since it's outside this bullet's cited scope; worth a follow-up
+   pass now that `LiveDot` (see finding 3) exists to supply the pulsing dot.
 
 10. **Brand wordmark "sonal" is the wrong colour** — spec: "brand wordmark 13/700 (`PR` in
     text-1, `sonal` in accent)." Both occurrences render `sonal` in `text2` instead:

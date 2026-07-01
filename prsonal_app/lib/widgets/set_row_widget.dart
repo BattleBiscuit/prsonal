@@ -3,6 +3,7 @@ import 'package:prsonal_app/models/exercise.dart';
 import 'package:prsonal_app/services/session_service.dart' show ActiveSetStatus;
 import 'package:prsonal_app/theme/app_colors.dart';
 import 'package:prsonal_app/theme/app_spacing.dart';
+import 'package:prsonal_app/theme/app_typography.dart';
 
 class SetRow extends StatefulWidget {
   const SetRow({
@@ -110,10 +111,12 @@ class _SetRowState extends State<SetRow> {
               width: 32,
               child: Text(
                 '${widget.index + 1}',
-                style: TextStyle(
-                  color: colors.text3,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
+                style: monoNumerals(
+                  TextStyle(
+                    color: colors.text3,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -148,10 +151,12 @@ class _SetRowState extends State<SetRow> {
             width: 32,
             child: Text(
               '${widget.index + 1}',
-              style: TextStyle(
-                color: colors.text1,
-                fontSize: 14,
-                fontWeight: FontWeight.w700,
+              style: monoNumerals(
+                TextStyle(
+                  color: colors.text1,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
               textAlign: TextAlign.center,
             ),
@@ -259,7 +264,7 @@ class _SetRowState extends State<SetRow> {
       ),
       onChanged: onChanged,
       cursorColor: colors.text1,
-      style: TextStyle(color: colors.text1, fontSize: 14),
+      style: monoNumerals(TextStyle(color: colors.text1, fontSize: 14)),
       decoration: InputDecoration(
         hintText: hint,
         hintStyle: TextStyle(color: colors.text1.withValues(alpha: 0.45)),
@@ -293,10 +298,12 @@ class _SetRowState extends State<SetRow> {
               width: 32,
               child: Text(
                 '${widget.index + 1}',
-                style: TextStyle(
-                  color: colors.text3,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
+                style: monoNumerals(
+                  TextStyle(
+                    color: colors.text3,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -340,10 +347,12 @@ class _SetRowState extends State<SetRow> {
             width: 32,
             child: Text(
               '${widget.index + 1}',
-              style: TextStyle(
-                color: colors.text3,
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
+              style: monoNumerals(
+                TextStyle(
+                  color: colors.text3,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
               textAlign: TextAlign.center,
             ),

@@ -21,3 +21,4 @@ subtitle and an optional trailing widget (icon or control). Tappable when `onTap
 - AC-001: Widget renders the title and subtitle
 - AC-002: Widget renders a trailing widget when provided
 - AC-003: Widget calls onTap when tapped and onTap is non-null
+- AC-004: Widget omits the subtitle line entirely when subtitle is null

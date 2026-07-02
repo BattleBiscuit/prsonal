@@ -216,21 +216,29 @@ void main() {
       'AC-011: A plan block renders flat — no enclosing card chrome (no bordered/filled box)',
       (tester) async {
         await _pump(tester);
-        // A boxed card would enclose the block on all four sides; the row
-        // `Divider()` between entries (a legitimate separator, not chrome)
-        // only ever draws a bottom border, so it's excluded here.
+        // Scoped to the plan block itself (by key), not the whole screen —
+        // AppPageShell's own chrome elsewhere on the page is none of this
+        // AC's concern. Within it: a boxed card would enclose the block on
+        // all four sides; the row `Divider()` between entries (a legitimate
+        // separator, not chrome) only ever draws a bottom border, so it's
+        // excluded here.
+        final planBlock = find.byKey(const ValueKey('planBlock-p1'));
+        expect(planBlock, findsOneWidget);
         expect(
-          find.byWidgetPredicate((w) {
-            if (w is! Container || w.decoration is! BoxDecoration) {
-              return false;
-            }
-            final border = (w.decoration as BoxDecoration).border;
-            return border is Border &&
-                border.top.style != BorderStyle.none &&
-                border.left.style != BorderStyle.none &&
-                border.right.style != BorderStyle.none &&
-                border.bottom.style != BorderStyle.none;
-          }),
+          find.descendant(
+            of: planBlock,
+            matching: find.byWidgetPredicate((w) {
+              if (w is! Container || w.decoration is! BoxDecoration) {
+                return false;
+              }
+              final border = (w.decoration as BoxDecoration).border;
+              return border is Border &&
+                  border.top.style != BorderStyle.none &&
+                  border.left.style != BorderStyle.none &&
+                  border.right.style != BorderStyle.none &&
+                  border.bottom.style != BorderStyle.none;
+            }),
+          ),
           findsNothing,
         );
       },

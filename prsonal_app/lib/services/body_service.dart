@@ -38,9 +38,12 @@ class BodyService {
 
   Stream<List<BodyMetric>> watchHistory(BodyMetricType? type, {int? days}) {
     if (type == null) return Stream.value([]);
-    return _db
-        .watchBodyMetrics(type)
-        .map((rows) => rows.map(_toModel).toList());
+    return _db.watchBodyMetrics(type).map((rows) {
+      final models = rows.map(_toModel).toList();
+      if (days == null) return models;
+      final cutoff = DateTime.now().subtract(Duration(days: days));
+      return models.where((m) => m.loggedAt.isAfter(cutoff)).toList();
+    });
   }
 
   // -------------------------------------------------------------------------

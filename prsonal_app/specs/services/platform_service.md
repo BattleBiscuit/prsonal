@@ -36,3 +36,7 @@ the next set 💪") that is rescheduled/cancelled rather than stacked.
 - AC-001: FakePlatformService records hapticTap, hapticPR and hapticSuccess calls
 - AC-002: scheduleRestComplete records the requested duration and cancelRestComplete clears the pending rest notification
 - AC-003: enableSessionWakelock and disableSessionWakelock toggle a recorded wakelock flag
+- AC-004: RealPlatformService's hapticTap/hapticPR/hapticSuccess invoke the platform channel with
+  the correct, distinct impact type for each (light/heavy-twice/medium)
+- AC-005: Every RealPlatformService method completes without throwing when the underlying platform
+  channel is unavailable (e.g. desktop/web/test — no haptics, notifications, or wakelock support)

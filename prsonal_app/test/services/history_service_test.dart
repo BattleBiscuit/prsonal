@@ -121,6 +121,9 @@ void main() {
         );
         await service.deleteSession(id);
         expect(() => service.getDetail(id), throwsA(isA<NotFoundException>()));
+        // The cascade, not just the parent lookup — an orphaned-row
+        // regression would still pass the assertion above.
+        expect(await db.workoutSetsForSession(id), isEmpty);
       },
     );
 

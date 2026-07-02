@@ -80,6 +80,9 @@ void main() {
           () => service.getPlanForEdit(p),
           throwsA(isA<NotFoundException>()),
         );
+        // The cascade, not just the parent lookup — an orphaned-row
+        // regression would still pass the assertion above.
+        expect(await db.planEntriesForPlan(p), isEmpty);
       },
     );
 

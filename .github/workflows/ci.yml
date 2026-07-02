@@ -75,6 +75,20 @@ jobs:
           path: prsonal_app/coverage/lcov.info
           if-no-files-found: warn
 
+  integration-test:
+    name: Integration test (end-to-end flow)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install sqlite3 (Drift in-memory DB)
+        run: sudo apt-get update && sudo apt-get install -y libsqlite3-dev
+      - uses: ./.github/actions/flutter-setup
+      # `-d flutter-tester` runs the integration_test suite as a headless
+      # widget test — no emulator/device and no desktop build toolchain
+      # (cmake) required, unlike `flutter test integration_test/` with no
+      # device flag, which tries to build for the host desktop target.
+      - run: flutter test integration_test/app_test.dart -d flutter-tester
+
   build-debug:
     name: Build debug APK
     runs-on: ubuntu-latest
@@ -103,7 +117,16 @@ jobs:
   # repo and store it as the RELEASE_PAT secret.
   tag:
     name: Tag release
-    needs: [format, analyze, spec-coverage, verify-codegen, test, build-debug]
+    needs:
+      [
+        format,
+        analyze,
+        spec-coverage,
+        verify-codegen,
+        test,
+        integration-test,
+        build-debug,
+      ]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     permissions:

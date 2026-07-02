@@ -7,6 +7,10 @@ import 'package:prsonal_app/screens/session_active_screen.dart';
 import 'package:prsonal_app/services/session_service.dart';
 
 // Fake engine: returns a canned ActiveSessionState and records mutations.
+// markCurrentSetComplete actually advances `state` (marks the current set
+// completed, moves the cursor) rather than only logging the call, so tests
+// can assert on real derived state (progress, currentSet, isLastSet) instead
+// of just "the engine was asked to do something".
 class _FakeEngine extends SessionEngine {
   _FakeEngine(this._initial);
   final ActiveSessionState _initial;
@@ -24,7 +28,47 @@ class _FakeEngine extends SessionEngine {
   }) async {
     calls.add('complete');
     lastIsBodyweight = isBodyweight;
+
+    final current = state!;
+    final cursor = current.cursor;
+    final exercise = current.exercises[cursor.exerciseIndex];
+    final updatedSets = [...exercise.sets];
+    updatedSets[cursor.setIndex] = updatedSets[cursor.setIndex].copyWith(
+      status: ActiveSetStatus.completed,
+      actualLabel: '$actualPrimary×${actualSecondary}kg',
+      isBodyweight: isBodyweight,
+    );
+    final updatedExercises = [...current.exercises];
+    updatedExercises[cursor.exerciseIndex] = exercise.copyWith(
+      sets: updatedSets,
+    );
+
+    state = ActiveSessionState(
+      session: current.session,
+      exercises: updatedExercises,
+      cursor: _nextCursor(updatedExercises),
+      elapsed: current.elapsed,
+      resting: current.resting,
+      restRemaining: current.restRemaining,
+    );
     return false;
+  }
+
+  /// The first active/pending set after the just-completed one, or a
+  /// past-the-end cursor when none remain (so `currentSet` is null and
+  /// `isLastSet` is true) — mirrors the real engine's cursor-advance intent
+  /// closely enough for this screen's tests without reimplementing it.
+  SessionCursor _nextCursor(List<ActiveExercise> exercises) {
+    for (var ei = 0; ei < exercises.length; ei++) {
+      for (var si = 0; si < exercises[ei].sets.length; si++) {
+        final status = exercises[ei].sets[si].status;
+        if (status == ActiveSetStatus.active ||
+            status == ActiveSetStatus.pending) {
+          return (exerciseIndex: ei, setIndex: si);
+        }
+      }
+    }
+    return (exerciseIndex: exercises.length, setIndex: 0);
   }
 
   @override
@@ -204,12 +248,36 @@ void main() {
     );
 
     testWidgets(
-      'AC-005: Completing the current set advances to the next set and starts the rest timer when the set has rest',
+      'AC-005: Completing the current set marks it done with its logged '
+      'values and advances the cursor',
       (tester) async {
         final engine = await _pump(tester);
+        // Precondition: one of two sets already done.
+        final barBefore = tester.widget<FractionallySizedBox>(
+          find.descendant(
+            of: find.byType(SessionActiveScreen),
+            matching: find.byType(FractionallySizedBox),
+          ),
+        );
+        expect(barBefore.widthFactor, 0.5);
+
         await tester.tap(find.text('Done'));
         await tester.pumpAndSettle();
+
         expect(engine.calls, contains('complete'));
+        // Real advancement, not just a logged call: the set's pre-filled
+        // planned values (8 reps × 82.5kg, per AC-011) are now its logged
+        // actuals, there's no more active set to edit, and the progress bar
+        // reflects both sets done.
+        expect(find.text('8×82.5kg'), findsOneWidget);
+        expect(find.byType(TextField), findsNothing);
+        final barAfter = tester.widget<FractionallySizedBox>(
+          find.descendant(
+            of: find.byType(SessionActiveScreen),
+            matching: find.byType(FractionallySizedBox),
+          ),
+        );
+        expect(barAfter.widthFactor, 1.0);
       },
     );
 
@@ -288,6 +356,9 @@ void main() {
         await tester.tap(find.bySemanticsLabel('Complete set'));
         await tester.pumpAndSettle();
         expect(engine.calls, contains('complete'));
+        // A different tap target than AC-005's bottom button, but must
+        // reach the same real completion — not just log the call.
+        expect(find.text('8×82.5kg'), findsOneWidget);
       },
     );
 

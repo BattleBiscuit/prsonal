@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:prsonal_app/theme/app_colors.dart';
 import 'package:prsonal_app/widgets/app_badge_widget.dart';
 
 Widget _wrap(Widget child) => MaterialApp(home: Scaffold(body: child));
@@ -17,6 +18,28 @@ void main() {
         await tester.pumpWidget(_wrap(const AppBadge(label: 'strength')));
         final badge = tester.widget<AppBadge>(find.byType(AppBadge));
         expect(badge.variant, AppBadgeVariant.neutral);
+      },
+    );
+
+    testWidgets(
+      'AC-003: Each variant renders its own distinct text color per the table above',
+      (tester) async {
+        final colors = AppColors.dark;
+        final expected = {
+          AppBadgeVariant.neutral: colors.text2,
+          AppBadgeVariant.success: colors.success,
+          AppBadgeVariant.danger: colors.danger,
+          AppBadgeVariant.warning: colors.warning,
+          AppBadgeVariant.accent: colors.accent,
+        };
+        for (final MapEntry(key: variant, value: expectedColor)
+            in expected.entries) {
+          await tester.pumpWidget(
+            _wrap(AppBadge(label: 'label', variant: variant)),
+          );
+          final text = tester.widget<Text>(find.text('label'));
+          expect(text.style!.color, expectedColor, reason: 'variant=$variant');
+        }
       },
     );
   });

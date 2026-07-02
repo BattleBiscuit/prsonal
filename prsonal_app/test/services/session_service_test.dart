@@ -175,6 +175,26 @@ void main() {
       },
     );
 
+    test('A completed set that ties (not exceeds) the prior best estimated 1RM '
+        'is not flagged isPR — isNewPR requires strictly greater', () async {
+      final routineId = await _seedRoutine(db, setCount: 2);
+      await engine().startSession(routineId: routineId);
+      await engine().markCurrentSetComplete(
+        actualPrimary: 8,
+        actualSecondary: 90,
+        isBodyweight: false,
+      );
+      // Identical reps and weight → identical estimated 1RM as the set above.
+      await engine().markCurrentSetComplete(
+        actualPrimary: 8,
+        actualSecondary: 90,
+        isBodyweight: false,
+      );
+      final sets = await db.workoutSetsForSession(state().session.id);
+      expect(sets[0].estimated1RM, sets[1].estimated1RM);
+      expect(sets[1].isPR, isFalse);
+    });
+
     test(
       'AC-006: markCurrentSetComplete advances the cursor to the next set',
       () async {

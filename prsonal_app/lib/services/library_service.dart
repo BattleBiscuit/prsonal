@@ -1,10 +1,14 @@
 import 'package:drift/drift.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sqlite3/sqlite3.dart' show SqliteException;
 import 'package:uuid/uuid.dart';
 
 import '../database/app_database.dart';
 import '../models/exercise.dart';
 import '../providers/app_providers.dart';
+import 'service_exceptions.dart';
+
+export 'service_exceptions.dart' show ExerciseInUseException;
 
 // ---------------------------------------------------------------------------
 // View-model types
@@ -141,7 +145,14 @@ class LibraryService {
   // -------------------------------------------------------------------------
 
   Future<void> deleteExercise(String id) async {
-    await _db.deleteExerciseById(id);
+    try {
+      await _db.deleteExerciseById(id);
+    } on SqliteException catch (e) {
+      if (e.message.contains('FOREIGN KEY constraint failed')) {
+        throw const ExerciseInUseException();
+      }
+      rethrow;
+    }
   }
 }
 

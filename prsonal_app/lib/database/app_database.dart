@@ -134,10 +134,16 @@ class Routines extends Table {
 
 class RoutineExercises extends Table {
   TextColumn get id => text()();
-  TextColumn get routineId =>
-      text().references(Routines, #id, onDelete: KeyAction.cascade)();
-  TextColumn get exerciseId =>
-      text().references(Exercises, #id, onDelete: KeyAction.restrict)();
+  // `.references()`'s onDelete/onUpdate codegen doesn't compile a REFERENCES
+  // clause into the schema on this drift_dev version (confirmed empty in the
+  // generated table — cascades/restricts were silently never enforced).
+  // customConstraint spells out the same clause directly.
+  TextColumn get routineId => text().customConstraint(
+    'NOT NULL REFERENCES routines(id) ON DELETE CASCADE',
+  )();
+  TextColumn get exerciseId => text().customConstraint(
+    'NOT NULL REFERENCES exercises(id) ON DELETE RESTRICT',
+  )();
   IntColumn get position => integer()();
   TextColumn get notes => text().nullable()();
   // JSON list of SetTarget objects
@@ -160,10 +166,12 @@ class Plans extends Table {
 
 class PlanEntries extends Table {
   TextColumn get id => text()();
-  TextColumn get planId =>
-      text().references(Plans, #id, onDelete: KeyAction.cascade)();
-  TextColumn get routineId =>
-      text().references(Routines, #id, onDelete: KeyAction.restrict)();
+  TextColumn get planId => text().customConstraint(
+    'NOT NULL REFERENCES plans(id) ON DELETE CASCADE',
+  )();
+  TextColumn get routineId => text().customConstraint(
+    'NOT NULL REFERENCES routines(id) ON DELETE RESTRICT',
+  )();
   IntColumn get dayOfWeek => integer().nullable()();
   IntColumn get order => integer()();
 
@@ -187,8 +195,9 @@ class WorkoutSessions extends Table {
 
 class WorkoutSets extends Table {
   TextColumn get id => text()();
-  TextColumn get sessionId =>
-      text().references(WorkoutSessions, #id, onDelete: KeyAction.cascade)();
+  TextColumn get sessionId => text().customConstraint(
+    'NOT NULL REFERENCES workout_sessions(id) ON DELETE CASCADE',
+  )();
   IntColumn get exercisePosition => integer()();
   TextColumn get exerciseId => text().nullable()();
   TextColumn get exerciseName => text()();
@@ -285,6 +294,18 @@ class AppDatabase extends _$AppDatabase {
 
   @override
   int get schemaVersion => 1;
+
+  // SQLite has foreign keys OFF by default per-connection. Without this, the
+  // cascade/restrict `onDelete` actions declared on every table above are
+  // silently never enforced — deleting a session or routine leaves its sets
+  // / exercises as permanently orphaned rows instead of being removed or
+  // rejected.
+  @override
+  MigrationStrategy get migration => MigrationStrategy(
+    beforeOpen: (details) async {
+      await customStatement('PRAGMA foreign_keys = ON');
+    },
+  );
 
   static QueryExecutor _openConnection() {
     return driftDatabase(name: 'prsonal');

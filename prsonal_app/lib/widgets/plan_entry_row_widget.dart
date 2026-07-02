@@ -93,6 +93,7 @@ class PlanEntryRow extends StatelessWidget {
             child: Semantics(
               label: 'Start $routineName',
               button: true,
+              container: true,
               enabled: !startDisabled,
               child: GestureDetector(
                 onTap: startDisabled ? null : onStart,

@@ -81,7 +81,17 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
       message: 'Delete "$name"?',
       confirmLabel: 'Delete',
     );
-    if (ok) await ref.read(libraryServiceProvider).deleteExercise(id);
+    if (!ok || !mounted) return;
+    final messenger = ScaffoldMessenger.of(context);
+    try {
+      await ref.read(libraryServiceProvider).deleteExercise(id);
+    } on ExerciseInUseException {
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text('"$name" is used in a routine — remove it there first'),
+        ),
+      );
+    }
   }
 
   @override

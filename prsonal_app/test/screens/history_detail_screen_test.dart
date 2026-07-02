@@ -97,18 +97,21 @@ void main() {
         expect(find.textContaining('PRs this session'), findsOneWidget);
         expect(find.text('Bench Press'), findsWidgets);
 
-        final banner = tester
-            .widgetList<Container>(find.byType(Container))
-            .map((c) => c.decoration)
-            .whereType<BoxDecoration>()
-            .where((d) {
-              final border = d.border;
-              return d.color == AppColors.dark.accent.withValues(alpha: 0.06) &&
-                  border is Border &&
-                  border.top.color ==
-                      AppColors.dark.accent.withValues(alpha: 0.20);
-            });
-        expect(banner, isNotEmpty);
+        // Targeted by key rather than scanning every Container on screen —
+        // this only breaks if the banner itself stops matching the
+        // "live/important" surface treatment, not on unrelated layout changes
+        // elsewhere on the page.
+        final container = tester.widget<Container>(
+          find.byKey(const ValueKey('prBanner')),
+        );
+        final decoration = container.decoration as BoxDecoration;
+        final border = decoration.border;
+        expect(decoration.color, AppColors.dark.accent.withValues(alpha: 0.06));
+        expect(border, isA<Border>());
+        expect(
+          (border as Border).top.color,
+          AppColors.dark.accent.withValues(alpha: 0.20),
+        );
       },
     );
 

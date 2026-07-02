@@ -80,25 +80,18 @@ void main() {
               contains(const FontFeature.tabularFigures()),
             );
 
-        testWidgets('Set index renders mono', (tester) async {
-          await tester.pumpWidget(
-            _wrap(
-              const HistorySetTable(exerciseName: 'Bench Press', rows: _rows),
-            ),
-          );
-          expect(tester.widget<Text>(find.text('1')).style, isMono());
-        });
-
-        testWidgets('Read-only actual-value readout renders mono', (
-          tester,
-        ) async {
-          await tester.pumpWidget(
-            _wrap(
-              const HistorySetTable(exerciseName: 'Bench Press', rows: _rows),
-            ),
-          );
-          expect(tester.widget<Text>(find.text('8×82.5kg')).style, isMono());
-        });
+        testWidgets(
+          'Set index and read-only actual-value readout render mono',
+          (tester) async {
+            await tester.pumpWidget(
+              _wrap(
+                const HistorySetTable(exerciseName: 'Bench Press', rows: _rows),
+              ),
+            );
+            expect(tester.widget<Text>(find.text('1')).style, isMono());
+            expect(tester.widget<Text>(find.text('8×82.5kg')).style, isMono());
+          },
+        );
 
         testWidgets('Editable actual-value input renders mono', (tester) async {
           await tester.pumpWidget(

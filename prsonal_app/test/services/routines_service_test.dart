@@ -64,10 +64,10 @@ void main() {
         await service.updateRoutine(id, name: 'A2');
         final after = await service.getRoutineForEdit(id);
         expect(after.name, 'A2');
-        expect(
-          after.updatedAt.isAfter(before) || after.updatedAt == before,
-          isTrue,
-        );
+        // Strict: updateRoutine guarantees advancement even when called
+        // within the same clock tick (it bumps by 1s rather than reusing
+        // `existing.updatedAt`), so this must never be merely "not before".
+        expect(after.updatedAt.isAfter(before), isTrue);
       },
     );
 
@@ -86,6 +86,9 @@ void main() {
           () => service.getRoutineForEdit(id),
           throwsA(isA<NotFoundException>()),
         );
+        // The cascade, not just the parent lookup — an orphaned-row
+        // regression would still pass the assertion above.
+        expect(await db.routineExercisesForRoutine(id), isEmpty);
       },
     );
 

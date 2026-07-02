@@ -93,10 +93,42 @@ void main() {
     testWidgets(
       'AC-002: Changing the range toggle reloads the metrics for that range',
       (tester) async {
-        await _pump(tester);
+        // Unlike `_pump`, this override reads the real `progressRangeProvider`
+        // and echoes it back as workoutCount — so a genuine reload (not just
+        // the toggle's own selected-state redraw) is the only way the
+        // displayed count could change.
+        await tester.pumpWidget(
+          ProviderScope(
+            overrides: [
+              progressSummaryProvider.overrideWith((ref) async {
+                final range = ref.watch(progressRangeProvider);
+                return ProgressSummary(
+                  workoutCount: range,
+                  volumeTrendPercent: 8,
+                  adherencePercent: 87,
+                  bestStreak: 3,
+                  muscleBalance: const {},
+                  sessionVolumes: const [],
+                );
+              }),
+              recentPrsProvider.overrideWith(
+                (ref) async => [_pr('Bench Press')],
+              ),
+              historyPreviewProvider.overrideWith((ref) async => const []),
+            ],
+            child: MaterialApp.router(routerConfig: _router()),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        // Default range is 28 days ('4w').
+        expect(find.text('28'), findsOneWidget);
+
         await tester.tap(find.text('8w'));
         await tester.pumpAndSettle();
-        expect(find.text('8w'), findsOneWidget);
+
+        expect(find.text('28'), findsNothing);
+        expect(find.text('56'), findsOneWidget);
       },
     );
 

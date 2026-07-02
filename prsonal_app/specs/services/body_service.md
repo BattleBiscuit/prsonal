@@ -14,7 +14,7 @@ bodyweight-relative sets. Exposed via `bodyServiceProvider`.
 | Method | Inputs | Output | Side Effects |
 |--------|--------|--------|--------------|
 | watchLatest | — | `Stream<Map<BodyMetricType, BodyMetric?>>` | none — most recent per type |
-| watchHistory | `BodyMetricType type, {int days}` | `Stream<List<BodyMetric>>` | none — within window, newest first |
+| watchHistory | `BodyMetricType? type, {int? days}` | `Stream<List<BodyMetric>>` | none — newest first; when `days` is given, excludes entries older than that window (omit for unbounded history) |
 | log | `BodyMetricType type, double value, {DateTime? at}` | `Future<void>` | inserts a metric |
 | deleteEntry | `String id` | `Future<void>` | removes one entry |
 | currentBodyweight | — | `Future<double>` | none — latest weight, or 80 |

@@ -48,5 +48,15 @@ void main() {
         expect(tapped, isTrue);
       },
     );
+
+    testWidgets(
+      'AC-004: Widget omits the subtitle line entirely when subtitle is null',
+      (tester) async {
+        await tester.pumpWidget(
+          _wrap(const SettingsRow(title: 'Export backup')),
+        );
+        expect(find.byType(Text), findsOneWidget);
+      },
+    );
   });
 }

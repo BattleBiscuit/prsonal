@@ -63,7 +63,9 @@ abandoning.
 - AC-002: The header shows the routine name and the elapsed time, with quit and finish actions
 - AC-003: The current set is editable and the bottom action button reads "Done"
 - AC-004: On the final set the bottom action button reads "Finish"
-- AC-005: Completing the current set advances to the next set and starts the rest timer when the set has rest
+- AC-005: Completing the current set marks it done with its logged values and advances the cursor
+  (rest-timer start is an engine concern — see `services/session_service.md` AC-010 — this screen
+  only renders whatever resting state the engine reports, per AC-006)
 - AC-006: While resting, the bottom action button shows the remaining rest time and tapping it skips the rest
 - AC-007: Tapping the finish action opens a confirm-finish modal; confirming finishes the session and navigates to history
 - AC-008: Tapping the quit action opens a confirm-abandon modal; confirming abandons the session and navigates to session-pick

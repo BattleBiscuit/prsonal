@@ -165,10 +165,7 @@ class RoutinesService {
     final existing = await _db.routineById(id);
     if (existing == null) throw const NotFoundException();
 
-    final now = DateTime.now();
-    final newUpdatedAt = now.isAfter(existing.updatedAt)
-        ? now
-        : existing.updatedAt.add(const Duration(seconds: 1));
+    final newUpdatedAt = _advancedTimestamp(existing.updatedAt);
     await _db.updateRoutineRow(
       RoutinesCompanion(
         id: Value(id),
@@ -319,20 +316,27 @@ class RoutinesService {
   Future<void> _touchRoutine(String routineId) async {
     final routine = await _db.routineById(routineId);
     if (routine == null) return;
-    // Drift stores DateTime at second precision. Ensure the new timestamp is
-    // strictly after the stored value by always bumping at least 1 second.
-    final bumped = routine.updatedAt.add(const Duration(seconds: 1));
-    final now = DateTime.now();
-    final newUpdatedAt = now.isAfter(bumped) ? now : bumped;
     await _db.updateRoutineRow(
       RoutinesCompanion(
         id: Value(routineId),
         name: Value(routine.name),
         notes: Value(routine.notes),
         createdAt: Value(routine.createdAt),
-        updatedAt: Value(newUpdatedAt),
+        updatedAt: Value(_advancedTimestamp(routine.updatedAt)),
       ),
     );
+  }
+
+  /// Returns a timestamp strictly after [existing], guaranteed even though
+  /// Drift stores `DateTime` at second precision: comparing `DateTime.now()`
+  /// directly against `existing` is unreliable, because `now`'s sub-second
+  /// component makes it look "later" even when both round-trip to the same
+  /// stored second. Bumping [existing] by 1s first and comparing against
+  /// *that* closes the gap.
+  DateTime _advancedTimestamp(DateTime existing) {
+    final bumped = existing.add(const Duration(seconds: 1));
+    final now = DateTime.now();
+    return now.isAfter(bumped) ? now : bumped;
   }
 }
 

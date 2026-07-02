@@ -35,3 +35,4 @@ Shape: pill (radius full), padding 2×8, text xs/500, no wrap.
 ## Acceptance Criteria
 - AC-001: Widget renders the label text
 - AC-002: Widget defaults to the neutral variant when no variant is provided
+- AC-003: Each variant renders its own distinct text color per the table above

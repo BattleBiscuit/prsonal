@@ -126,6 +126,7 @@ class _PlanBlock extends ConsumerWidget {
     final colors = Theme.of(context).extension<AppColors>() ?? AppColors.dark;
 
     return Padding(
+      key: ValueKey('planBlock-${plan.id}'),
       padding: const EdgeInsets.all(space4),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

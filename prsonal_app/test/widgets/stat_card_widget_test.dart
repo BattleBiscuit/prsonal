@@ -29,13 +29,32 @@ void main() {
       expect(find.byIcon(Icons.local_fire_department), findsOneWidget);
     });
 
-    testWidgets('AC-003: Widget defaults to the neutral tone', (tester) async {
-      await tester.pumpWidget(
-        _wrap(const StatCard(value: '12', label: 'WORKOUTS')),
-      );
-      final card = tester.widget<StatCard>(find.byType(StatCard));
-      expect(card.tone, StatTone.neutral);
-    });
+    testWidgets(
+      'AC-003: The icon renders in the same accent color regardless of tone '
+      '— tone is a no-op, and must stay one, per the monochrome identity',
+      (tester) async {
+        final colors = <Color>{};
+        for (final tone in StatTone.values) {
+          await tester.pumpWidget(
+            _wrap(
+              StatCard(
+                value: '12',
+                label: 'WORKOUTS',
+                icon: Icons.local_fire_department,
+                tone: tone,
+              ),
+            ),
+          );
+          final icon = tester.widget<Icon>(
+            find.byIcon(Icons.local_fire_department),
+          );
+          colors.add(icon.color!);
+        }
+        // Every tone produced the exact same color — a regression that wired
+        // even one StatTone case to a real hue would grow this set past 1.
+        expect(colors, hasLength(1));
+      },
+    );
 
     testWidgets(
       'AC-004: Widget renders flat — no enclosing card chrome (no bordered/filled box)',

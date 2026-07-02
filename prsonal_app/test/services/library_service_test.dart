@@ -1,8 +1,10 @@
+import 'package:drift/drift.dart' show Value;
 import 'package:drift/native.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:prsonal_app/database/app_database.dart';
 import 'package:prsonal_app/models/exercise.dart';
+import 'package:prsonal_app/models/routine_exercise.dart';
 import 'package:prsonal_app/models/workout_math.dart';
 import 'package:prsonal_app/providers/app_providers.dart';
 import 'package:prsonal_app/services/library_service.dart';
@@ -135,5 +137,32 @@ void main() {
         expect(results.map((e) => e.name), ['Bench Press']);
       },
     );
+
+    test('AC-007: deleteExercise is rejected while the exercise is still '
+        'referenced by a routine', () async {
+      final exerciseId = await service.createExercise(
+        name: 'Bench',
+        type: ExerciseType.strength,
+        primaryMuscles: const [],
+        secondaryMuscles: const [],
+      );
+      final routineId = await db.insertRoutine(name: 'Push Day A');
+      await db.insertRoutineExerciseRow(
+        RoutineExercisesCompanion.insert(
+          id: 're1',
+          routineId: routineId,
+          exerciseId: exerciseId,
+          position: 0,
+          sets: [SetTarget.strength()],
+        ),
+      );
+
+      await expectLater(
+        () => service.deleteExercise(exerciseId),
+        throwsA(isA<ExerciseInUseException>()),
+      );
+      // Rejected, not silently no-op'd — the exercise is still there.
+      expect(await service.watchExercises().first, isNotEmpty);
+    });
   });
 }

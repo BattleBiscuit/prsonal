@@ -97,5 +97,32 @@ void main() {
       await _pump(tester, const []);
       expect(find.text('No exercises yet'), findsOneWidget);
     });
+
+    testWidgets('AC-007: Deleting an exercise still used by a routine shows an '
+        'explanatory message instead of crashing', (tester) async {
+      final service = _MockLibraryService();
+      when(
+        () => service.deleteExercise(any()),
+      ).thenThrow(const ExerciseInUseException());
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            libraryServiceProvider.overrideWithValue(service),
+            libraryListProvider.overrideWith(
+              (ref) => Stream.value([_ex('e1', 'Bench Press')]),
+            ),
+          ],
+          child: const MaterialApp(home: LibraryScreen()),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.bySemanticsLabel('Delete exercise'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Delete'));
+      await tester.pumpAndSettle();
+
+      expect(find.textContaining('used in a routine'), findsOneWidget);
+    });
   });
 }

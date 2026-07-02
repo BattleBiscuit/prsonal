@@ -24,6 +24,10 @@ class AppInput extends StatelessWidget {
   final TextEditingController? controller;
   final TextInputType? keyboardType;
   final bool obscureText;
+
+  /// Seeds the field's initial text. Ignored (per Flutter's own
+  /// [TextFormField] constraint) when [controller] is also provided — set
+  /// the controller's text directly in that case instead.
   final String? initialValue;
 
   @override
@@ -45,7 +49,8 @@ class AppInput extends StatelessWidget {
           ),
           const SizedBox(height: space2),
         ],
-        TextField(
+        TextFormField(
+          initialValue: controller == null ? initialValue : null,
           controller: controller,
           enabled: enabled,
           onChanged: onChanged,

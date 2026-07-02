@@ -58,6 +58,29 @@ void main() {
       },
     );
 
+    test('AC-003: watchHistory with a `days` window excludes entries older '
+        'than that window', () async {
+      final now = DateTime.now();
+      await service.log(
+        BodyMetricType.waist,
+        90,
+        at: now.subtract(const Duration(days: 100)), // outside a 90d window
+      );
+      await service.log(
+        BodyMetricType.waist,
+        85,
+        at: now.subtract(const Duration(days: 10)), // inside it
+      );
+      final windowed = await service
+          .watchHistory(BodyMetricType.waist, days: 90)
+          .first;
+      expect(windowed.map((e) => e.value), [85]);
+
+      // No window → both entries, confirming the filter is opt-in.
+      final unwindowed = await service.watchHistory(BodyMetricType.waist).first;
+      expect(unwindowed.length, 2);
+    });
+
     test('AC-004: deleteEntry removes a single entry', () async {
       await service.log(BodyMetricType.weight, 82.5, at: DateTime(2026, 6, 23));
       final id =

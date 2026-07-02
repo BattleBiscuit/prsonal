@@ -48,5 +48,29 @@ void main() {
       final field = tester.widget<TextField>(find.byType(TextField));
       expect(field.enabled, isFalse);
     });
+
+    testWidgets(
+      'AC-006: Widget seeds its starting text from initialValue when no '
+      'controller is given',
+      (tester) async {
+        await tester.pumpWidget(
+          _wrap(const AppInput(initialValue: 'Push Day A')),
+        );
+        expect(find.text('Push Day A'), findsOneWidget);
+      },
+    );
+
+    testWidgets('initialValue is ignored when a controller is also given — the '
+        'controller owns the text instead', (tester) async {
+      final controller = TextEditingController(text: 'From controller');
+      addTearDown(controller.dispose);
+      await tester.pumpWidget(
+        _wrap(
+          AppInput(controller: controller, initialValue: 'From initialValue'),
+        ),
+      );
+      expect(find.text('From controller'), findsOneWidget);
+      expect(find.text('From initialValue'), findsNothing);
+    });
   });
 }

@@ -850,6 +850,7 @@ class $RoutineExercisesTable extends RoutineExercises
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL REFERENCES routines(id) ON DELETE CASCADE',
   );
   static const VerificationMeta _exerciseIdMeta = const VerificationMeta(
     'exerciseId',
@@ -861,6 +862,7 @@ class $RoutineExercisesTable extends RoutineExercises
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL REFERENCES exercises(id) ON DELETE RESTRICT',
   );
   static const VerificationMeta _positionMeta = const VerificationMeta(
     'position',
@@ -1612,6 +1614,7 @@ class $PlanEntriesTable extends PlanEntries
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL REFERENCES plans(id) ON DELETE CASCADE',
   );
   static const VerificationMeta _routineIdMeta = const VerificationMeta(
     'routineId',
@@ -1623,6 +1626,7 @@ class $PlanEntriesTable extends PlanEntries
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL REFERENCES routines(id) ON DELETE RESTRICT',
   );
   static const VerificationMeta _dayOfWeekMeta = const VerificationMeta(
     'dayOfWeek',
@@ -2502,6 +2506,8 @@ class $WorkoutSetsTable extends WorkoutSets
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
+    $customConstraints:
+        'NOT NULL REFERENCES workout_sessions(id) ON DELETE CASCADE',
   );
   static const VerificationMeta _exercisePositionMeta = const VerificationMeta(
     'exercisePosition',
@@ -4093,6 +4099,30 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     workoutSets,
     bodyMetrics,
   ];
+  @override
+  StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules([
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'routines',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('routine_exercises', kind: UpdateKind.delete)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'plans',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('plan_entries', kind: UpdateKind.delete)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'workout_sessions',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('workout_sets', kind: UpdateKind.delete)],
+    ),
+  ]);
 }
 
 typedef $$ExercisesTableCreateCompanionBuilder =
@@ -4117,6 +4147,34 @@ typedef $$ExercisesTableUpdateCompanionBuilder =
       Value<DateTime> createdAt,
       Value<int> rowid,
     });
+
+final class $$ExercisesTableReferences
+    extends BaseReferences<_$AppDatabase, $ExercisesTable, Exercise> {
+  $$ExercisesTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static MultiTypedResultKey<$RoutineExercisesTable, List<RoutineExercise>>
+  _routineExercisesRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.routineExercises,
+    aliasName: $_aliasNameGenerator(
+      db.exercises.id,
+      db.routineExercises.exerciseId,
+    ),
+  );
+
+  $$RoutineExercisesTableProcessedTableManager get routineExercisesRefs {
+    final manager = $$RoutineExercisesTableTableManager(
+      $_db,
+      $_db.routineExercises,
+    ).filter((f) => f.exerciseId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _routineExercisesRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+}
 
 class $$ExercisesTableFilterComposer
     extends Composer<_$AppDatabase, $ExercisesTable> {
@@ -4164,6 +4222,31 @@ class $$ExercisesTableFilterComposer
     column: $table.createdAt,
     builder: (column) => ColumnFilters(column),
   );
+
+  Expression<bool> routineExercisesRefs(
+    Expression<bool> Function($$RoutineExercisesTableFilterComposer f) f,
+  ) {
+    final $$RoutineExercisesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.routineExercises,
+      getReferencedColumn: (t) => t.exerciseId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$RoutineExercisesTableFilterComposer(
+            $db: $db,
+            $table: $db.routineExercises,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$ExercisesTableOrderingComposer
@@ -4246,6 +4329,31 @@ class $$ExercisesTableAnnotationComposer
 
   GeneratedColumn<DateTime> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  Expression<T> routineExercisesRefs<T extends Object>(
+    Expression<T> Function($$RoutineExercisesTableAnnotationComposer a) f,
+  ) {
+    final $$RoutineExercisesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.routineExercises,
+      getReferencedColumn: (t) => t.exerciseId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$RoutineExercisesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.routineExercises,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$ExercisesTableTableManager
@@ -4259,9 +4367,9 @@ class $$ExercisesTableTableManager
           $$ExercisesTableAnnotationComposer,
           $$ExercisesTableCreateCompanionBuilder,
           $$ExercisesTableUpdateCompanionBuilder,
-          (Exercise, BaseReferences<_$AppDatabase, $ExercisesTable, Exercise>),
+          (Exercise, $$ExercisesTableReferences),
           Exercise,
-          PrefetchHooks Function()
+          PrefetchHooks Function({bool routineExercisesRefs})
         > {
   $$ExercisesTableTableManager(_$AppDatabase db, $ExercisesTable table)
     : super(
@@ -4315,9 +4423,45 @@ class $$ExercisesTableTableManager
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$ExercisesTableReferences(db, table, e),
+                ),
+              )
               .toList(),
-          prefetchHooksCallback: null,
+          prefetchHooksCallback: ({routineExercisesRefs = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [
+                if (routineExercisesRefs) db.routineExercises,
+              ],
+              addJoins: null,
+              getPrefetchedDataCallback: (items) async {
+                return [
+                  if (routineExercisesRefs)
+                    await $_getPrefetchedData<
+                      Exercise,
+                      $ExercisesTable,
+                      RoutineExercise
+                    >(
+                      currentTable: table,
+                      referencedTable: $$ExercisesTableReferences
+                          ._routineExercisesRefsTable(db),
+                      managerFromTypedResult: (p0) =>
+                          $$ExercisesTableReferences(
+                            db,
+                            table,
+                            p0,
+                          ).routineExercisesRefs,
+                      referencedItemsForCurrentItem: (item, referencedItems) =>
+                          referencedItems.where((e) => e.exerciseId == item.id),
+                      typedResults: items,
+                    ),
+                ];
+              },
+            );
+          },
         ),
       );
 }
@@ -4332,9 +4476,9 @@ typedef $$ExercisesTableProcessedTableManager =
       $$ExercisesTableAnnotationComposer,
       $$ExercisesTableCreateCompanionBuilder,
       $$ExercisesTableUpdateCompanionBuilder,
-      (Exercise, BaseReferences<_$AppDatabase, $ExercisesTable, Exercise>),
+      (Exercise, $$ExercisesTableReferences),
       Exercise,
-      PrefetchHooks Function()
+      PrefetchHooks Function({bool routineExercisesRefs})
     >;
 typedef $$RoutinesTableCreateCompanionBuilder =
     RoutinesCompanion Function({
@@ -4354,6 +4498,52 @@ typedef $$RoutinesTableUpdateCompanionBuilder =
       Value<DateTime> updatedAt,
       Value<int> rowid,
     });
+
+final class $$RoutinesTableReferences
+    extends BaseReferences<_$AppDatabase, $RoutinesTable, Routine> {
+  $$RoutinesTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static MultiTypedResultKey<$RoutineExercisesTable, List<RoutineExercise>>
+  _routineExercisesRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.routineExercises,
+    aliasName: $_aliasNameGenerator(
+      db.routines.id,
+      db.routineExercises.routineId,
+    ),
+  );
+
+  $$RoutineExercisesTableProcessedTableManager get routineExercisesRefs {
+    final manager = $$RoutineExercisesTableTableManager(
+      $_db,
+      $_db.routineExercises,
+    ).filter((f) => f.routineId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _routineExercisesRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<$PlanEntriesTable, List<PlanEntry>>
+  _planEntriesRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.planEntries,
+    aliasName: $_aliasNameGenerator(db.routines.id, db.planEntries.routineId),
+  );
+
+  $$PlanEntriesTableProcessedTableManager get planEntriesRefs {
+    final manager = $$PlanEntriesTableTableManager(
+      $_db,
+      $_db.planEntries,
+    ).filter((f) => f.routineId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_planEntriesRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+}
 
 class $$RoutinesTableFilterComposer
     extends Composer<_$AppDatabase, $RoutinesTable> {
@@ -4388,6 +4578,56 @@ class $$RoutinesTableFilterComposer
     column: $table.updatedAt,
     builder: (column) => ColumnFilters(column),
   );
+
+  Expression<bool> routineExercisesRefs(
+    Expression<bool> Function($$RoutineExercisesTableFilterComposer f) f,
+  ) {
+    final $$RoutineExercisesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.routineExercises,
+      getReferencedColumn: (t) => t.routineId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$RoutineExercisesTableFilterComposer(
+            $db: $db,
+            $table: $db.routineExercises,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> planEntriesRefs(
+    Expression<bool> Function($$PlanEntriesTableFilterComposer f) f,
+  ) {
+    final $$PlanEntriesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.planEntries,
+      getReferencedColumn: (t) => t.routineId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PlanEntriesTableFilterComposer(
+            $db: $db,
+            $table: $db.planEntries,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$RoutinesTableOrderingComposer
@@ -4448,6 +4688,56 @@ class $$RoutinesTableAnnotationComposer
 
   GeneratedColumn<DateTime> get updatedAt =>
       $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  Expression<T> routineExercisesRefs<T extends Object>(
+    Expression<T> Function($$RoutineExercisesTableAnnotationComposer a) f,
+  ) {
+    final $$RoutineExercisesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.routineExercises,
+      getReferencedColumn: (t) => t.routineId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$RoutineExercisesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.routineExercises,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<T> planEntriesRefs<T extends Object>(
+    Expression<T> Function($$PlanEntriesTableAnnotationComposer a) f,
+  ) {
+    final $$PlanEntriesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.planEntries,
+      getReferencedColumn: (t) => t.routineId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PlanEntriesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.planEntries,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$RoutinesTableTableManager
@@ -4461,9 +4751,12 @@ class $$RoutinesTableTableManager
           $$RoutinesTableAnnotationComposer,
           $$RoutinesTableCreateCompanionBuilder,
           $$RoutinesTableUpdateCompanionBuilder,
-          (Routine, BaseReferences<_$AppDatabase, $RoutinesTable, Routine>),
+          (Routine, $$RoutinesTableReferences),
           Routine,
-          PrefetchHooks Function()
+          PrefetchHooks Function({
+            bool routineExercisesRefs,
+            bool planEntriesRefs,
+          })
         > {
   $$RoutinesTableTableManager(_$AppDatabase db, $RoutinesTable table)
     : super(
@@ -4509,9 +4802,70 @@ class $$RoutinesTableTableManager
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$RoutinesTableReferences(db, table, e),
+                ),
+              )
               .toList(),
-          prefetchHooksCallback: null,
+          prefetchHooksCallback:
+              ({routineExercisesRefs = false, planEntriesRefs = false}) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [
+                    if (routineExercisesRefs) db.routineExercises,
+                    if (planEntriesRefs) db.planEntries,
+                  ],
+                  addJoins: null,
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (routineExercisesRefs)
+                        await $_getPrefetchedData<
+                          Routine,
+                          $RoutinesTable,
+                          RoutineExercise
+                        >(
+                          currentTable: table,
+                          referencedTable: $$RoutinesTableReferences
+                              ._routineExercisesRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$RoutinesTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).routineExercisesRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.routineId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (planEntriesRefs)
+                        await $_getPrefetchedData<
+                          Routine,
+                          $RoutinesTable,
+                          PlanEntry
+                        >(
+                          currentTable: table,
+                          referencedTable: $$RoutinesTableReferences
+                              ._planEntriesRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$RoutinesTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).planEntriesRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.routineId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                    ];
+                  },
+                );
+              },
         ),
       );
 }
@@ -4526,9 +4880,9 @@ typedef $$RoutinesTableProcessedTableManager =
       $$RoutinesTableAnnotationComposer,
       $$RoutinesTableCreateCompanionBuilder,
       $$RoutinesTableUpdateCompanionBuilder,
-      (Routine, BaseReferences<_$AppDatabase, $RoutinesTable, Routine>),
+      (Routine, $$RoutinesTableReferences),
       Routine,
-      PrefetchHooks Function()
+      PrefetchHooks Function({bool routineExercisesRefs, bool planEntriesRefs})
     >;
 typedef $$RoutineExercisesTableCreateCompanionBuilder =
     RoutineExercisesCompanion Function({
@@ -4551,6 +4905,54 @@ typedef $$RoutineExercisesTableUpdateCompanionBuilder =
       Value<int> rowid,
     });
 
+final class $$RoutineExercisesTableReferences
+    extends
+        BaseReferences<_$AppDatabase, $RoutineExercisesTable, RoutineExercise> {
+  $$RoutineExercisesTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $RoutinesTable _routineIdTable(_$AppDatabase db) =>
+      db.routines.createAlias(
+        $_aliasNameGenerator(db.routineExercises.routineId, db.routines.id),
+      );
+
+  $$RoutinesTableProcessedTableManager get routineId {
+    final $_column = $_itemColumn<String>('routine_id')!;
+
+    final manager = $$RoutinesTableTableManager(
+      $_db,
+      $_db.routines,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_routineIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static $ExercisesTable _exerciseIdTable(_$AppDatabase db) =>
+      db.exercises.createAlias(
+        $_aliasNameGenerator(db.routineExercises.exerciseId, db.exercises.id),
+      );
+
+  $$ExercisesTableProcessedTableManager get exerciseId {
+    final $_column = $_itemColumn<String>('exercise_id')!;
+
+    final manager = $$ExercisesTableTableManager(
+      $_db,
+      $_db.exercises,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_exerciseIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
 class $$RoutineExercisesTableFilterComposer
     extends Composer<_$AppDatabase, $RoutineExercisesTable> {
   $$RoutineExercisesTableFilterComposer({
@@ -4562,16 +4964,6 @@ class $$RoutineExercisesTableFilterComposer
   });
   ColumnFilters<String> get id => $composableBuilder(
     column: $table.id,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get routineId => $composableBuilder(
-    column: $table.routineId,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get exerciseId => $composableBuilder(
-    column: $table.exerciseId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -4590,6 +4982,52 @@ class $$RoutineExercisesTableFilterComposer
     column: $table.sets,
     builder: (column) => ColumnWithTypeConverterFilters(column),
   );
+
+  $$RoutinesTableFilterComposer get routineId {
+    final $$RoutinesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.routineId,
+      referencedTable: $db.routines,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$RoutinesTableFilterComposer(
+            $db: $db,
+            $table: $db.routines,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$ExercisesTableFilterComposer get exerciseId {
+    final $$ExercisesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.exerciseId,
+      referencedTable: $db.exercises,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ExercisesTableFilterComposer(
+            $db: $db,
+            $table: $db.exercises,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 }
 
 class $$RoutineExercisesTableOrderingComposer
@@ -4603,16 +5041,6 @@ class $$RoutineExercisesTableOrderingComposer
   });
   ColumnOrderings<String> get id => $composableBuilder(
     column: $table.id,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get routineId => $composableBuilder(
-    column: $table.routineId,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get exerciseId => $composableBuilder(
-    column: $table.exerciseId,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -4630,6 +5058,52 @@ class $$RoutineExercisesTableOrderingComposer
     column: $table.sets,
     builder: (column) => ColumnOrderings(column),
   );
+
+  $$RoutinesTableOrderingComposer get routineId {
+    final $$RoutinesTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.routineId,
+      referencedTable: $db.routines,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$RoutinesTableOrderingComposer(
+            $db: $db,
+            $table: $db.routines,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$ExercisesTableOrderingComposer get exerciseId {
+    final $$ExercisesTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.exerciseId,
+      referencedTable: $db.exercises,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ExercisesTableOrderingComposer(
+            $db: $db,
+            $table: $db.exercises,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 }
 
 class $$RoutineExercisesTableAnnotationComposer
@@ -4644,14 +5118,6 @@ class $$RoutineExercisesTableAnnotationComposer
   GeneratedColumn<String> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
 
-  GeneratedColumn<String> get routineId =>
-      $composableBuilder(column: $table.routineId, builder: (column) => column);
-
-  GeneratedColumn<String> get exerciseId => $composableBuilder(
-    column: $table.exerciseId,
-    builder: (column) => column,
-  );
-
   GeneratedColumn<int> get position =>
       $composableBuilder(column: $table.position, builder: (column) => column);
 
@@ -4660,6 +5126,52 @@ class $$RoutineExercisesTableAnnotationComposer
 
   GeneratedColumnWithTypeConverter<List<SetTarget>, String> get sets =>
       $composableBuilder(column: $table.sets, builder: (column) => column);
+
+  $$RoutinesTableAnnotationComposer get routineId {
+    final $$RoutinesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.routineId,
+      referencedTable: $db.routines,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$RoutinesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.routines,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$ExercisesTableAnnotationComposer get exerciseId {
+    final $$ExercisesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.exerciseId,
+      referencedTable: $db.exercises,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ExercisesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.exercises,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 }
 
 class $$RoutineExercisesTableTableManager
@@ -4673,16 +5185,9 @@ class $$RoutineExercisesTableTableManager
           $$RoutineExercisesTableAnnotationComposer,
           $$RoutineExercisesTableCreateCompanionBuilder,
           $$RoutineExercisesTableUpdateCompanionBuilder,
-          (
-            RoutineExercise,
-            BaseReferences<
-              _$AppDatabase,
-              $RoutineExercisesTable,
-              RoutineExercise
-            >,
-          ),
+          (RoutineExercise, $$RoutineExercisesTableReferences),
           RoutineExercise,
-          PrefetchHooks Function()
+          PrefetchHooks Function({bool routineId, bool exerciseId})
         > {
   $$RoutineExercisesTableTableManager(
     _$AppDatabase db,
@@ -4734,9 +5239,71 @@ class $$RoutineExercisesTableTableManager
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$RoutineExercisesTableReferences(db, table, e),
+                ),
+              )
               .toList(),
-          prefetchHooksCallback: null,
+          prefetchHooksCallback: ({routineId = false, exerciseId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (routineId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.routineId,
+                                referencedTable:
+                                    $$RoutineExercisesTableReferences
+                                        ._routineIdTable(db),
+                                referencedColumn:
+                                    $$RoutineExercisesTableReferences
+                                        ._routineIdTable(db)
+                                        .id,
+                              )
+                              as T;
+                    }
+                    if (exerciseId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.exerciseId,
+                                referencedTable:
+                                    $$RoutineExercisesTableReferences
+                                        ._exerciseIdTable(db),
+                                referencedColumn:
+                                    $$RoutineExercisesTableReferences
+                                        ._exerciseIdTable(db)
+                                        .id,
+                              )
+                              as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
         ),
       );
 }
@@ -4751,12 +5318,9 @@ typedef $$RoutineExercisesTableProcessedTableManager =
       $$RoutineExercisesTableAnnotationComposer,
       $$RoutineExercisesTableCreateCompanionBuilder,
       $$RoutineExercisesTableUpdateCompanionBuilder,
-      (
-        RoutineExercise,
-        BaseReferences<_$AppDatabase, $RoutineExercisesTable, RoutineExercise>,
-      ),
+      (RoutineExercise, $$RoutineExercisesTableReferences),
       RoutineExercise,
-      PrefetchHooks Function()
+      PrefetchHooks Function({bool routineId, bool exerciseId})
     >;
 typedef $$PlansTableCreateCompanionBuilder =
     PlansCompanion Function({
@@ -4776,6 +5340,29 @@ typedef $$PlansTableUpdateCompanionBuilder =
       Value<DateTime> createdAt,
       Value<int> rowid,
     });
+
+final class $$PlansTableReferences
+    extends BaseReferences<_$AppDatabase, $PlansTable, Plan> {
+  $$PlansTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static MultiTypedResultKey<$PlanEntriesTable, List<PlanEntry>>
+  _planEntriesRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.planEntries,
+    aliasName: $_aliasNameGenerator(db.plans.id, db.planEntries.planId),
+  );
+
+  $$PlanEntriesTableProcessedTableManager get planEntriesRefs {
+    final manager = $$PlanEntriesTableTableManager(
+      $_db,
+      $_db.planEntries,
+    ).filter((f) => f.planId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_planEntriesRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+}
 
 class $$PlansTableFilterComposer extends Composer<_$AppDatabase, $PlansTable> {
   $$PlansTableFilterComposer({
@@ -4810,6 +5397,31 @@ class $$PlansTableFilterComposer extends Composer<_$AppDatabase, $PlansTable> {
     column: $table.createdAt,
     builder: (column) => ColumnFilters(column),
   );
+
+  Expression<bool> planEntriesRefs(
+    Expression<bool> Function($$PlanEntriesTableFilterComposer f) f,
+  ) {
+    final $$PlanEntriesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.planEntries,
+      getReferencedColumn: (t) => t.planId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PlanEntriesTableFilterComposer(
+            $db: $db,
+            $table: $db.planEntries,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$PlansTableOrderingComposer
@@ -4870,6 +5482,31 @@ class $$PlansTableAnnotationComposer
 
   GeneratedColumn<DateTime> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  Expression<T> planEntriesRefs<T extends Object>(
+    Expression<T> Function($$PlanEntriesTableAnnotationComposer a) f,
+  ) {
+    final $$PlanEntriesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.planEntries,
+      getReferencedColumn: (t) => t.planId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PlanEntriesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.planEntries,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$PlansTableTableManager
@@ -4883,9 +5520,9 @@ class $$PlansTableTableManager
           $$PlansTableAnnotationComposer,
           $$PlansTableCreateCompanionBuilder,
           $$PlansTableUpdateCompanionBuilder,
-          (Plan, BaseReferences<_$AppDatabase, $PlansTable, Plan>),
+          (Plan, $$PlansTableReferences),
           Plan,
-          PrefetchHooks Function()
+          PrefetchHooks Function({bool planEntriesRefs})
         > {
   $$PlansTableTableManager(_$AppDatabase db, $PlansTable table)
     : super(
@@ -4931,9 +5568,33 @@ class $$PlansTableTableManager
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .map(
+                (e) =>
+                    (e.readTable(table), $$PlansTableReferences(db, table, e)),
+              )
               .toList(),
-          prefetchHooksCallback: null,
+          prefetchHooksCallback: ({planEntriesRefs = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [if (planEntriesRefs) db.planEntries],
+              addJoins: null,
+              getPrefetchedDataCallback: (items) async {
+                return [
+                  if (planEntriesRefs)
+                    await $_getPrefetchedData<Plan, $PlansTable, PlanEntry>(
+                      currentTable: table,
+                      referencedTable: $$PlansTableReferences
+                          ._planEntriesRefsTable(db),
+                      managerFromTypedResult: (p0) =>
+                          $$PlansTableReferences(db, table, p0).planEntriesRefs,
+                      referencedItemsForCurrentItem: (item, referencedItems) =>
+                          referencedItems.where((e) => e.planId == item.id),
+                      typedResults: items,
+                    ),
+                ];
+              },
+            );
+          },
         ),
       );
 }
@@ -4948,9 +5609,9 @@ typedef $$PlansTableProcessedTableManager =
       $$PlansTableAnnotationComposer,
       $$PlansTableCreateCompanionBuilder,
       $$PlansTableUpdateCompanionBuilder,
-      (Plan, BaseReferences<_$AppDatabase, $PlansTable, Plan>),
+      (Plan, $$PlansTableReferences),
       Plan,
-      PrefetchHooks Function()
+      PrefetchHooks Function({bool planEntriesRefs})
     >;
 typedef $$PlanEntriesTableCreateCompanionBuilder =
     PlanEntriesCompanion Function({
@@ -4971,6 +5632,48 @@ typedef $$PlanEntriesTableUpdateCompanionBuilder =
       Value<int> rowid,
     });
 
+final class $$PlanEntriesTableReferences
+    extends BaseReferences<_$AppDatabase, $PlanEntriesTable, PlanEntry> {
+  $$PlanEntriesTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static $PlansTable _planIdTable(_$AppDatabase db) => db.plans.createAlias(
+    $_aliasNameGenerator(db.planEntries.planId, db.plans.id),
+  );
+
+  $$PlansTableProcessedTableManager get planId {
+    final $_column = $_itemColumn<String>('plan_id')!;
+
+    final manager = $$PlansTableTableManager(
+      $_db,
+      $_db.plans,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_planIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static $RoutinesTable _routineIdTable(_$AppDatabase db) =>
+      db.routines.createAlias(
+        $_aliasNameGenerator(db.planEntries.routineId, db.routines.id),
+      );
+
+  $$RoutinesTableProcessedTableManager get routineId {
+    final $_column = $_itemColumn<String>('routine_id')!;
+
+    final manager = $$RoutinesTableTableManager(
+      $_db,
+      $_db.routines,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_routineIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
 class $$PlanEntriesTableFilterComposer
     extends Composer<_$AppDatabase, $PlanEntriesTable> {
   $$PlanEntriesTableFilterComposer({
@@ -4985,16 +5688,6 @@ class $$PlanEntriesTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<String> get planId => $composableBuilder(
-    column: $table.planId,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get routineId => $composableBuilder(
-    column: $table.routineId,
-    builder: (column) => ColumnFilters(column),
-  );
-
   ColumnFilters<int> get dayOfWeek => $composableBuilder(
     column: $table.dayOfWeek,
     builder: (column) => ColumnFilters(column),
@@ -5004,6 +5697,52 @@ class $$PlanEntriesTableFilterComposer
     column: $table.order,
     builder: (column) => ColumnFilters(column),
   );
+
+  $$PlansTableFilterComposer get planId {
+    final $$PlansTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.planId,
+      referencedTable: $db.plans,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PlansTableFilterComposer(
+            $db: $db,
+            $table: $db.plans,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$RoutinesTableFilterComposer get routineId {
+    final $$RoutinesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.routineId,
+      referencedTable: $db.routines,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$RoutinesTableFilterComposer(
+            $db: $db,
+            $table: $db.routines,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 }
 
 class $$PlanEntriesTableOrderingComposer
@@ -5020,16 +5759,6 @@ class $$PlanEntriesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<String> get planId => $composableBuilder(
-    column: $table.planId,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get routineId => $composableBuilder(
-    column: $table.routineId,
-    builder: (column) => ColumnOrderings(column),
-  );
-
   ColumnOrderings<int> get dayOfWeek => $composableBuilder(
     column: $table.dayOfWeek,
     builder: (column) => ColumnOrderings(column),
@@ -5039,6 +5768,52 @@ class $$PlanEntriesTableOrderingComposer
     column: $table.order,
     builder: (column) => ColumnOrderings(column),
   );
+
+  $$PlansTableOrderingComposer get planId {
+    final $$PlansTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.planId,
+      referencedTable: $db.plans,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PlansTableOrderingComposer(
+            $db: $db,
+            $table: $db.plans,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$RoutinesTableOrderingComposer get routineId {
+    final $$RoutinesTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.routineId,
+      referencedTable: $db.routines,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$RoutinesTableOrderingComposer(
+            $db: $db,
+            $table: $db.routines,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 }
 
 class $$PlanEntriesTableAnnotationComposer
@@ -5053,17 +5828,57 @@ class $$PlanEntriesTableAnnotationComposer
   GeneratedColumn<String> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
 
-  GeneratedColumn<String> get planId =>
-      $composableBuilder(column: $table.planId, builder: (column) => column);
-
-  GeneratedColumn<String> get routineId =>
-      $composableBuilder(column: $table.routineId, builder: (column) => column);
-
   GeneratedColumn<int> get dayOfWeek =>
       $composableBuilder(column: $table.dayOfWeek, builder: (column) => column);
 
   GeneratedColumn<int> get order =>
       $composableBuilder(column: $table.order, builder: (column) => column);
+
+  $$PlansTableAnnotationComposer get planId {
+    final $$PlansTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.planId,
+      referencedTable: $db.plans,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PlansTableAnnotationComposer(
+            $db: $db,
+            $table: $db.plans,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$RoutinesTableAnnotationComposer get routineId {
+    final $$RoutinesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.routineId,
+      referencedTable: $db.routines,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$RoutinesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.routines,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 }
 
 class $$PlanEntriesTableTableManager
@@ -5077,12 +5892,9 @@ class $$PlanEntriesTableTableManager
           $$PlanEntriesTableAnnotationComposer,
           $$PlanEntriesTableCreateCompanionBuilder,
           $$PlanEntriesTableUpdateCompanionBuilder,
-          (
-            PlanEntry,
-            BaseReferences<_$AppDatabase, $PlanEntriesTable, PlanEntry>,
-          ),
+          (PlanEntry, $$PlanEntriesTableReferences),
           PlanEntry,
-          PrefetchHooks Function()
+          PrefetchHooks Function({bool planId, bool routineId})
         > {
   $$PlanEntriesTableTableManager(_$AppDatabase db, $PlanEntriesTable table)
     : super(
@@ -5128,9 +5940,67 @@ class $$PlanEntriesTableTableManager
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$PlanEntriesTableReferences(db, table, e),
+                ),
+              )
               .toList(),
-          prefetchHooksCallback: null,
+          prefetchHooksCallback: ({planId = false, routineId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (planId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.planId,
+                                referencedTable: $$PlanEntriesTableReferences
+                                    ._planIdTable(db),
+                                referencedColumn: $$PlanEntriesTableReferences
+                                    ._planIdTable(db)
+                                    .id,
+                              )
+                              as T;
+                    }
+                    if (routineId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.routineId,
+                                referencedTable: $$PlanEntriesTableReferences
+                                    ._routineIdTable(db),
+                                referencedColumn: $$PlanEntriesTableReferences
+                                    ._routineIdTable(db)
+                                    .id,
+                              )
+                              as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
         ),
       );
 }
@@ -5145,9 +6015,9 @@ typedef $$PlanEntriesTableProcessedTableManager =
       $$PlanEntriesTableAnnotationComposer,
       $$PlanEntriesTableCreateCompanionBuilder,
       $$PlanEntriesTableUpdateCompanionBuilder,
-      (PlanEntry, BaseReferences<_$AppDatabase, $PlanEntriesTable, PlanEntry>),
+      (PlanEntry, $$PlanEntriesTableReferences),
       PlanEntry,
-      PrefetchHooks Function()
+      PrefetchHooks Function({bool planId, bool routineId})
     >;
 typedef $$WorkoutSessionsTableCreateCompanionBuilder =
     WorkoutSessionsCompanion Function({
@@ -5173,6 +6043,37 @@ typedef $$WorkoutSessionsTableUpdateCompanionBuilder =
       Value<String?> planEntryId,
       Value<int> rowid,
     });
+
+final class $$WorkoutSessionsTableReferences
+    extends
+        BaseReferences<_$AppDatabase, $WorkoutSessionsTable, WorkoutSession> {
+  $$WorkoutSessionsTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static MultiTypedResultKey<$WorkoutSetsTable, List<WorkoutSet>>
+  _workoutSetsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.workoutSets,
+    aliasName: $_aliasNameGenerator(
+      db.workoutSessions.id,
+      db.workoutSets.sessionId,
+    ),
+  );
+
+  $$WorkoutSetsTableProcessedTableManager get workoutSetsRefs {
+    final manager = $$WorkoutSetsTableTableManager(
+      $_db,
+      $_db.workoutSets,
+    ).filter((f) => f.sessionId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_workoutSetsRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+}
 
 class $$WorkoutSessionsTableFilterComposer
     extends Composer<_$AppDatabase, $WorkoutSessionsTable> {
@@ -5223,6 +6124,31 @@ class $$WorkoutSessionsTableFilterComposer
     column: $table.planEntryId,
     builder: (column) => ColumnFilters(column),
   );
+
+  Expression<bool> workoutSetsRefs(
+    Expression<bool> Function($$WorkoutSetsTableFilterComposer f) f,
+  ) {
+    final $$WorkoutSetsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.workoutSets,
+      getReferencedColumn: (t) => t.sessionId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$WorkoutSetsTableFilterComposer(
+            $db: $db,
+            $table: $db.workoutSets,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$WorkoutSessionsTableOrderingComposer
@@ -5313,6 +6239,31 @@ class $$WorkoutSessionsTableAnnotationComposer
     column: $table.planEntryId,
     builder: (column) => column,
   );
+
+  Expression<T> workoutSetsRefs<T extends Object>(
+    Expression<T> Function($$WorkoutSetsTableAnnotationComposer a) f,
+  ) {
+    final $$WorkoutSetsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.workoutSets,
+      getReferencedColumn: (t) => t.sessionId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$WorkoutSetsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.workoutSets,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$WorkoutSessionsTableTableManager
@@ -5326,16 +6277,9 @@ class $$WorkoutSessionsTableTableManager
           $$WorkoutSessionsTableAnnotationComposer,
           $$WorkoutSessionsTableCreateCompanionBuilder,
           $$WorkoutSessionsTableUpdateCompanionBuilder,
-          (
-            WorkoutSession,
-            BaseReferences<
-              _$AppDatabase,
-              $WorkoutSessionsTable,
-              WorkoutSession
-            >,
-          ),
+          (WorkoutSession, $$WorkoutSessionsTableReferences),
           WorkoutSession,
-          PrefetchHooks Function()
+          PrefetchHooks Function({bool workoutSetsRefs})
         > {
   $$WorkoutSessionsTableTableManager(
     _$AppDatabase db,
@@ -5395,9 +6339,43 @@ class $$WorkoutSessionsTableTableManager
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$WorkoutSessionsTableReferences(db, table, e),
+                ),
+              )
               .toList(),
-          prefetchHooksCallback: null,
+          prefetchHooksCallback: ({workoutSetsRefs = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [if (workoutSetsRefs) db.workoutSets],
+              addJoins: null,
+              getPrefetchedDataCallback: (items) async {
+                return [
+                  if (workoutSetsRefs)
+                    await $_getPrefetchedData<
+                      WorkoutSession,
+                      $WorkoutSessionsTable,
+                      WorkoutSet
+                    >(
+                      currentTable: table,
+                      referencedTable: $$WorkoutSessionsTableReferences
+                          ._workoutSetsRefsTable(db),
+                      managerFromTypedResult: (p0) =>
+                          $$WorkoutSessionsTableReferences(
+                            db,
+                            table,
+                            p0,
+                          ).workoutSetsRefs,
+                      referencedItemsForCurrentItem: (item, referencedItems) =>
+                          referencedItems.where((e) => e.sessionId == item.id),
+                      typedResults: items,
+                    ),
+                ];
+              },
+            );
+          },
         ),
       );
 }
@@ -5412,12 +6390,9 @@ typedef $$WorkoutSessionsTableProcessedTableManager =
       $$WorkoutSessionsTableAnnotationComposer,
       $$WorkoutSessionsTableCreateCompanionBuilder,
       $$WorkoutSessionsTableUpdateCompanionBuilder,
-      (
-        WorkoutSession,
-        BaseReferences<_$AppDatabase, $WorkoutSessionsTable, WorkoutSession>,
-      ),
+      (WorkoutSession, $$WorkoutSessionsTableReferences),
       WorkoutSession,
-      PrefetchHooks Function()
+      PrefetchHooks Function({bool workoutSetsRefs})
     >;
 typedef $$WorkoutSetsTableCreateCompanionBuilder =
     WorkoutSetsCompanion Function({
@@ -5472,6 +6447,30 @@ typedef $$WorkoutSetsTableUpdateCompanionBuilder =
       Value<int> rowid,
     });
 
+final class $$WorkoutSetsTableReferences
+    extends BaseReferences<_$AppDatabase, $WorkoutSetsTable, WorkoutSet> {
+  $$WorkoutSetsTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static $WorkoutSessionsTable _sessionIdTable(_$AppDatabase db) =>
+      db.workoutSessions.createAlias(
+        $_aliasNameGenerator(db.workoutSets.sessionId, db.workoutSessions.id),
+      );
+
+  $$WorkoutSessionsTableProcessedTableManager get sessionId {
+    final $_column = $_itemColumn<String>('session_id')!;
+
+    final manager = $$WorkoutSessionsTableTableManager(
+      $_db,
+      $_db.workoutSessions,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_sessionIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
 class $$WorkoutSetsTableFilterComposer
     extends Composer<_$AppDatabase, $WorkoutSetsTable> {
   $$WorkoutSetsTableFilterComposer({
@@ -5483,11 +6482,6 @@ class $$WorkoutSetsTableFilterComposer
   });
   ColumnFilters<String> get id => $composableBuilder(
     column: $table.id,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get sessionId => $composableBuilder(
-    column: $table.sessionId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -5591,6 +6585,29 @@ class $$WorkoutSetsTableFilterComposer
     column: $table.estimated1RM,
     builder: (column) => ColumnFilters(column),
   );
+
+  $$WorkoutSessionsTableFilterComposer get sessionId {
+    final $$WorkoutSessionsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.sessionId,
+      referencedTable: $db.workoutSessions,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$WorkoutSessionsTableFilterComposer(
+            $db: $db,
+            $table: $db.workoutSessions,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 }
 
 class $$WorkoutSetsTableOrderingComposer
@@ -5604,11 +6621,6 @@ class $$WorkoutSetsTableOrderingComposer
   });
   ColumnOrderings<String> get id => $composableBuilder(
     column: $table.id,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get sessionId => $composableBuilder(
-    column: $table.sessionId,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -5711,6 +6723,29 @@ class $$WorkoutSetsTableOrderingComposer
     column: $table.estimated1RM,
     builder: (column) => ColumnOrderings(column),
   );
+
+  $$WorkoutSessionsTableOrderingComposer get sessionId {
+    final $$WorkoutSessionsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.sessionId,
+      referencedTable: $db.workoutSessions,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$WorkoutSessionsTableOrderingComposer(
+            $db: $db,
+            $table: $db.workoutSessions,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 }
 
 class $$WorkoutSetsTableAnnotationComposer
@@ -5724,9 +6759,6 @@ class $$WorkoutSetsTableAnnotationComposer
   });
   GeneratedColumn<String> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
-
-  GeneratedColumn<String> get sessionId =>
-      $composableBuilder(column: $table.sessionId, builder: (column) => column);
 
   GeneratedColumn<int> get exercisePosition => $composableBuilder(
     column: $table.exercisePosition,
@@ -5819,6 +6851,29 @@ class $$WorkoutSetsTableAnnotationComposer
     column: $table.estimated1RM,
     builder: (column) => column,
   );
+
+  $$WorkoutSessionsTableAnnotationComposer get sessionId {
+    final $$WorkoutSessionsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.sessionId,
+      referencedTable: $db.workoutSessions,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$WorkoutSessionsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.workoutSessions,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 }
 
 class $$WorkoutSetsTableTableManager
@@ -5832,12 +6887,9 @@ class $$WorkoutSetsTableTableManager
           $$WorkoutSetsTableAnnotationComposer,
           $$WorkoutSetsTableCreateCompanionBuilder,
           $$WorkoutSetsTableUpdateCompanionBuilder,
-          (
-            WorkoutSet,
-            BaseReferences<_$AppDatabase, $WorkoutSetsTable, WorkoutSet>,
-          ),
+          (WorkoutSet, $$WorkoutSetsTableReferences),
           WorkoutSet,
-          PrefetchHooks Function()
+          PrefetchHooks Function({bool sessionId})
         > {
   $$WorkoutSetsTableTableManager(_$AppDatabase db, $WorkoutSetsTable table)
     : super(
@@ -5951,9 +7003,54 @@ class $$WorkoutSetsTableTableManager
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$WorkoutSetsTableReferences(db, table, e),
+                ),
+              )
               .toList(),
-          prefetchHooksCallback: null,
+          prefetchHooksCallback: ({sessionId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (sessionId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.sessionId,
+                                referencedTable: $$WorkoutSetsTableReferences
+                                    ._sessionIdTable(db),
+                                referencedColumn: $$WorkoutSetsTableReferences
+                                    ._sessionIdTable(db)
+                                    .id,
+                              )
+                              as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
         ),
       );
 }
@@ -5968,12 +7065,9 @@ typedef $$WorkoutSetsTableProcessedTableManager =
       $$WorkoutSetsTableAnnotationComposer,
       $$WorkoutSetsTableCreateCompanionBuilder,
       $$WorkoutSetsTableUpdateCompanionBuilder,
-      (
-        WorkoutSet,
-        BaseReferences<_$AppDatabase, $WorkoutSetsTable, WorkoutSet>,
-      ),
+      (WorkoutSet, $$WorkoutSetsTableReferences),
       WorkoutSet,
-      PrefetchHooks Function()
+      PrefetchHooks Function({bool sessionId})
     >;
 typedef $$BodyMetricsTableCreateCompanionBuilder =
     BodyMetricsCompanion Function({

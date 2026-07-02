@@ -25,5 +25,6 @@ for call-site compatibility (the value's own sign carries up/down).
 ## Acceptance Criteria
 - AC-001: Widget renders the value and label
 - AC-002: Widget renders a leading icon when provided
-- AC-003: Widget defaults to the neutral tone
+- AC-003: The icon renders in the same accent color regardless of which tone is passed — tone is a
+  no-op, and must stay one, per the monochrome identity
 - AC-004: Widget renders flat — no enclosing card chrome (no bordered/filled box)

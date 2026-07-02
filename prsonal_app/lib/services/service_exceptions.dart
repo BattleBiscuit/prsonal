@@ -20,3 +20,13 @@ class BackupException implements Exception {
   @override
   String toString() => 'BackupException: $message';
 }
+
+/// Thrown when deleting an exercise that a routine still references
+/// (`RoutineExercises.exerciseId` is `onDelete: restrict`).
+class ExerciseInUseException implements Exception {
+  const ExerciseInUseException();
+
+  @override
+  String toString() =>
+      'ExerciseInUseException: exercise is still used by a routine';
+}

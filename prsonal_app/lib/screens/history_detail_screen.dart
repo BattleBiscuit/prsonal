@@ -156,6 +156,7 @@ class _HistoryDetailScreenState extends ConsumerState<HistoryDetailScreen> {
           const SizedBox(height: space4),
           if (detail.prNames.isNotEmpty) ...[
             Container(
+              key: const ValueKey('prBanner'),
               padding: const EdgeInsets.all(space3),
               decoration: BoxDecoration(
                 color: colors.accent.withValues(alpha: 0.06),

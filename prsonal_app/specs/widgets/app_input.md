@@ -13,7 +13,8 @@ for names (routine, plan, exercise) and numeric entry (reps, weight, rest, body 
 
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
-| value | String? | no | null | Current text |
+| initialValue | String? | no | null | Seeds the field's starting text; ignored when `controller` is set |
+| controller | TextEditingController? | no | null | Owns the field's text externally instead of `initialValue` |
 | label | String? | no | null | Label shown above the field |
 | placeholder | String? | no | null | Hint text shown when empty |
 | onChanged | ValueChanged\<String\>? | no | null | Called with the new text on every edit |
@@ -40,3 +41,4 @@ for names (routine, plan, exercise) and numeric entry (reps, weight, rest, body 
 - AC-003: Widget calls onChanged with the entered text
 - AC-004: Widget displays the error text when errorText is provided
 - AC-005: Widget is non-editable when enabled is false
+- AC-006: Widget seeds its starting text from initialValue when no controller is given

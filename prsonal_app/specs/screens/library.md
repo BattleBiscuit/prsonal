@@ -40,3 +40,5 @@ as a [[library_exercise_card]], with a FAB to create and tap-to-edit / delete vi
 - AC-004: Tapping a card opens the exercise form to edit it
 - AC-005: Tapping delete confirms and then removes the exercise
 - AC-006: Shows an empty state when the library is empty
+- AC-007: Deleting an exercise still used by a routine shows an explanatory message instead of
+  crashing

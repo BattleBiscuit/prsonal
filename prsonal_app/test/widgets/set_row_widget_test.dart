@@ -244,63 +244,50 @@ void main() {
               contains(const FontFeature.tabularFigures()),
             );
 
-        testWidgets('Upcoming set index renders mono', (tester) async {
-          await tester.pumpWidget(
-            _wrap(
-              const SetRow(
+        testWidgets(
+          'Set index renders mono in every state — each status branch '
+          '(_buildUpcoming/_buildActive/_buildCompleted/_buildSkipped) '
+          'applies monoNumerals independently, so each is checked',
+          (tester) async {
+            final cases = <String, Widget>{
+              'upcoming': const SetRow(
                 index: 2,
                 kind: ExerciseType.strength,
                 status: ActiveSetStatus.upcoming,
                 plannedLabel: '8×82.5kg',
               ),
-            ),
-          );
-          expect(tester.widget<Text>(find.text('3')).style, isMono());
-        });
-
-        testWidgets('Active set index renders mono', (tester) async {
-          await tester.pumpWidget(
-            _wrap(
-              SetRow(
+              'active': SetRow(
                 index: 0,
                 kind: ExerciseType.strength,
                 status: ActiveSetStatus.active,
                 plannedLabel: '8×82.5kg',
                 onToggleComplete: () {},
               ),
-            ),
-          );
-          expect(tester.widget<Text>(find.text('1')).style, isMono());
-        });
-
-        testWidgets('Completed set index renders mono', (tester) async {
-          await tester.pumpWidget(
-            _wrap(
-              const SetRow(
+              'completed': const SetRow(
                 index: 0,
                 kind: ExerciseType.strength,
                 status: ActiveSetStatus.completed,
                 plannedLabel: '8×80kg',
                 actualLabel: '8×82.5kg',
               ),
-            ),
-          );
-          expect(tester.widget<Text>(find.text('1')).style, isMono());
-        });
-
-        testWidgets('Skipped set index renders mono', (tester) async {
-          await tester.pumpWidget(
-            _wrap(
-              const SetRow(
+              'skipped': const SetRow(
                 index: 0,
                 kind: ExerciseType.strength,
                 status: ActiveSetStatus.skipped,
                 plannedLabel: '8×80kg',
               ),
-            ),
-          );
-          expect(tester.widget<Text>(find.text('1')).style, isMono());
-        });
+            };
+            for (final MapEntry(key: state, value: row) in cases.entries) {
+              await tester.pumpWidget(_wrap(row));
+              final label = state == 'upcoming' ? '3' : '1';
+              expect(
+                tester.widget<Text>(find.text(label)).style,
+                isMono(),
+                reason: 'state=$state',
+              );
+            }
+          },
+        );
 
         testWidgets('Active set live weight/reps input fields render mono', (
           tester,
